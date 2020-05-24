@@ -1,27 +1,57 @@
 {
   "name": "st-open-api",
   "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "open-api",
+    "swagger",
+    "client-generator",
+    "springtype"
+  ],
   "description": "This project creates from open-api 3.0 an typescript client",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/springtype-org/st-open-api.git"
+  },
   "scripts": {
     "prestart": "npx st-rm-rf dist",
     "prebuild": "npx st-rm-rf dist",
     "build": "tsc",
-    "postbuild": "npx st-cp package.json static schema template dist",
-    "start": "ts-node src/index.ts"
+    "postbuild": "npx st-cp package.json static schema template dist"
+  },
+  "engines": {
+    "node": ">=10"
+  },
+  "bundledDependencies": [
+    "ajv",
+    "commander",
+    "mustache",
+    "node-fetch",
+    "st-rm-rf",
+    "valid-url"
+  ],
+  "bin": {
+    "st-open-api": "./cli.js"
   },
   "author": "Michael Mannseicher",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/springtype-org/st-open-api/issues"
+  },
   "dependencies": {
-    "@types/mustache": "^4.0.1",
-    "@types/node": "^13.11.1",
-    "@types/node-fetch": "^2.5.6",
     "ajv": "^6.12.2",
     "commander": "^5.1.0",
     "mustache": "^4.0.1",
     "node-fetch": "^2.6.0",
     "st-rm-rf": "^2.0.0-beta.1",
-    "ts-node": "^8.8.2",
-    "typescript": "^3.8.3",
     "valid-url": "^1.0.9"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/mustache": "^4.0.1",
+    "@types/node": "^13.11.1",
+    "@types/node-fetch": "^2.5.6",
+    "typescript": "^3.8.3"
+  }
 }
