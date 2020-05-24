@@ -10,7 +10,7 @@ import {copyResources} from "./copy-resources";
 import {createServiceClasses} from "./create-service-classes";
 import {IGenerateConfig} from "../interface/i-generate-config";
 
-const JSON_SCHEMA_3_0_x = JSON.parse(readFileSync('schema/open-api-3-0-x.json').toString('utf-8'));
+const JSON_SCHEMA_3_0_x = JSON.parse(readFileSync('../schema/open-api-3-0-x.json').toString('utf-8'));
 const getSourceAsString = async (source: string): Promise<string> => {
     if (isUri(source)) {
         return await download(source);

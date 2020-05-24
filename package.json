@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publishConfig": {
     "access": "public"
   },
@@ -19,7 +19,7 @@
     "prestart": "npx st-rm-rf dist",
     "prebuild": "npx st-rm-rf dist",
     "build": "tsc",
-    "postbuild": "npx st-cp package.json static schema template dist"
+    "postbuild": "npx st-cp package.json README.dm static schema template dist"
   },
   "engines": {
     "node": ">=10"
