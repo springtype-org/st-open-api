@@ -14,7 +14,7 @@ export class FolderManager {
 
     constructor(outputFolder: string) {
         this.outputFolder = join(process.cwd(), outputFolder);
-        deletePathOrFile(this.outputFolder);
+        deletePathOrFile(this.outputFolder, {printInfo: false, printWarning: false, printError: true});
     }
 
     getServiceFolder() {
