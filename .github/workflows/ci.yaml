@@ -16,7 +16,7 @@ jobs:
       - name: Add artifact to github
         uses: actions/upload-artifact@v2
         with:
-          name: artifact.zip
+          name: artifact
           path: dist
 
   npm-publish:
@@ -33,7 +33,7 @@ jobs:
       - name: Download build
         uses: actions/download-artifact@v2
         with:
-          name: artifact.zip
+          name: artifact
           path: dist
       - name: Publish if version in package.json change
         uses: springtype-org/github-action-npm-publish@master
