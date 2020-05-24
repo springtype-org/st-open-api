@@ -1,0 +1,50 @@
+{{#isDescription}}
+/*
+{{#description}}
+ * {{.}}
+{{/description}}
+ */
+{{/isDescription}}
+{{functionName}} = async ({{#isParameter}}parameter: {{parameterClassName}}{{/isParameter}}{{#isRequestBody}}{{#isParameter}}, {{/isParameter}}body: {{requestBodyClass}}{{/isRequestBody}}): Promise<{{#isResponse}}{{responseClass}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
+{{#isQueryParameter}}
+    const queryParams = [
+    {{#queryParameters}}
+        {name: '{{.}}', value: parameter.{{.}}},
+    {{/queryParameters}}
+    ];
+{{/isQueryParameter}}
+{{#isUrlParameter}}
+    const pathParams = {
+    {{#urlParameter}}
+        '{{.}}': parameter.{{.}},
+    {{/urlParameter}}
+    };
+{{/isUrlParameter}}
+
+    {{#isResponse}}const response = {{/isResponse}}await http({
+            method: '{{httpMethod}}',
+            url: `${openApi.endpointUrl}{{{originalPath}}}`,
+{{#isQueryParameter}}
+            queryParameter: queryParams,
+{{/isQueryParameter}}
+{{#isUrlParameter}}
+            urlParameter: pathParams,
+{{/isUrlParameter}}
+            header: {
+{{#isJsonResponse}}
+                Accept: 'application/json',
+{{/isJsonResponse}}
+{{#isRequestBodyJson}}
+                'Content-Type': 'application/json',
+{{/isRequestBodyJson}}
+            },
+{{#isRequestBody}}
+            body: JSON.stringify(body),
+{{/isRequestBody}}
+        },
+        openApi.requestInterceptor
+    );
+{{#isJsonResponse}}
+    return JSON.parse(response);
+{{/isJsonResponse}}
+}

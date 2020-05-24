@@ -1,0 +1,8 @@
+{{#isDescription}}
+/*
+{{#description}}
+ * {{.}}
+{{/description}}
+ */
+{{/isDescription}}
+{{propertyName}}{{^required}}?{{/required}}: {{#isArray}}Array<{{/isArray}}{{{value}}}{{#isArray}}>{{/isArray}};

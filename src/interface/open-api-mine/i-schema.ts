@@ -1,0 +1,17 @@
+import {IProperty} from "./i-property";
+import {IType} from "./i-type";
+
+export interface ISchema {
+    type: IType | 'object' | 'array';
+    items?: ISchemaItem;
+    required?: Array<string>;
+    properties?: {[name: string]: ISchema};
+    '$ref'?: string;
+    enum?: Array<string| number>;
+}
+
+export interface ISchemaItem {
+     type: 'string' | 'integer';
+    enum?: Array<string| number>;
+    '$ref': string;
+}

@@ -1,0 +1,12 @@
+/**
+ * This file was generated
+ */
+export enum {{enumName}} {
+{{#isValues}}
+
+{{#values}}
+    '{{{value}}}'={{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}},
+
+{{/values}}
+{{/isValues}}
+}
