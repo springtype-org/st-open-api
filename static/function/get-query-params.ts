@@ -1,7 +1,7 @@
 const EMPTY_STRING = '';
 
-export const getQueryParameters = (parameters: Array<IQueryParam>): string => {
-    const keyValue: Array<string> = []
+export const getQueryParameters = (parameters: Array<IQueryParam> = []): string => {
+    const keyValue: Array<string> = [];
     for (const parameter of parameters) {
         if (!!parameter.value) {
             if (Array.isArray(parameter.value)) {
@@ -15,11 +15,11 @@ export const getQueryParameters = (parameters: Array<IQueryParam>): string => {
         return EMPTY_STRING;
     }
     return `?${keyValue.join('&')}`
-}
+};
 
 const getQueryParameter = (paramName: string, paramValue: string) => {
     return `${encodeURI(paramName)}=${encodeURI(paramValue)}`;
-}
+};
 
 export interface IQueryParam {
     name: string,

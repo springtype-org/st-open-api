@@ -12,19 +12,15 @@ if (!_globalThis[HTTP_KEY]) {
 
     // register scoped global as an instance of this class
     _globalThis[HTTP_KEY] = {
-
-        // runs micro-tasks asynchronously
-        run: async (fn: Function) => {
-            return fn();
-        },
     };
 }
 
 export const globalThis: any = _globalThis;
 export const openApi: I$openApi = _globalThis[HTTP_KEY];
+
 export const DEFAULT_REQUEST_INTERCEPTOR: RequestInterceptor = async (request: IRequest) => {
     return request;
-}
+};
 
 if (!openApi.globalThis) {
     openApi.globalThis = globalThis;
