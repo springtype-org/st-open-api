@@ -29,3 +29,6 @@ the global _$openApi_ can be manipulate some variables and every request.
 Setting an specific endpoint url
 
 `$openApi.endpointUrl = "https://localhost:4444";`
+
+## TODO
+- split logic of interface and class

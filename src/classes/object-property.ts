@@ -113,7 +113,7 @@ export class ObjectProperty implements IPropertyClass {
             isSpringType: isFunction && this.useSpringtype,
 
             className: this.className,
-
+            isInterface: Object.values(this.functions).length == 0,
             isImport: this.imports.get().length > 0,
             imports: this.imports.get(),
 
@@ -137,6 +137,7 @@ export class ObjectProperty implements IPropertyClass {
 interface IMustacheClass {
     className: string;
 
+    isInterface: boolean;
     isSpringType: boolean;
 
     isImport: boolean;

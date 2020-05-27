@@ -18,7 +18,7 @@
 {{#isSpringType}}
 @injectable
 {{/isSpringType}}
-export class {{className}} {
+export {{^isInterface}}class{{/isInterface}}{{#isInterface}}interface{{/isInterface}} {{className}} {
 
 {{#isProperties}}
 {{#properties}}
