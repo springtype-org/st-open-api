@@ -4,10 +4,10 @@ import {IGenerateConfig} from "../interface/i-generate-config";
 
 export const copyResources = (config: IGenerateConfig) => {
     const folder = config.folder;
-    const iAjaxInterface = nodePath.join(process.argv[1], '..', 'static', 'interface', 'i-$-open-api.ts');
-    const httpFunction = nodePath.join(process.argv[1], '..', 'static', 'function', 'http.ts');
-    const queryFunction = nodePath.join(process.argv[1], '..', 'static', 'function', 'get-query-params.ts');
-    const openApiFunction = nodePath.join(process.argv[1], '..', 'static', 'function', 'open-api.ts');
+    const iAjaxInterface = nodePath.join(__dirname, '..', 'static', 'interface', 'i-$-open-api.ts');
+    const httpFunction = nodePath.join(__dirname, '..', 'static', 'function', 'http.ts');
+    const queryFunction = nodePath.join(__dirname, '..', 'static', 'function', 'get-query-params.ts');
+    const openApiFunction = nodePath.join(__dirname, '..', 'static', 'function', 'open-api.ts');
 
     fs.copyFileSync(httpFunction, nodePath.join(folder.getFunctionFolder(), 'http.ts'));
     fs.copyFileSync(queryFunction, nodePath.join(folder.getFunctionFolder(), 'get-query-params.ts'));
