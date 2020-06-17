@@ -1,36 +1,46 @@
 import {ISchema} from "../interface/open-api-mine/i-schema";
-import {IProperty, ObjectProperty} from "../classes/object-property";
+import {IProperty} from "../classes/object-property";
 import {EnumProperty} from "../classes/enum-property";
 import * as fs from "fs";
 import * as nodePath from "path";
 import {IGenerateConfig} from "../interface/i-generate-config";
+import {convertClassName} from "./convert-class-name";
+import {InterfaceProperty} from "../classes/interface-property";
 
-export const getObjectOrEnumFromSchema = (config: IGenerateConfig, className: string, originalName: string, schema: ISchema, path: string): ObjectProperty | EnumProperty | undefined => {
-    if (schema.type === 'object') {
-        const objectProperty = new ObjectProperty(className, config.useSpringtype);
+export const getInterfaceOrEnumFromSchema = (config: IGenerateConfig, className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | undefined => {
+    let isArray = false;
+    if (schema.type === 'array') {
+        isArray = true;
+        schema = schema.items;
+        schema.type = 'object';
+    }
+    if (schema.type === 'object' || schema.properties) {
+        const interfaceProperty = new InterfaceProperty(className, isArray);
         for (const propertyName of Object.keys(schema.properties)) {
             const property = schema.properties[propertyName];
             const isRequired = (schema.required || []).indexOf(propertyName) > -1;
-            objectProperty.addProperty(getProperty(config, className, originalName, propertyName, isRequired, property, path))
+            interfaceProperty.addProperty(getProperty(config, className, originalName, propertyName, isRequired, property, path))
         }
-        return objectProperty;
-    } else {
-        const enumeration = schema.enum;
-        if (enumeration) {
-            const enumClass = new EnumProperty(className);
-            enumClass.setValues(schema.enum);
-            return enumClass;
-        }
+        return interfaceProperty;
 
+    } else if (schema.enum) {
+        const enumClass = new EnumProperty(className);
+        enumClass.setValues(schema.enum);
+        return enumClass;
+    } else {
+        console.log(className, originalName, 'no mapping for schema found')
     }
 }
 
 
 const getProperty = (config: IGenerateConfig, className: string, originalName: string, propertyName: string, required: boolean, schema: ISchema, path: string): IProperty => {
     const {ref, folder} = config;
+    if (schema.allOf) {
+        schema = schema.allOf.find(v => !!v['$ref']) as any
+    }
     const type = mapType(schema.type);
     const isArray = type === 'array';
-    let value = isArray ? schema.items.type : type;
+    let value = isArray ? mapType(schema.items.type) : type;
     let _import;
 
     const enumeration = getEnumeration(schema);
@@ -41,9 +51,10 @@ const getProperty = (config: IGenerateConfig, className: string, originalName: s
         if (!newOriginal.toUpperCase().endsWith('enum')) {
             newOriginal += 'Enum';
         }
-        const enumeration = getObjectOrEnumFromSchema(config, `I${newOriginal}`, newOriginal, schema, folder.getEnumerationFolder()) as EnumProperty;
+        const enumeration = getInterfaceOrEnumFromSchema(config, `I${convertClassName(newOriginal)}`, newOriginal, schema, folder.getEnumerationFolder()) as EnumProperty;
         const rendered = enumeration.render();
         fs.appendFileSync(nodePath.join(folder.getEnumerationFolder(), `${rendered.fileName}.ts`), rendered.render)
+
         const refKey = `#/nested/enumeration/${newOriginal}`
         ref.addReference(refKey, {
             fileName: rendered.fileName,

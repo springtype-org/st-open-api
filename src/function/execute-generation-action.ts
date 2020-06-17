@@ -20,7 +20,7 @@ const getSourceAsString = async (source: string): Promise<string> => {
 }
 
 const validate = async (openApiSchema: object, verbose: boolean): Promise<boolean> => {
-    const JSON_SCHEMA_3_0_x = JSON.parse(readFileSync(join(process.argv[1], '..','schema/open-api-3-0-x.json')).toString('utf-8'));
+    const JSON_SCHEMA_3_0_x = JSON.parse(readFileSync(join(process.argv[1], '..', 'schema/open-api-3-0-x.json')).toString('utf-8'));
     const ajv = Ajv({schemaId: 'auto', allErrors: true});
     ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
     const valid = ajv.validate(JSON_SCHEMA_3_0_x, openApiSchema);
@@ -54,13 +54,14 @@ export const executeGenerationAction = async (source: string, output: string, op
                 useSpringtype: opt.useSpringtype,
                 verbose: opt.verbose
             }
+
             createComponentInterfaces(config, openApi.components);
 
             createServiceClasses(config, openApi);
 
             copyResources(config);
         } else {
-            console.error("OpenApi resource not valid.")
+            console.error("OpenApi Json not valid.")
             process.exit(1);
             return;
         }

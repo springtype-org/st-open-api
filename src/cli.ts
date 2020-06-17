@@ -7,7 +7,6 @@ const {Command} = require('commander');
 
 
 (async () => {
-
     // if nothing added get help
     if (process.argv.length == 2) {
         process.argv.push('-h')

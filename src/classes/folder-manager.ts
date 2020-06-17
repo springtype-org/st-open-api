@@ -37,6 +37,14 @@ export class FolderManager {
         return mkdir(join(this.getInterfaceFolder(), 'components'));
     }
 
+    getInterfaceRequestFolder() {
+        return mkdir(join(this.getInterfaceFolder(), 'request'));
+    }
+
+    getInterfaceResponseFolder() {
+        return mkdir(join(this.getInterfaceFolder(), 'response'));
+    }
+
     getInterfaceParameterFolder() {
         return mkdir(join(this.getInterfaceFolder(), 'parameter'));
     }

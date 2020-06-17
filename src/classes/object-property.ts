@@ -4,8 +4,9 @@ import {renderMustache} from "../function/render-mustache";
 import {UniqueArray} from "./unique-array";
 import {splitByLineBreak} from "../function/split-by-line-break";
 import {FolderManager} from "./folder-manager";
+import {convertClassName} from "../function/convert-class-name";
 
-export const HTTP_FUNCTION_REF = (folder: FolderManager)  => {
+export const HTTP_FUNCTION_REF = (folder: FolderManager) => {
     return {
         fileName: "http",
         refKey: "HTTP_FUNCTION_REF",
@@ -14,21 +15,23 @@ export const HTTP_FUNCTION_REF = (folder: FolderManager)  => {
     }
 }
 
-export const OPEN_API_FUNCTION_REF = (folder: FolderManager)  => {
+export const OPEN_API_FUNCTION_REF = (folder: FolderManager) => {
     return {
-    fileName: "open-api",
-    refKey: "OPEN_API_FUNCTION_REF",
-    className: "openApi",
-    folderPath: folder.getFunctionFolder()
-}}
+        fileName: "open-api",
+        refKey: "OPEN_API_FUNCTION_REF",
+        className: "openApi",
+        folderPath: folder.getFunctionFolder()
+    }
+}
 
-export const QUERY_PARAMETER_FUNCTION_REF = (folder: FolderManager)  => {
+export const QUERY_PARAMETER_FUNCTION_REF = (folder: FolderManager) => {
     return {
-    fileName: "get-query-params",
-    refKey: "QUERY_PARAMETER_FUNCTION_REF",
-    className: "getQueryParameters",
-    folderPath: folder.getFunctionFolder()
-}}
+        fileName: "get-query-params",
+        refKey: "QUERY_PARAMETER_FUNCTION_REF",
+        className: "getQueryParameters",
+        folderPath: folder.getFunctionFolder()
+    }
+}
 
 export class ObjectProperty implements IPropertyClass {
 
@@ -44,8 +47,8 @@ export class ObjectProperty implements IPropertyClass {
     }
 
     private convertName(originalName: string) {
-        let className = originalName;
-        this.className = className
+        let className = convertClassName(originalName);
+        this.className = className;
         this.fileName = camelToKebabCase(className);
     }
 

@@ -2,12 +2,14 @@ import {IOperation} from "../interface/open-api-mine/i-operation";
 import {getSortedParameter} from "./get-sorted-parameter";
 import {createResponseInterfaces} from "./create-response-interfaces";
 import {createRequestBodyInterfaces} from "./create-request-body-interfaces";
-import {getObjectOrEnumFromSchema} from "./get-propery";
+import {getInterfaceOrEnumFromSchema} from "./get-propery";
 import {ISchema} from "../interface/open-api-mine/i-schema";
 import * as fs from "fs";
 import * as nodePath from "path";
 import {HTTP_FUNCTION_REF, IFunction, ObjectProperty, OPEN_API_FUNCTION_REF,} from "../classes/object-property";
 import {IGenerateConfig} from "../interface/i-generate-config";
+import {kebabCaseToCamel} from "./kebab-case-to-camel";
+import {firstCharacterLower} from "./first-character-lower";
 
 export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: ObjectProperty, httpMethod: string, path: string, operation: IOperation) => {
     if (!!operation) {
@@ -56,7 +58,7 @@ export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: Obj
                 }
                 parameterObject.properties[p.name] = p.schema;
             });
-            const classToRender = getObjectOrEnumFromSchema(config, parameterClassName, functionName, parameterObject, config.folder.getInterfaceParameterFolder());
+            const classToRender = getInterfaceOrEnumFromSchema(config, parameterClassName, functionName, parameterObject, config.folder.getInterfaceParameterFolder());
 
             const rendered = classToRender.render();
             fs.appendFileSync(nodePath.join(config.folder.getInterfaceParameterFolder(), `${rendered.fileName}.ts`), rendered.render)
@@ -80,7 +82,7 @@ export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: Obj
 
 const getOperationId = (httpMethod: string, path: string, operationId: string | undefined): string => {
     if (!!operationId) {
-        return operationId
+        return firstCharacterLower(kebabCaseToCamel(operationId.replace('_', '-')));
     }
     const newPath = path.split('/').filter(p => !!p)
         .map(p => {

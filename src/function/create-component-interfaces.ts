@@ -1,33 +1,37 @@
 import {IComponents} from "../interface/open-api-mine/i-components";
-import * as fs from "fs";
-import * as nodePath from "path";
+import {appendFileSync} from "fs";
+import {join} from "path";
+
 import {camelToKebabCase} from "./camel-to-kebab-case";
 import {ISchema} from "../interface/open-api-mine/i-schema";
-import {getObjectOrEnumFromSchema} from "./get-propery";
+import {getInterfaceOrEnumFromSchema} from "./get-propery";
 import {IGenerateConfig} from "../interface/i-generate-config";
+import {convertClassName} from "./convert-class-name";
 
 
 export const createComponentInterfaces = (config: IGenerateConfig, components: IComponents) => {
+    if (components && components.schemas) {
+        const schemas = components.schemas;
+        const {ref, folder} = config;
+        for (const schemaName of Object.keys(schemas)) {
+            const className = 'I' + convertClassName(schemaName);
+            const fileName = camelToKebabCase(className);
 
-    const schemas = components.schemas;
-    const {ref, folder} = config;
-    for (const schemaName of Object.keys(schemas)) {
-        const className = 'I' + schemaName.substring(0, 1).toUpperCase() + schemaName.substring(1);
-        ref.addReference(`#/components/schemas/${schemaName}`, {
-            fileName: camelToKebabCase(className),
-            className: className,
-            folderPath: folder.getInterfaceComponentsFolder()
-        });
-    }
-    for (const schemaName of Object.keys(schemas)) {
+            ref.addReference(`#/components/schemas/${schemaName}`, {
+                fileName: fileName,
+                className: className,
+                folderPath: folder.getInterfaceComponentsFolder()
+            });
+        }
+        for (const schemaName of Object.keys(schemas)) {
 
-        const schema = schemas[schemaName] as ISchema;
+            const schema = schemas[schemaName] as ISchema;
 
-        let classOrEnumeration = getObjectOrEnumFromSchema(config, 'I' + schemaName, schemaName, schema, folder.getInterfaceComponentsFolder());
-
-        if (!!classOrEnumeration) {
-            const rendered = classOrEnumeration.render();
-            fs.appendFileSync(nodePath.join(folder.getInterfaceComponentsFolder(), `${rendered.fileName}.ts`), rendered.render)
+            let interfaceOrEnumeration = getInterfaceOrEnumFromSchema(config, 'I' + convertClassName(schemaName), schemaName, schema, folder.getInterfaceComponentsFolder());
+            if (!!interfaceOrEnumeration) {
+                const rendered = interfaceOrEnumeration.render();
+                appendFileSync(join(folder.getInterfaceComponentsFolder(), `${rendered.fileName}.ts`), rendered.render)
+            }
         }
     }
 }
