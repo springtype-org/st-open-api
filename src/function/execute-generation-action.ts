@@ -10,6 +10,8 @@ import {copyResources} from "./copy-resources";
 import {createServiceClasses} from "./create-service-classes";
 import {IGenerateConfig} from "../interface/i-generate-config";
 import {join} from "path";
+import {transpileToJs} from "./transpile-to-js";
+import {IOpenApiOpt} from "../interface/i-open-api-opt";
 
 const getSourceAsString = async (source: string): Promise<string> => {
     if (isUri(source)) {
@@ -28,7 +30,7 @@ const validate = async (openApiSchema: object, verbose: boolean): Promise<boolea
     return valid
 }
 
-export const executeGenerationAction = async (source: string, output: string, opt: { useSpringtype: boolean; verbose: boolean; force: boolean }) => {
+export const executeGenerationAction = async (source: string, output: string, opt: IOpenApiOpt) => {
     if (opt.verbose) {
         console.log('inputs source, output, opt', source, output, opt)
     }
@@ -60,6 +62,11 @@ export const executeGenerationAction = async (source: string, output: string, op
             createServiceClasses(config, openApi);
 
             copyResources(config);
+
+            if (opt.language === 'js') {
+                transpileToJs(output, opt)
+            }
+
         } else {
             console.error("OpenApi Json not valid.")
             process.exit(1);

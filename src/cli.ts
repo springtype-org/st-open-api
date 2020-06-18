@@ -3,7 +3,7 @@
 import {getPackageInfo} from "./function/get-package-info";
 import {executeGenerationAction} from "./function/execute-generation-action";
 
-const {Command} = require('commander');
+import {Command} from 'commander';
 
 
 (async () => {
@@ -29,16 +29,21 @@ const {Command} = require('commander');
         .option('-u, --useSpringtype', 'add springtype annotations')
         .option('-f, --force', 'Force generation also if validation fails')
         .option('-d, --debug', 'Print debug messages')
+        .option('-l, --language [language]', 'choose your language (js, ts)',/(ts|js)/,'ts')
 
-        .action((options) => executeGenerationAction(
-            options.source,
-            options.output,
-            {
-                force: !!options.force,
-                useSpringtype: !!options.useSpringtype,
-                verbose: !!options.debug
+        .action((options) => {
+                executeGenerationAction(
+                    options.source,
+                    options.output,
+                    {
+                        language: options.language,
+                        force: !!options.force,
+                        useSpringtype: !!options.useSpringtype,
+                        verbose: !!options.debug
+                    }
+                )
             }
-        ));
+        );
 
     /*program.on('--help', () => {
           console.log('');
