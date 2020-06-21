@@ -2,7 +2,7 @@ import {ISchema} from "../interface/open-api-mine/i-schema";
 import {IFunctionRequestBody} from "../classes/object-property";
 import {IGenerateConfig} from "../interface/i-generate-config";
 import {convertClassName} from "./convert-class-name";
-import {getInterfaceOrEnumFromSchema} from "./get-propery";
+import {getInterfaceOrEnumFromSchema} from "./get-property";
 import {appendFileSync} from "fs";
 import {join} from "path";
 

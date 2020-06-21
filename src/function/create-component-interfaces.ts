@@ -4,7 +4,7 @@ import {join} from "path";
 
 import {camelToKebabCase} from "./camel-to-kebab-case";
 import {ISchema} from "../interface/open-api-mine/i-schema";
-import {getInterfaceOrEnumFromSchema} from "./get-propery";
+import {getInterfaceOrEnumFromSchema} from "./get-property";
 import {IGenerateConfig} from "../interface/i-generate-config";
 import {convertClassName} from "./convert-class-name";
 

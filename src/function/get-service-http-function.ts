@@ -2,7 +2,7 @@ import {IOperation} from "../interface/open-api-mine/i-operation";
 import {getSortedParameter} from "./get-sorted-parameter";
 import {createResponseInterfaces} from "./create-response-interfaces";
 import {createRequestBodyInterfaces} from "./create-request-body-interfaces";
-import {getInterfaceOrEnumFromSchema} from "./get-propery";
+import {getInterfaceOrEnumFromSchema} from "./get-property";
 import {ISchema} from "../interface/open-api-mine/i-schema";
 import * as fs from "fs";
 import * as nodePath from "path";
