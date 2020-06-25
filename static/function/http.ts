@@ -51,8 +51,10 @@ export const http = async (request: IRequest,
         xhr.open(request.method, url);
 
         // 2.1 Set header
-        for (const headerName of Object.keys(request.header)) {
-            xhr.setRequestHeader(headerName, request.header[headerName]);
+        if (request.header) {
+            for (const headerName of Object.keys(request.header)) {
+                xhr.setRequestHeader(headerName, request.header[headerName]);
+            }
         }
 
         // 3. Send the request over the network
