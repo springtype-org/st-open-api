@@ -5,6 +5,7 @@ export interface IGenerateConfig {
     ref: Ref,
     folder: FolderManager
     useSpringtype: boolean;
+    groupSplitLevel: number;
     verbose: boolean;
     force: boolean
 }

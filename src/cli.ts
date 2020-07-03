@@ -30,12 +30,14 @@ import {Command} from 'commander';
         .option('-f, --force', 'Force generation also if validation fails')
         .option('-d, --debug', 'Print debug messages')
         .option('-l, --language [language]', 'choose your language (js, ts)',/(ts|js)/,'ts')
+        .option('-g, --groupSplitLevel <groupSplitLevel> ', 'the path split level, to group to an service class',/([01])/,false)
 
         .action((options) => {
                 executeGenerationAction(
                     options.source,
                     options.output,
                     {
+                        groupSplitLevel: parseInt(options.groupSplitLevel),
                         language: options.language,
                         force: !!options.force,
                         useSpringtype: !!options.useSpringtype,

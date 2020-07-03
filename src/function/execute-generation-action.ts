@@ -52,6 +52,7 @@ export const executeGenerationAction = async (source: string, output: string, op
             const config: IGenerateConfig = {
                 ref: initReference(folder),
                 folder,
+                groupSplitLevel: opt.groupSplitLevel,
                 force: opt.force,
                 useSpringtype: opt.useSpringtype,
                 verbose: opt.verbose
