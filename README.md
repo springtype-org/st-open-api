@@ -36,4 +36,5 @@ Setting a specific endpoint url global or an request interceptor
 ## TODO
 - split logic of interface and class
 - add suffix for enumerations and add a get values list 
-- configuration js|ts
+- delete typings on js maybe js only 
+- time to add tests
