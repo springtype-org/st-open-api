@@ -1,6 +1,5 @@
 export interface IOpenApiOpt {
-    groupSplitLevel: number;
-    useSpringtype: boolean;
+    serviceSuffix: string;
     verbose: boolean;
     force: boolean
     language: string

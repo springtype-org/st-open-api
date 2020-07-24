@@ -26,32 +26,24 @@ import {Command} from 'commander';
 
         .requiredOption('-s, --source <source>', 'The path or url to an open-api json file')
         .requiredOption('-o, --output <outputPath>', 'The path where files are generated to')
-        .option('-u, --useSpringtype', 'add springtype annotations')
         .option('-f, --force', 'Force generation also if validation fails')
         .option('-d, --debug', 'Print debug messages')
         .option('-l, --language [language]', 'choose your language (js, ts)',/(ts|js)/,'ts')
-        .option('-g, --groupSplitLevel <groupSplitLevel> ', 'the path split level, to group to an service class',/([01])/,false)
+        .option('-n, --suffix <ServiceSuffix> ', 'the suffix for an generated service class','Service')
 
         .action((options) => {
                 executeGenerationAction(
                     options.source,
                     options.output,
                     {
-                        groupSplitLevel: parseInt(options.groupSplitLevel),
+                        serviceSuffix: options.suffix,
                         language: options.language,
                         force: !!options.force,
-                        useSpringtype: !!options.useSpringtype,
                         verbose: !!options.debug
                     }
                 )
             }
         );
-
-    /*program.on('--help', () => {
-          console.log('');
-          console.log('Example call:');
-          console.log('  $ custom-help --help');
-      });*/
 
     program.parse(process.argv);
 })();

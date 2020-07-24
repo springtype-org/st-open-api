@@ -38,6 +38,7 @@ const getProperty = (config: IGenerateConfig, className: string, originalName: s
     if (schema.allOf) {
         schema = schema.allOf.find(v => !!v['$ref']) as any
     }
+
     const type = mapType(schema.type);
     const isArray = type === 'array';
     let value = isArray ? mapType(schema.items.type) : type;
@@ -48,9 +49,8 @@ const getProperty = (config: IGenerateConfig, className: string, originalName: s
 
     if (!!enumeration) {
         let newOriginal = `${originalName.substring(0, 1).toUpperCase()}${originalName.substring(1)}`;
-        if (!newOriginal.toUpperCase().endsWith('enum')) {
-            newOriginal += 'Enum';
-        }
+
+        //TODO: add here prefix
         const enumeration = getInterfaceOrEnumFromSchema(config, `I${convertClassName(newOriginal)}`, newOriginal, schema, folder.getEnumerationFolder()) as EnumProperty;
         const rendered = enumeration.render();
         fs.appendFileSync(nodePath.join(folder.getEnumerationFolder(), `${rendered.fileName}.ts`), rendered.render)

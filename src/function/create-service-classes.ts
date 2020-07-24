@@ -13,7 +13,7 @@ export const createServiceClasses = (config: IGenerateConfig, openApi: IOpenApi)
         const className = groupName.charAt(0).toUpperCase() + groupName.slice(1)
 
         const group = orderedPaths[groupName];
-        const objectProperty = new ObjectProperty(className, config.useSpringtype);
+        const objectProperty = new ObjectProperty(className);
 
         for (const subPath of Object.keys(group)) {
             const item = group[subPath];
@@ -26,11 +26,6 @@ export const createServiceClasses = (config: IGenerateConfig, openApi: IOpenApi)
             getServiceHttpFunction(config, objectProperty, 'PUT', subPath, item.put);
             getServiceHttpFunction(config, objectProperty, 'POST', subPath, item.post);
         }
-
-        if (config.useSpringtype) {
-            objectProperty.addImports(ref.getImportAndTypeByRef(HTTP_FUNCTION_REF(folder).refKey, folder.getServiceFolder()).import);
-        }
-
 
         const rendered = objectProperty.render();
         fs.appendFileSync(nodePath.join(folder.getServiceFolder(), `${rendered.fileName}.ts`), rendered.render)

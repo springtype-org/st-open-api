@@ -1,5 +1,10 @@
 import {Ref} from "../classes/ref";
-import {HTTP_FUNCTION_REF, OPEN_API_FUNCTION_REF, QUERY_PARAMETER_FUNCTION_REF} from "../classes/object-property";
+import {
+    HTTP_FUNCTION_REF,
+    HTTP_REQUEST_FUNCTION_REF,
+    OPEN_API_FUNCTION_REF,
+    QUERY_PARAMETER_FUNCTION_REF
+} from "../classes/object-property";
 import {FolderManager} from "../classes/folder-manager";
 
 export const initReference = (folder: FolderManager): Ref => {
@@ -10,6 +15,13 @@ export const initReference = (folder: FolderManager): Ref => {
         folderPath: httpFunction.folderPath,
         className: httpFunction.className,
         fileName: httpFunction.fileName
+    })
+
+    const httpRequestFunction = HTTP_REQUEST_FUNCTION_REF(folder);
+    ref.addReference(httpRequestFunction.refKey, {
+        folderPath: httpRequestFunction.folderPath,
+        className: httpRequestFunction.className,
+        fileName: httpRequestFunction.fileName
     })
     const openApiFunction = OPEN_API_FUNCTION_REF(folder);
     ref.addReference(openApiFunction.refKey, {

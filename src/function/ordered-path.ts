@@ -6,14 +6,20 @@ export const orderedPath = (openApi: IOpenApi, config: IGenerateConfig): IOrdere
     const orderPath: IOrderedPaths = {};
 
     if (!!openApi.paths) {
-        const paths = Object.keys(openApi.paths);
-        const groupedPaths = groupPath(paths, config.groupSplitLevel);
-        for (const groupName of Object.keys(groupedPaths)) {
-            const group = orderPath[groupName] = {};
-            const paths: Array<string> = groupedPaths[groupName];
-            for (const path of paths) {
-                group[path] = openApi.paths[path];
+        for (const path of Object.keys(openApi.paths)) {
+            let manipulatedPath = path;
+            if (manipulatedPath.startsWith('/')) {
+                manipulatedPath = manipulatedPath.substring(1);
             }
+            const pathParts = manipulatedPath.split('/');
+            const groupName = pathParts[0] + '-'+config.serviceSuffix;
+
+            let group = orderPath[groupName];
+            if (!group) {
+                group = {}
+                orderPath[groupName] = group;
+            }
+            group[path] = openApi.paths[path];
         }
     }
     return orderPath;

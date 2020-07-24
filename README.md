@@ -1,6 +1,6 @@
 # st-open-api
 
-this api create an client for open api specification version 3.0.x
+this api create a client for open api specification version 3.0.x
 
 usage:
 `npx st-open-api -s open-api.json -o client`
@@ -10,15 +10,18 @@ usage:
 
 -o **output** _required_ the output path existing files will be overridden
 
--u **useSpringtype** add springtype decorators to service class: default _false_
-
 -f **force** _optional_  ignore result of validation: default _false_
 
 -d **debug** _optional_  output debug information: default _false_
 
+-l **language** _optional_ choose your output language (ts|js): default _ts_
+
+-n **serviceSuffix** _optional_ choose your service suffix: default _Service_
+
 ### Configuration
 
-the global _$openApi_ can be manipulate some variables and every request.
+configure the global _openApi_ can be manipulate some variables and every request.
+`Right now not bound to window object`
  
 **requestInterceptor**: is called before any request is done, here you can manipulate every request, for example add an api-token header.
  
@@ -26,9 +29,11 @@ the global _$openApi_ can be manipulate some variables and every request.
 
 ## Examples
 
-Setting an specific endpoint url
+Setting a specific endpoint url global or an request interceptor
 
-`$openApi.endpointUrl = "https://localhost:4444";`
+`openApi.endpointUrl = "https://localhost:4444";`
 
 ## TODO
 - split logic of interface and class
+- add suffix for enumerations and add a get values list 
+- configuration js|ts
