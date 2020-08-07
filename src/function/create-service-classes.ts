@@ -3,8 +3,9 @@ import *as nodePath from "path";
 import {orderedPath} from "./ordered-path";
 import {IOpenApi} from "../interface/open-api-mine/i-open-api";
 import {getServiceHttpFunction} from "./get-service-http-function";
-import {HTTP_FUNCTION_REF, ObjectProperty} from "../classes/object-property";
+import {ObjectProperty} from "../classes/object-property";
 import {IGenerateConfig} from "../interface/i-generate-config";
+import {GROUP_SERVICE} from "../classes/ref";
 
 export const createServiceClasses = (config: IGenerateConfig, openApi: IOpenApi) => {
     const orderedPaths = orderedPath(openApi, config);
@@ -28,6 +29,13 @@ export const createServiceClasses = (config: IGenerateConfig, openApi: IOpenApi)
         }
 
         const rendered = objectProperty.render();
+        ref.addReference(`service/${className}`, {
+                className: rendered.classEnumName,
+                fileName: rendered.fileName,
+                folderPath: folder.getServiceFolder()
+            },
+            GROUP_SERVICE
+        )
         fs.appendFileSync(nodePath.join(folder.getServiceFolder(), `${rendered.fileName}.ts`), rendered.render)
 
     }

@@ -28,8 +28,10 @@ import {Command} from 'commander';
         .requiredOption('-o, --output <outputPath>', 'The path where files are generated to')
         .option('-f, --force', 'Force generation also if validation fails')
         .option('-d, --debug', 'Print debug messages')
-        .option('-l, --language [language]', 'choose your language (js, ts)',/(ts|js)/,'ts')
+        //TODO: write own commander does not support jsOnly and js as option
+        .option('-l, --language [language]', 'choose your language (js, jsOnly, ts)',/(ts|js|onlyJs)/,'ts')
         .option('-n, --suffix <ServiceSuffix> ', 'the suffix for an generated service class','Service')
+        .option('-r, --react', 'create react provider component',false)
 
         .action((options) => {
                 executeGenerationAction(
@@ -39,7 +41,8 @@ import {Command} from 'commander';
                         serviceSuffix: options.suffix,
                         language: options.language,
                         force: !!options.force,
-                        verbose: !!options.debug
+                        verbose: !!options.debug,
+                        react: !!options.react
                     }
                 )
             }

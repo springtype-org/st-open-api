@@ -8,7 +8,8 @@ import {
     sys
 } from "typescript";
 import {IOpenApiOpt} from "../interface/i-open-api-opt";
-import {deletePathOrFile} from "st-rm-rf";
+import {unlinkSync} from "fs";
+import {normalize} from "path"
 
 
 function reportDiagnostics(diagnostics: Diagnostic[]): void {
@@ -27,7 +28,12 @@ function reportDiagnostics(diagnostics: Diagnostic[]): void {
     }
 }
 
-function getConfiguration(outputDirectory: string) {
+function getConfiguration(outputDirectory: string, includeTSX: boolean = false) {
+    const options: any = {};
+    if (includeTSX) {
+        options['jsx'] = 'preserve'
+    }
+
     // Parse JSON, after removing comments. Just fancier JSON.parse
     const result = parseConfigFileTextToJson('', JSON.stringify({
 
@@ -35,7 +41,8 @@ function getConfiguration(outputDirectory: string) {
                 declaration: true,
                 rootDirs: [
                     outputDirectory
-                ]
+                ],
+                ...options
             }
         }
     ));
@@ -54,8 +61,9 @@ function getConfiguration(outputDirectory: string) {
 
 export const transpileToJs = (outputDirectory: string, conf: IOpenApiOpt) => {
 
+    const includeTSX = conf.react;
     // Extract configuration from config file
-    let config = getConfiguration(outputDirectory);
+    let config = getConfiguration(outputDirectory, includeTSX);
 
     // Compile
     let program = createProgram(config.fileNames, config.options);
@@ -64,7 +72,13 @@ export const transpileToJs = (outputDirectory: string, conf: IOpenApiOpt) => {
     // Report errors
     reportDiagnostics(getPreEmitDiagnostics(program).concat(emitResult.diagnostics));
 
-    config.fileNames.map(f => deletePathOrFile(f, {printError: true, printInfo: false, printWarning: false}))
+    config.fileNames.forEach(tsFile => {
+        if (conf.language === 'onlyJs') {
+            const dTsFile = tsFile.replace(/\.tsx|\.ts/i, '.d.ts');
+            unlinkSync(dTsFile)
+        }
+        unlinkSync(tsFile)
+    })
 
     // Return code
     if (emitResult.emitSkipped) {

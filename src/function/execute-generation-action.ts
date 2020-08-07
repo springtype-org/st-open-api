@@ -12,6 +12,7 @@ import {IGenerateConfig} from "../interface/i-generate-config";
 import {join} from "path";
 import {transpileToJs} from "./transpile-to-js";
 import {IOpenApiOpt} from "../interface/i-open-api-opt";
+import {createReactProvider} from "./create-react-provider";
 
 const getSourceAsString = async (source: string): Promise<string> => {
     if (isUri(source)) {
@@ -54,16 +55,20 @@ export const executeGenerationAction = async (source: string, output: string, op
                 folder,
                 serviceSuffix: opt.serviceSuffix,
                 force: opt.force,
-                verbose: opt.verbose
+                verbose: opt.verbose,
             }
 
             createComponentInterfaces(config, openApi.components);
 
             createServiceClasses(config, openApi);
 
+            if (opt.react) {
+                createReactProvider(config);
+            }
+
             copyResources(config);
 
-            if (opt.language === 'js') {
+            if (opt.language === 'js' || opt.language === 'onlyJs' ) {
                 transpileToJs(output, opt)
             }
 

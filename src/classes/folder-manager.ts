@@ -38,6 +38,10 @@ export class FolderManager {
         return mkdir(join(this.outputFolder, 'enumeration'));
     }
 
+    getReactProviderFolder() {
+        return mkdir(join(this.outputFolder, 'provider'));
+    }
+
     getInterfaceComponentsFolder() {
         return mkdir(join(this.getInterfaceFolder(), 'components'));
     }

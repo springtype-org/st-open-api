@@ -29,12 +29,13 @@ configure the global _openApi_ can be manipulate some variables and every reques
 
 ## Examples
 
-Setting a specific endpoint url global or an request interceptor
+Setting a specific endpoint url global or a request interceptor
 
 `openApi.endpointUrl = "https://localhost:4444";`
 
 ## TODO
-- split logic of interface and class
 - add suffix for enumerations and add a get values list 
 - delete typings on js maybe js only 
 - time to add tests
+- add a configuration file how to split services
+

@@ -2,7 +2,7 @@ import * as path from "path";
 import * as Mustache from "mustache";
 import * as fs from "fs";
 
-const TYPE_TEMPLATE_DIR = path.join(__dirname, '..', 'template', 'mustache');
+const TYPE_TEMPLATE_DIR = path.join(__dirname, '..', 'template', 'mustache', 'ts');
 
 const cache: { [filePath: string]: string } = {}
 

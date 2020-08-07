@@ -1,5 +1,9 @@
 const EMPTY_STRING = '';
 
+/**
+ * Build the query
+ * @param parameters
+ */
 export const getQueryParameters = (parameters: Array<IQueryParam> = []): string => {
     const keyValue: Array<string> = [];
     for (const parameter of parameters) {
