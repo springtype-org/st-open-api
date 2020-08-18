@@ -12,9 +12,12 @@ export const {{propertyName}} = new {{serviceClassName}}();
 {{/services}}
 
 if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
     console.groupCollapsed('Constant Services registered');
 {{#services}}
+    // eslint-disable-next-line no-console
     console.info({{propertyName}});
 {{/services}}
+    // eslint-disable-next-line no-console
     console.groupEnd();
 }

@@ -34,7 +34,10 @@ export const OpenApiProvider = ({children, value}:  PropsWithChildren<IOpenApiPr
 }
 
 if (process.env.NODE_ENV !== 'production') {
+    // eslint-disable-next-line no-console
     console.groupCollapsed('OpenApi-Services registered');
+    // eslint-disable-next-line no-console
     console.info(OpenApiContext);
+    // eslint-disable-next-line no-console
     console.groupEnd();
 }
