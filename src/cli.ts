@@ -27,22 +27,30 @@ import {Command} from 'commander';
         .requiredOption('-s, --source <source>', 'The path or url to an open-api json file')
         .requiredOption('-o, --output <outputPath>', 'The path where files are generated to')
         .option('-f, --force', 'Force generation also if validation fails')
+        .option('-i, --interceptor', 'Force in service class to add an interceptor',false)
         .option('-d, --debug', 'Print debug messages')
         //TODO: write own commander does not support jsOnly and js as option
         .option('-l, --language [language]', 'choose your language (js, jsOnly, ts)',/(ts|js|onlyJs)/,'ts')
         .option('-n, --suffix <ServiceSuffix> ', 'the suffix for an generated service class','Service')
         .option('-r, --react', 'create react provider component',false)
+        .option('-t, --static', 'create static services',false)
+        .option('-c, --config <path>', 'the url to an config js')
 
         .action((options) => {
                 executeGenerationAction(
                     options.source,
                     options.output,
+
                     {
                         serviceSuffix: options.suffix,
                         language: options.language,
                         force: !!options.force,
+
+                        forceInterceptor: !!options.interceptor,
+                        createStaticServices: !!options.static,
                         verbose: !!options.debug,
-                        react: !!options.react
+                        react: !!options.react,
+                        config: options.config
                     }
                 )
             }

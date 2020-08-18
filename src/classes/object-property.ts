@@ -88,6 +88,7 @@ export class ObjectProperty implements IPropertyClass {
             isRequestBodyJson: !!fun.requestBodyClass && fun.isRequestBodyJson,
             requestBodyClass: fun.requestBodyClass,
 
+            forceInterceptor: fun.forceInterceptor,
             isResponse: !!fun.responseClass,
             isJsonResponse: !!fun.responseClass && fun.isJsonResponse,
             responseClass: fun.responseClass
@@ -185,6 +186,7 @@ interface IMustacheFunction {
     isRequestBody: boolean;
     requestBodyClass?: string;
 
+    forceInterceptor: boolean;
     isResponse: boolean;
     responseClass?: string;
 }
@@ -202,6 +204,7 @@ export interface IFunction extends IFunctionResponse, IFunctionRequestBody {
     parameterClassName?: string;
 
     queryParameters: Array<string>;
+    forceInterceptor: boolean;
 }
 
 export interface IFunctionResponse {

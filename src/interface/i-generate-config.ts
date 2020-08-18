@@ -7,4 +7,6 @@ export interface IGenerateConfig {
     serviceSuffix: string;
     verbose: boolean;
     force: boolean;
+    forceInterceptor: boolean;
+    createStaticServices: boolean;
 }

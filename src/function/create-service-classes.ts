@@ -35,7 +35,8 @@ export const createServiceClasses = (config: IGenerateConfig, openApi: IOpenApi)
                 folderPath: folder.getServiceFolder()
             },
             GROUP_SERVICE
-        )
+        );
+
         fs.appendFileSync(nodePath.join(folder.getServiceFolder(), `${rendered.fileName}.ts`), rendered.render)
 
     }

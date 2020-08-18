@@ -14,7 +14,7 @@ usage:
 
 -d **debug** _optional_  output debug information: default _false_
 
--l **language** _optional_ choose your output language (ts|js): default _ts_
+-l **language** _optional_ choose your output language (ts|js|onlyJs): default _ts_
 
 -n **serviceSuffix** _optional_ choose your service suffix: default _Service_
 

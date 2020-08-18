@@ -5,7 +5,7 @@
 {{/description}}
  */
 {{/isDescription}}
-{{functionName}} = async ({{#isParameter}}parameter: {{parameterClassName}}, {{/isParameter}}{{#isRequestBody}}body: {{{requestBodyClass}}},{{/isRequestBody}} interceptor: (request: IRequest) => Promise<IRequest> = openApi.requestInterceptor): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
+{{functionName}} = async ({{#isParameter}}parameter: {{parameterClassName}}, {{/isParameter}}{{#isRequestBody}}body: {{{requestBodyClass}}},{{/isRequestBody}} interceptor: (request: IRequest) => Promise<IRequest>{{^forceInterceptor}} = openApi.requestInterceptor{{/forceInterceptor}}): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
 {{#isQueryParameter}}
     const queryParams = [
     {{#queryParameters}}

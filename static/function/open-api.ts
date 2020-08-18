@@ -9,4 +9,3 @@ export const openApi: I$openApi = {
     requestInterceptor: DEFAULT_REQUEST_INTERCEPTOR,
     endpointUrl: ''
 };
-

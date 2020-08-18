@@ -13,6 +13,7 @@ import {join} from "path";
 import {transpileToJs} from "./transpile-to-js";
 import {IOpenApiOpt} from "../interface/i-open-api-opt";
 import {createReactProvider} from "./create-react-provider";
+import {createStaticServices} from "./create-static-services";
 
 const getSourceAsString = async (source: string): Promise<string> => {
     if (isUri(source)) {
@@ -32,6 +33,9 @@ const validate = async (openApiSchema: object, verbose: boolean): Promise<boolea
 }
 
 export const executeGenerationAction = async (source: string, output: string, opt: IOpenApiOpt) => {
+    if(opt.config){
+        console.log('config', opt.config)
+    }
     if (opt.verbose) {
         console.log('inputs source, output, opt', source, output, opt)
     }
@@ -47,7 +51,6 @@ export const executeGenerationAction = async (source: string, output: string, op
                 console.log('Initialize references');
             }
 
-
             const folder = new FolderManager(output);
 
             const config: IGenerateConfig = {
@@ -55,7 +58,9 @@ export const executeGenerationAction = async (source: string, output: string, op
                 folder,
                 serviceSuffix: opt.serviceSuffix,
                 force: opt.force,
+                forceInterceptor: opt.forceInterceptor,
                 verbose: opt.verbose,
+                createStaticServices: opt.createStaticServices
             }
 
             createComponentInterfaces(config, openApi.components);
@@ -66,6 +71,9 @@ export const executeGenerationAction = async (source: string, output: string, op
                 createReactProvider(config);
             }
 
+            if(opt.createStaticServices){
+                createStaticServices(config)
+            }
             copyResources(config);
 
             if (opt.language === 'js' || opt.language === 'onlyJs' ) {

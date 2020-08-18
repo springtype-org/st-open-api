@@ -8,9 +8,13 @@ export class Ref {
     getImportAndTypeByRef = (ref: string, path: string): IRefResult => {
         const reference = this.refs[ref];
         let relativePath = relative(path, reference.folderPath).split(sep).join('/');
+        console.log('relativePath',relativePath)
         if (!relativePath) {
             relativePath = './';
         } else {
+            if(!relativePath.startsWith('../')){
+                relativePath = `./${relativePath}`;
+            }
             relativePath += '/';
         }
         return {

@@ -34,6 +34,7 @@ export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: Obj
         const operationFunction: IFunction = {
 
             functionName: functionName,
+            forceInterceptor: config.forceInterceptor,
             imports: [],
 
             httpMethod: httpMethod,
