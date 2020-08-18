@@ -1,6 +1,12 @@
+import {Path} from "typescript";
+
 export interface IOpenApiOpt {
-    useSpringtype: boolean;
+    serviceSuffix: string;
     verbose: boolean;
-    force: boolean
-    language: string
+    force: boolean;
+    forceInterceptor: boolean;
+    createStaticServices: boolean;
+    language: 'ts'|'js'|'onlyJs';
+    react: boolean;
+    config: Path
 }

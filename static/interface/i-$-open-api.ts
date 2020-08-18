@@ -1,9 +1,6 @@
 import {IRequest} from "../function/http";
 
 export interface I$openApi {
-    // --- platform global reference
-    // node: global, browser: window
-    globalThis: any;
 
     requestInterceptor: RequestInterceptor;
 

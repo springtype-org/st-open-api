@@ -2,7 +2,7 @@ import {join,isAbsolute} from "path";
 import {existsSync, mkdirSync} from "fs";
 import {deletePathOrFile} from "st-rm-rf";
 
-const mkdir = (path: string) => {
+export const mkdir = (path: string) => {
     if (!existsSync(path)) {
         mkdirSync(path, {recursive: true})
     }
@@ -36,6 +36,14 @@ export class FolderManager {
 
     getEnumerationFolder() {
         return mkdir(join(this.outputFolder, 'enumeration'));
+    }
+
+    getReactProviderFolder() {
+        return mkdir(join(this.outputFolder, 'provider'));
+    }
+
+    getConstantServicesFolder() {
+        return mkdir(join(this.outputFolder, 'constant'));
     }
 
     getInterfaceComponentsFolder() {

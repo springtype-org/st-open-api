@@ -15,6 +15,7 @@ export class EnumProperty implements IPropertyClass {
         //if (!originalName.toUpperCase().endsWith('enum')) {
         //    originalName += 'Enum';
         //}
+
         this.convertName(originalName);
     }
 

@@ -6,7 +6,13 @@ import {getInterfaceOrEnumFromSchema} from "./get-property";
 import {ISchema} from "../interface/open-api-mine/i-schema";
 import * as fs from "fs";
 import * as nodePath from "path";
-import {HTTP_FUNCTION_REF, IFunction, ObjectProperty, OPEN_API_FUNCTION_REF,} from "../classes/object-property";
+import {
+    HTTP_FUNCTION_REF,
+    HTTP_REQUEST_FUNCTION_REF,
+    IFunction,
+    ObjectProperty,
+    OPEN_API_FUNCTION_REF,
+} from "../classes/object-property";
 import {IGenerateConfig} from "../interface/i-generate-config";
 import {kebabCaseToCamel} from "./kebab-case-to-camel";
 import {firstCharacterLower} from "./first-character-lower";
@@ -28,6 +34,7 @@ export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: Obj
         const operationFunction: IFunction = {
 
             functionName: functionName,
+            forceInterceptor: config.forceInterceptor,
             imports: [],
 
             httpMethod: httpMethod,
@@ -75,6 +82,7 @@ export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: Obj
         }
 
         objProperty.addImports(config.ref.getImportAndTypeByRef(HTTP_FUNCTION_REF(config.folder).refKey, config.folder.getServiceFolder()).import);
+        objProperty.addImports(config.ref.getImportAndTypeByRef(HTTP_REQUEST_FUNCTION_REF(config.folder).refKey, config.folder.getServiceFolder()).import);
         objProperty.addImports(config.ref.getImportAndTypeByRef(OPEN_API_FUNCTION_REF(config.folder).refKey, config.folder.getServiceFolder()).import);
         objProperty.addFunction(operationFunction);
     }

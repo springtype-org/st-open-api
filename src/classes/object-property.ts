@@ -14,6 +14,14 @@ export const HTTP_FUNCTION_REF = (folder: FolderManager) => {
         folderPath: folder.getFunctionFolder()
     }
 }
+export const HTTP_REQUEST_FUNCTION_REF = (folder: FolderManager) => {
+    return {
+        fileName: "http",
+        refKey: "HTTP_REQUEST_FUNCTION_REF",
+        className: "IRequest",
+        folderPath: folder.getFunctionFolder()
+    }
+}
 
 export const OPEN_API_FUNCTION_REF = (folder: FolderManager) => {
     return {
@@ -42,7 +50,7 @@ export class ObjectProperty implements IPropertyClass {
     functions: { [name: string]: { data: IMustacheFunction, imports: Array<string> } } = {};
     properties: { [name: string]: { data: IMustacheProperty, import?: string } } = {}
 
-    constructor(originalName: string, private useSpringtype: boolean) {
+    constructor(originalName: string) {
         this.convertName(originalName);
     }
 
@@ -80,6 +88,7 @@ export class ObjectProperty implements IPropertyClass {
             isRequestBodyJson: !!fun.requestBodyClass && fun.isRequestBodyJson,
             requestBodyClass: fun.requestBodyClass,
 
+            forceInterceptor: fun.forceInterceptor,
             isResponse: !!fun.responseClass,
             isJsonResponse: !!fun.responseClass && fun.isJsonResponse,
             responseClass: fun.responseClass
@@ -113,8 +122,6 @@ export class ObjectProperty implements IPropertyClass {
         renderProperties.forEach(property => this.imports.push(property.import));
 
         const viewData: IMustacheClass = {
-            isSpringType: isFunction && this.useSpringtype,
-
             className: this.className,
             isInterface: Object.values(this.functions).length == 0,
             isImport: this.imports.get().length > 0,
@@ -141,7 +148,6 @@ interface IMustacheClass {
     className: string;
 
     isInterface: boolean;
-    isSpringType: boolean;
 
     isImport: boolean;
     imports?: Array<string>;
@@ -180,6 +186,7 @@ interface IMustacheFunction {
     isRequestBody: boolean;
     requestBodyClass?: string;
 
+    forceInterceptor: boolean;
     isResponse: boolean;
     responseClass?: string;
 }
@@ -197,6 +204,7 @@ export interface IFunction extends IFunctionResponse, IFunctionRequestBody {
     parameterClassName?: string;
 
     queryParameters: Array<string>;
+    forceInterceptor: boolean;
 }
 
 export interface IFunctionResponse {
