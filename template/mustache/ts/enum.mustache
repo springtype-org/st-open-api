@@ -8,15 +8,3 @@ export enum {{enumName}} {
 {{/values}}
 {{/isValues}}
 }
-
-export namespace {{enumName}} {
-    export const values = (): Array<{{enumName}}> => [
-{{#values}}
-        {{enumName}}['{{{value}}}'],
-{{/values}}
-    ]
-
-    export const parse = (enumValue: string): {{enumName}} | undefined => values()
-        .map(v => ({enum: v, value: v.toString()}))
-        .find(v => v.value === enumValue)?.enum;
-}
