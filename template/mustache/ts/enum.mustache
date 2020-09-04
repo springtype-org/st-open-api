@@ -16,5 +16,7 @@ export namespace {{enumName}} {
 {{/values}}
     ]
 
-    export const parse = (enumValue: string): {{enumName}} | undefined => {{enumName}}[enumValue]
+    export const parse = (enumValue: string): {{enumName}} | undefined => values()
+        .map(v => ({enum: v, value: v.toString()}))
+        .find(v => v.value === enumValue)?.enum;
 }
