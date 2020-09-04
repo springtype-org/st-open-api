@@ -3,10 +3,18 @@
  */
 export enum {{enumName}} {
 {{#isValues}}
-
 {{#values}}
-    '{{{value}}}'={{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}},
-
+    '{{{value}}}' = {{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}},
 {{/values}}
 {{/isValues}}
+}
+
+export namespace {{enumName}} {
+    export const values = (): Array<{{enumName}}> => [
+{{#values}}
+        {{enumName}}['{{{value}}}'],
+{{/values}}
+    ]
+
+    export const parse = (enumValue: string): {{enumName}} | undefined => {{enumName}}[enumValue]
 }
