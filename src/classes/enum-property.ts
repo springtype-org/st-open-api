@@ -2,6 +2,7 @@ import {IPropertyClass, IRenderResult} from "../interface/i-property-class";
 import {camelToKebabCase} from "../function/camel-to-kebab-case";
 import {renderMustache} from "../function/render-mustache";
 import {convertClassName} from "../function/convert-class-name";
+import {configuration} from "../function/config";
 
 
 export class EnumProperty implements IPropertyClass {
@@ -37,20 +38,18 @@ export class EnumProperty implements IPropertyClass {
     render(): IRenderResult {
         const viewData: IMustacheEnum = {
             enumName: this.enumName,
-            isValues: this.values.length > 0,
-            values: this.values
+            values: this.values.map(((value, index, arr) => ({...value, last: index === arr.length -1 })))
         }
         return {
             classEnumName: this.enumName,
             fileName: this.fileName,
-            render: renderMustache('enum.mustache', viewData)
+            render: renderMustache(`${configuration.isType()?'type':'enum'}.mustache`, viewData)
         }
     }
 }
 
 interface IMustacheEnum {
     enumName: string;
-    isValues: boolean;
-    values: Array<{ isString: boolean, value: string }>;
+    values: Array<{ isString: boolean, value: string , last: boolean}>;
 }
 

@@ -10,6 +10,7 @@ import {
 import {IOpenApiOpt} from "../interface/i-open-api-opt";
 import {unlinkSync} from "fs";
 import {normalize} from "path"
+import {configuration} from "./config";
 
 
 function reportDiagnostics(diagnostics: Diagnostic[]): void {
@@ -59,11 +60,11 @@ function getConfiguration(outputDirectory: string, includeTSX: boolean = false) 
     return configParseResult;
 }
 
-export const transpileToJs = (outputDirectory: string, conf: IOpenApiOpt) => {
+export const transpileToJs = () => {
 
-    const includeTSX = conf.react;
+    const includeTSX = configuration.isCreateReactProvider();
     // Extract configuration from config file
-    let config = getConfiguration(outputDirectory, includeTSX);
+    let config = getConfiguration(configuration.getOutputFolder(), includeTSX);
 
     // Compile
     let program = createProgram(config.fileNames, config.options);
@@ -73,7 +74,7 @@ export const transpileToJs = (outputDirectory: string, conf: IOpenApiOpt) => {
     reportDiagnostics(getPreEmitDiagnostics(program).concat(emitResult.diagnostics));
 
     config.fileNames.forEach(tsFile => {
-        if (conf.language === 'onlyJs') {
+        if (configuration.getLanguage() === 'onlyJs') {
             const dTsFile = tsFile.replace(/\.tsx|\.ts/i, '.d.ts');
             unlinkSync(dTsFile)
         }

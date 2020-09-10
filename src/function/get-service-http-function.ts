@@ -13,16 +13,18 @@ import {
     ObjectProperty,
     OPEN_API_FUNCTION_REF,
 } from "../classes/object-property";
-import {IGenerateConfig} from "../interface/i-generate-config";
 import {kebabCaseToCamel} from "./kebab-case-to-camel";
 import {firstCharacterLower} from "./first-character-lower";
+import {configuration} from "./config";
 
-export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: ObjectProperty, httpMethod: string, path: string, operation: IOperation) => {
+export const getServiceHttpFunction = (objProperty: ObjectProperty, httpMethod: string, path: string, operation: IOperation) => {
+    const reference = configuration.getReference();
+    const folder = configuration.getFolderManager();
+
     if (!!operation) {
         const functionName = getOperationId(httpMethod, path, operation.operationId)
-        const requestBody = createRequestBodyInterfaces(config, functionName, operation.requestBody);
-        const response = createResponseInterfaces(config, functionName, operation.responses);
-
+        const requestBody = createRequestBodyInterfaces(functionName, operation.requestBody);
+        const response = createResponseInterfaces(functionName, operation.responses);
 
         const sortedParameter = getSortedParameter(path, operation.parameters);
         const queryParameters = sortedParameter.params.query || {};
@@ -34,7 +36,7 @@ export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: Obj
         const operationFunction: IFunction = {
 
             functionName: functionName,
-            forceInterceptor: config.forceInterceptor,
+            forceInterceptor: configuration.forceInterceptor(),
             imports: [],
 
             httpMethod: httpMethod,
@@ -65,25 +67,25 @@ export const getServiceHttpFunction = (config: IGenerateConfig, objProperty: Obj
                 }
                 parameterObject.properties[p.name] = p.schema;
             });
-            const classToRender = getInterfaceOrEnumFromSchema(config, parameterClassName, functionName, parameterObject, config.folder.getInterfaceParameterFolder());
+            const classToRender = getInterfaceOrEnumFromSchema(parameterClassName, functionName, parameterObject, folder.getInterfaceParameterFolder());
 
             const rendered = classToRender.render();
-            fs.appendFileSync(nodePath.join(config.folder.getInterfaceParameterFolder(), `${rendered.fileName}.ts`), rendered.render)
+            fs.appendFileSync(nodePath.join(folder.getInterfaceParameterFolder(), `${rendered.fileName}.ts`), rendered.render)
             const schemaName = `#/schema/parameter/${parameterClassName}`;
 
-            config.ref.addReference(schemaName, {
+            reference.addReference(schemaName, {
                 fileName: rendered.fileName,
                 className: rendered.classEnumName,
-                folderPath: config.folder.getInterfaceParameterFolder(),
+                folderPath: folder.getInterfaceParameterFolder(),
             });
 
             //add import of Parameter
-            operationFunction.imports.push(config.ref.getImportAndTypeByRef(schemaName, config.folder.getServiceFolder()).import);
+            operationFunction.imports.push(reference.getImportAndTypeByRef(schemaName, folder.getServiceFolder()).import);
         }
 
-        objProperty.addImports(config.ref.getImportAndTypeByRef(HTTP_FUNCTION_REF(config.folder).refKey, config.folder.getServiceFolder()).import);
-        objProperty.addImports(config.ref.getImportAndTypeByRef(HTTP_REQUEST_FUNCTION_REF(config.folder).refKey, config.folder.getServiceFolder()).import);
-        objProperty.addImports(config.ref.getImportAndTypeByRef(OPEN_API_FUNCTION_REF(config.folder).refKey, config.folder.getServiceFolder()).import);
+        objProperty.addImports(reference.getImportAndTypeByRef(HTTP_FUNCTION_REF(folder).refKey, folder.getServiceFolder()).import);
+        objProperty.addImports(reference.getImportAndTypeByRef(HTTP_REQUEST_FUNCTION_REF(folder).refKey, folder.getServiceFolder()).import);
+        objProperty.addImports(reference.getImportAndTypeByRef(OPEN_API_FUNCTION_REF(folder).refKey, folder.getServiceFolder()).import);
         objProperty.addFunction(operationFunction);
     }
 }

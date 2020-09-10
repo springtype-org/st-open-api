@@ -22,6 +22,10 @@ export class FolderManager {
         deletePathOrFile(this.outputFolder, {printInfo: false, printWarning: false, printError: true});
     }
 
+    getOutputFolder(){
+        return this.outputFolder;
+    }
+
     getServiceFolder() {
         return mkdir(join(this.outputFolder, 'service'))
     }

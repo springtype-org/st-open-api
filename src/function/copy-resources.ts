@@ -1,9 +1,10 @@
 import * as nodePath from "path";
 import * as fs from "fs";
 import {IGenerateConfig} from "../interface/i-generate-config";
+import {configuration} from "./config";
 
-export const copyResources = (config: IGenerateConfig) => {
-    const folder = config.folder;
+export const copyResources = () => {
+    const folder = configuration.getFolderManager();
     const iAjaxInterface = nodePath.join(__dirname, '..', 'static', 'interface', 'i-$-open-api.ts');
     const httpFunction = nodePath.join(__dirname, '..', 'static', 'function', 'http.ts');
     const queryFunction = nodePath.join(__dirname, '..', 'static', 'function', 'get-query-params.ts');

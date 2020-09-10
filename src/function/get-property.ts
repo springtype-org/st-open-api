@@ -4,13 +4,15 @@ import {EnumProperty} from "../classes/enum-property";
 import * as fs from "fs";
 import * as nodePath from "path";
 import {join} from "path";
-import {IGenerateConfig} from "../interface/i-generate-config";
+
 import {convertClassName} from "./convert-class-name";
 import {InterfaceProperty} from "../classes/interface-property";
 import {mkdir} from "../classes/folder-manager";
+import {configuration} from "./config";
 
-export const getInterfaceOrEnumFromSchema = (config: IGenerateConfig, className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | undefined => {
-    if (config.verbose) {
+export const getInterfaceOrEnumFromSchema = (className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | undefined => {
+    const isDebug =configuration.isDebug();
+    if (isDebug) {
         console.log(`Get enum or interface ${className}`)
         console.log(`Schema ${className}`, JSON.stringify(schema, null, 2))
     }
@@ -21,14 +23,14 @@ export const getInterfaceOrEnumFromSchema = (config: IGenerateConfig, className:
         schema.type = 'object';
     }
     if (schema.type === 'object' || schema.properties) {
-        if (config.verbose) {
+        if (isDebug) {
             console.log(`Schema ${className}`, JSON.stringify(schema, null, 2))
         }
         const interfaceProperty = new InterfaceProperty(className, isArray);
         for (const propertyName of Object.keys(schema.properties)) {
             const property = schema.properties[propertyName];
             const isRequired = (schema.required || []).indexOf(propertyName) > -1;
-            interfaceProperty.addProperty(getProperty(config, className, originalName, propertyName, isRequired, property, path))
+            interfaceProperty.addProperty(getProperty(className, originalName, propertyName, isRequired, property, path))
         }
         return interfaceProperty;
 
@@ -42,11 +44,12 @@ export const getInterfaceOrEnumFromSchema = (config: IGenerateConfig, className:
 }
 
 
-const getProperty = (config: IGenerateConfig, className: string, originalName: string, propertyName: string, required: boolean, schema: ISchema, path: string): IProperty => {
-    if (config.verbose) {
+const getProperty = (className: string, originalName: string, propertyName: string, required: boolean, schema: ISchema, path: string): IProperty => {
+    const isDebug =configuration.isDebug();
+    const ref = configuration.getReference();
+    if (isDebug) {
         console.log(`Enter get property ${originalName}`, JSON.stringify(schema, null, 2))
     }
-    const {ref} = config;
     if (schema.allOf) {
         schema = schema.allOf.find(v => !!v['$ref']) as any
     }
@@ -75,12 +78,12 @@ const getProperty = (config: IGenerateConfig, className: string, originalName: s
 
     const enumeration = getEnumeration(schema);
 
-    if (config.verbose && !!enumeration) {
+    if (isDebug && !!enumeration) {
         console.log('Enumeration found ', enumeration)
     }
     let reference = getReference(schema);
 
-    if (config.verbose && !!reference) {
+    if (isDebug && !!reference) {
         console.log('Reference found ', JSON.stringify(schema, null, 2))
     }
 
@@ -88,7 +91,7 @@ const getProperty = (config: IGenerateConfig, className: string, originalName: s
         let newOriginal = `${propertyName}${originalName.substring(0, 1).toUpperCase()}${originalName.substring(1)}`;
         const nestedPath = getNestedPath(path, 'enumeration');
 
-        const enumeration = getInterfaceOrEnumFromSchema(config, `I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
+        const enumeration = getInterfaceOrEnumFromSchema( `I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
         const rendered = enumeration.render();
         fs.appendFileSync(nodePath.join(nestedPath, `${rendered.fileName}.ts`), rendered.render)
 
@@ -105,7 +108,7 @@ const getProperty = (config: IGenerateConfig, className: string, originalName: s
         let newOriginal = `${propertyName}${originalName.substring(0, 1).toUpperCase()}${originalName.substring(1)}`;
         const nestedPath = getNestedPath(path, 'interface');
 
-        const object = getInterfaceOrEnumFromSchema(config, `I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
+        const object = getInterfaceOrEnumFromSchema( `I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
         const rendered = object.render();
         fs.appendFileSync(nodePath.join(nestedPath, `${rendered.fileName}.ts`), rendered.render)
 

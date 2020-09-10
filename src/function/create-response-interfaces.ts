@@ -1,12 +1,15 @@
 import {ISchema} from "../interface/open-api-mine/i-schema";
 import {IFunctionResponse} from "../classes/object-property";
-import {IGenerateConfig} from "../interface/i-generate-config";
 import {getInterfaceOrEnumFromSchema} from "./get-property";
 import {convertClassName} from "./convert-class-name";
 import {appendFileSync} from "fs";
 import {join} from "path";
+import {configuration} from "./config";
 
-export const createResponseInterfaces = (config: IGenerateConfig, operationId: string, responses: any): IFunctionResponse & { import?: string } => {
+export const createResponseInterfaces = (operationId: string, responses: any): IFunctionResponse & { import?: string } => {
+    const reference = configuration.getReference();
+    const folder = configuration.getFolderManager();
+
     const success = responses['200'];
     if (!!success && !!success.content) {
         const successContent = success.content;
@@ -17,26 +20,26 @@ export const createResponseInterfaces = (config: IGenerateConfig, operationId: s
             isJson = true;
             const responseSchema = success.content['application/json'].schema as ISchema;
             if (responseSchema.$ref) {
-                const importAndType = config.ref.getImportAndTypeByRef(responseSchema.$ref, config.folder.getServiceFolder());
+                const importAndType = reference.getImportAndTypeByRef(responseSchema.$ref, folder.getServiceFolder());
                 responseType = importAndType.className;
                 _import = importAndType.import;
             } else {
                 //TODO: refactor me
                 const schemaName = `${operationId}Response`
                 const className = 'I' + convertClassName(schemaName)
-                let interfaceOrEnumeration = getInterfaceOrEnumFromSchema(config, className, schemaName, responseSchema, config.folder.getInterfaceResponseFolder())
+                let interfaceOrEnumeration = getInterfaceOrEnumFromSchema(className, schemaName, responseSchema, folder.getInterfaceResponseFolder())
 
                 if (!!interfaceOrEnumeration) {
                     const rendered = interfaceOrEnumeration.render();
-                    appendFileSync(join(config.folder.getInterfaceResponseFolder(), `${rendered.fileName}.ts`), rendered.render)
+                    appendFileSync(join(folder.getInterfaceResponseFolder(), `${rendered.fileName}.ts`), rendered.render)
                     _import = interfaceOrEnumeration.fileName;
                     const refKey = `#/components/schemas/response/${schemaName}`
-                    config.ref.addReference(refKey, {
+                    reference.addReference(refKey, {
                         fileName: interfaceOrEnumeration.fileName,
                         className: className,
-                        folderPath: config.folder.getInterfaceResponseFolder()
+                        folderPath: folder.getInterfaceResponseFolder()
                     });
-                    const importAndType = config.ref.getImportAndTypeByRef(refKey, config.folder.getServiceFolder());
+                    const importAndType = reference.getImportAndTypeByRef(refKey, folder.getServiceFolder());
 
                     //TODO: fix this on higher level in mustache template
                     responseType = responseSchema.type === 'array' ? `Array<${importAndType.className}>` : importAndType.className;

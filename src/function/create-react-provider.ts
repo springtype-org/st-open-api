@@ -1,8 +1,8 @@
-import {IGenerateConfig} from "../interface/i-generate-config";
 import {GROUP_SERVICE} from "../classes/ref";
 import {renderMustache} from "./render-mustache";
 import {appendFileSync} from "fs";
 import {join} from "path";
+import {configuration} from "./config";
 
 export interface IReactProviderMustache {
     services: Array<{
@@ -13,14 +13,16 @@ export interface IReactProviderMustache {
     imports: Array<string>;
 }
 
-export const createReactProvider = (config: IGenerateConfig) => {
-    const {folder, ref} = config;
-    const services = ref.getByGroup(GROUP_SERVICE)
+export const createReactProvider = () => {
+    const folder = configuration.getFolderManager();
+    const reference = configuration.getReference();
+
+    const services = reference.getByGroup(GROUP_SERVICE)
 
     const viewData: IReactProviderMustache = {
         services: services.map(v => ({propertyName: v.fileName, serviceClassName: v.className})),
         isImport: services.length > 0,
-        imports: services.map(v => ref.getImportAndTypeByRef(
+        imports: services.map(v => reference.getImportAndTypeByRef(
             v.refKey,
             folder.getReactProviderFolder()).import
         )

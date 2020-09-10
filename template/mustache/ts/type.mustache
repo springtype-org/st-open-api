@@ -1,0 +1,8 @@
+/**
+ * This file was generated
+ */
+export type {{enumName}} = {{#values}}{{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}}{{^last}} | {{/last}}{{/values}};
+
+export const {{enumName}}: { values: Array<{{enumName}}> } = {
+    values: [{{#values}}{{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}}{{^last}}, {{/last}}{{/values}}]
+};
