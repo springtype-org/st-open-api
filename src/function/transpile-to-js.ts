@@ -7,9 +7,7 @@ import {
     parseJsonConfigFileContent,
     sys
 } from "typescript";
-import {IOpenApiOpt} from "../interface/i-open-api-opt";
 import {unlinkSync} from "fs";
-import {normalize} from "path"
 import {configuration} from "./config";
 
 

@@ -1,9 +1,10 @@
 import {relative, sep} from "path";
+
 export const GROUP_SERVICE = 'SERVICE'
 
 export class Ref {
     refs: { [ref: string]: IRef } = {};
-    groups: {[group: string]: Array<IRef & {refKey: string}>} = {};
+    groups: { [group: string]: Array<IRef & { refKey: string }> } = {};
 
     getImportAndTypeByRef = (ref: string, path: string): IRefResult => {
         const reference = this.refs[ref];
@@ -11,7 +12,7 @@ export class Ref {
         if (!relativePath) {
             relativePath = './';
         } else {
-            if(!relativePath.startsWith('../')){
+            if (!relativePath.startsWith('../')) {
                 relativePath = `./${relativePath}`;
             }
             relativePath += '/';
@@ -22,17 +23,17 @@ export class Ref {
         }
     }
 
-    addReference = (refKey: string, data: IRef, group: string|undefined = undefined) => {
-        const ref ={
+    addReference = (refKey: string, data: IRef, group: string | undefined = undefined) => {
+        const ref = {
             fileName: data.fileName,
             className: data.className,
             folderPath: data.folderPath
         };
 
         this.refs[refKey] = ref;
-        if(!!group){
+        if (!!group) {
             let groupArr = this.groups[group];
-            if(!groupArr){
+            if (!groupArr) {
                 groupArr = [];
                 this.groups[group] = groupArr;
             }

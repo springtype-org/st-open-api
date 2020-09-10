@@ -11,7 +11,7 @@ import {mkdir} from "../classes/folder-manager";
 import {configuration} from "./config";
 
 export const getInterfaceOrEnumFromSchema = (className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | undefined => {
-    const isDebug =configuration.isDebug();
+    const isDebug = configuration.isDebug();
     if (isDebug) {
         console.log(`Get enum or interface ${className}`)
         console.log(`Schema ${className}`, JSON.stringify(schema, null, 2))
@@ -45,7 +45,7 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
 
 
 const getProperty = (className: string, originalName: string, propertyName: string, required: boolean, schema: ISchema, path: string): IProperty => {
-    const isDebug =configuration.isDebug();
+    const isDebug = configuration.isDebug();
     const ref = configuration.getReference();
     if (isDebug) {
         console.log(`Enter get property ${originalName}`, JSON.stringify(schema, null, 2))
@@ -91,7 +91,7 @@ const getProperty = (className: string, originalName: string, propertyName: stri
         let newOriginal = `${propertyName}${originalName.substring(0, 1).toUpperCase()}${originalName.substring(1)}`;
         const nestedPath = getNestedPath(path, 'enumeration');
 
-        const enumeration = getInterfaceOrEnumFromSchema( `I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
+        const enumeration = getInterfaceOrEnumFromSchema(`I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
         const rendered = enumeration.render();
         fs.appendFileSync(nodePath.join(nestedPath, `${rendered.fileName}.ts`), rendered.render)
 
@@ -108,7 +108,7 @@ const getProperty = (className: string, originalName: string, propertyName: stri
         let newOriginal = `${propertyName}${originalName.substring(0, 1).toUpperCase()}${originalName.substring(1)}`;
         const nestedPath = getNestedPath(path, 'interface');
 
-        const object = getInterfaceOrEnumFromSchema( `I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
+        const object = getInterfaceOrEnumFromSchema(`I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
         const rendered = object.render();
         fs.appendFileSync(nodePath.join(nestedPath, `${rendered.fileName}.ts`), rendered.render)
 
@@ -163,7 +163,7 @@ const getNestedPath = (path: string, type: string) => {
 }
 
 const isPrimitive = (type: string) => {
-    switch(type) {
+    switch (type) {
         case "boolean":
         case "integer":
         case "number":

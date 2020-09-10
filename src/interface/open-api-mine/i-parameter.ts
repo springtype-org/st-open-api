@@ -15,7 +15,7 @@ export interface IParameter {
      * REQUIRED. The location of the parameter.
      * Possible values are "query", "header", "nodePath" or "cookie".
      */
-    in:  'query'| 'header'| 'path' | 'cookie';
+    in: 'query' | 'header' | 'path' | 'cookie';
 
     /**
      * A brief description of the parameter. This could contain examples of use.

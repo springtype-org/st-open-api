@@ -1,6 +1,5 @@
 import {IOrderedPaths} from "../interface/i-ordered-paths";
 import {IOpenApi} from "../interface/open-api-mine/i-open-api";
-import {IGenerateConfig} from "../interface/i-generate-config";
 import {configuration} from "./config";
 
 export const orderedPath = (openApi: IOpenApi): IOrderedPaths => {
@@ -13,7 +12,7 @@ export const orderedPath = (openApi: IOpenApi): IOrderedPaths => {
                 manipulatedPath = manipulatedPath.substring(1);
             }
             const pathParts = manipulatedPath.split('/');
-            const groupName = pathParts[0] + '-'+configuration.getServiceSuffix();
+            const groupName = pathParts[0] + '-' + configuration.getServiceSuffix();
 
             let group = orderPath[groupName];
             if (!group) {

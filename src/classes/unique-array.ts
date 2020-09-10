@@ -1,4 +1,4 @@
-export class UniqueArray<T>{
+export class UniqueArray<T> {
     internalArray: Array<T> = [];
 
     push(...str: T[]) {
@@ -6,11 +6,11 @@ export class UniqueArray<T>{
             str = [str];
         }
 
-        str.filter(t => !!t).forEach(t =>{
+        str.filter(t => !!t).forEach(t => {
 
-        if (this.internalArray.indexOf(t) === -1) {
-            this.internalArray.push(t);
-        }
+            if (this.internalArray.indexOf(t) === -1) {
+                this.internalArray.push(t);
+            }
         });
     }
 

@@ -7,7 +7,7 @@ export interface ISchema {
     properties?: { [name: string]: ISchema };
     '$ref'?: string;
     enum?: Array<string | number>;
-    allOf?: Array<{ '$ref': string }| any>
+    allOf?: Array<{ '$ref': string } | any>
 }
 
 export interface ISchemaItem {

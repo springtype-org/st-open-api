@@ -14,7 +14,7 @@ export interface IMediaType {
      * Furthermore, if referencing a schema which contains an example, the example
      * value SHALL override the example provided by the schema.
      */
-    example: string | number | boolean |  object;
+    example: string | number | boolean | object;
 
     /**
      * Examples of the media type. Each example object SHOULD match the media type and specified

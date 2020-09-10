@@ -38,18 +38,18 @@ export class EnumProperty implements IPropertyClass {
     render(): IRenderResult {
         const viewData: IMustacheEnum = {
             enumName: this.enumName,
-            values: this.values.map(((value, index, arr) => ({...value, last: index === arr.length -1 })))
+            values: this.values.map(((value, index, arr) => ({...value, last: index === arr.length - 1})))
         }
         return {
             classEnumName: this.enumName,
             fileName: this.fileName,
-            render: renderMustache(`${configuration.isType()?'type':'enum'}.mustache`, viewData)
+            render: renderMustache(`${configuration.isType() ? 'type' : 'enum'}.mustache`, viewData)
         }
     }
 }
 
 interface IMustacheEnum {
     enumName: string;
-    values: Array<{ isString: boolean, value: string , last: boolean}>;
+    values: Array<{ isString: boolean, value: string, last: boolean }>;
 }
 

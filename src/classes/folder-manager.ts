@@ -1,4 +1,4 @@
-import {join,isAbsolute} from "path";
+import {isAbsolute, join} from "path";
 import {existsSync, mkdirSync} from "fs";
 import {deletePathOrFile} from "st-rm-rf";
 
@@ -14,6 +14,7 @@ const resolvePath = (outputFolder) => {
     }
     return outputFolder;
 }
+
 export class FolderManager {
     private readonly outputFolder: string;
 
@@ -22,7 +23,7 @@ export class FolderManager {
         deletePathOrFile(this.outputFolder, {printInfo: false, printWarning: false, printError: true});
     }
 
-    getOutputFolder(){
+    getOutputFolder() {
         return this.outputFolder;
     }
 

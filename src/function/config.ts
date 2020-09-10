@@ -67,6 +67,7 @@ export class Configuration {
     getReference(): Ref {
         return this.reference;
     }
+
     print() {
         console.log('--- Configuration')
         console.log()

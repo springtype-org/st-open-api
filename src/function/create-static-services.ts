@@ -1,9 +1,7 @@
-import {IGenerateConfig} from "../interface/i-generate-config";
 import {GROUP_SERVICE} from "../classes/ref";
 import {renderMustache} from "./render-mustache";
 import {appendFileSync} from "fs";
 import {join} from "path";
-import {kebabCaseToCamel} from "./kebab-case-to-camel";
 import {kebabCaseToSnake} from "./kebab-case-to-snake";
 import {configuration} from "./config";
 
@@ -23,7 +21,10 @@ export const createStaticServices = () => {
     const services = reference.getByGroup(GROUP_SERVICE)
 
     const viewData: IReactProviderMustache = {
-        services: services.map(v => ({propertyName: kebabCaseToSnake(v.fileName).toUpperCase(), serviceClassName: v.className})),
+        services: services.map(v => ({
+            propertyName: kebabCaseToSnake(v.fileName).toUpperCase(),
+            serviceClassName: v.className
+        })),
         isImport: services.length > 0,
         imports: services.map(v => reference.getImportAndTypeByRef(
             v.refKey,

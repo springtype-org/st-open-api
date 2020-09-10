@@ -1,6 +1,5 @@
 import * as nodePath from "path";
 import * as fs from "fs";
-import {IGenerateConfig} from "../interface/i-generate-config";
 import {configuration} from "./config";
 
 export const copyResources = () => {
