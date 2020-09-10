@@ -5,7 +5,7 @@ export type {{enumName}} =
     {{#values}}{{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}}{{#last}};{{/last}}
     {{^last}}| {{/last}}{{/values}}
 
-export const {{enumName}}: { enum: { {{#values}}{{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}}: {{enumName}}{{^last}}, {{/last}}{{/values}} }, values: Array<{{enumName}}> } = {
+export const {{enumName}}: { enum: { {{#values}}{{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}}: {{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}}{{^last}}, {{/last}}{{/values}} }, values: Array<{{enumName}}> } = {
     enum: {
 {{#values}}        {{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}}: {{#isString}}'{{/isString}}{{{value}}}{{#isString}}'{{/isString}}{{^last}}, {{/last}}
 {{/values}}
