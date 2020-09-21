@@ -21,6 +21,10 @@ export interface IRequest {
     header?: IParameter;
     body?: string;
 }
+export interface IError {
+    status: number;
+    message: string;
+}
 
 export interface IParameter {
     [name: string]: string
@@ -30,10 +34,12 @@ export interface IParameter {
  * Make an http request
  * @param request the http request parameters
  * @param requestInterceptor an request interceptor will be called before every request call
+ * @param errorHandler handles errors
  */
 export const http = async (request: IRequest,
                            requestInterceptor: (request: IRequest
-                           ) => Promise<IRequest>): Promise<string> => {
+                           ) => Promise<IRequest>,
+                           errorHandler: (error:IError) => IError | false): Promise<string> => {
 
     if (requestInterceptor) {
         request = await requestInterceptor(request);
@@ -66,12 +72,18 @@ export const http = async (request: IRequest,
                 const response = xhr.responseText;
                 resolve(response);
             } else {
-                reject({status: xhr.status, message: xhr.responseText});
+                const errorResp = errorHandler({status: xhr.status, message: xhr.responseText});
+                if (!!errorResp) {
+                    reject(errorResp);
+                }
             }
         };
 
         xhr.onerror = () => {
-            reject({status: xhr.status, message: xhr.responseText});
+            const errorResp = errorHandler({status: xhr.status, message: xhr.responseText});
+            if (!!errorResp) {
+                reject(errorResp);
+            }
         }
     });
 };

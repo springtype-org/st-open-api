@@ -42,7 +42,8 @@
             body: JSON.stringify(body),
 {{/isRequestBody}}
         },
-        interceptor
+        interceptor,
+        openApi.errorHandler
     );
 {{#isJsonResponse}}
     return JSON.parse(response);
