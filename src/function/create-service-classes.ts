@@ -6,6 +6,7 @@ import {getServiceHttpFunction} from "./get-service-http-function";
 import {ObjectProperty} from "../classes/object-property";
 import {GROUP_SERVICE} from "../classes/ref";
 import {configuration} from "./config";
+import {sorted, sortedBy} from "../utils";
 
 export const createServiceClasses = (openApi: IOpenApi) => {
     const orderedPaths = orderedPath(openApi);
