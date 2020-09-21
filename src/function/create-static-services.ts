@@ -4,6 +4,7 @@ import {appendFileSync} from "fs";
 import {join} from "path";
 import {kebabCaseToSnake} from "./kebab-case-to-snake";
 import {configuration} from "./config";
+import {sorted} from "../utils";
 
 export interface IReactProviderMustache {
     services: Array<{
@@ -26,10 +27,10 @@ export const createStaticServices = () => {
             serviceClassName: v.className
         })),
         isImport: services.length > 0,
-        imports: services.map(v => reference.getImportAndTypeByRef(
+        imports: sorted(services.map(v => reference.getImportAndTypeByRef(
             v.refKey,
             folder.getReactProviderFolder()).import
-        )
+        ))
     }
 
     appendFileSync(
