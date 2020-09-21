@@ -3,6 +3,7 @@ import {camelToKebabCase} from "../function/camel-to-kebab-case";
 import {renderMustache} from "../function/render-mustache";
 import {convertClassName} from "../function/convert-class-name";
 import {configuration} from "../function/config";
+import {sortedBy} from "../utils";
 
 
 export class EnumProperty implements IPropertyClass {
@@ -38,7 +39,7 @@ export class EnumProperty implements IPropertyClass {
     render(): IRenderResult {
         const viewData: IMustacheEnum = {
             enumName: this.enumName,
-            values: this.values.map(((value, index, arr) => ({...value, last: index === arr.length - 1})))
+            values: sortedBy(this.values, 'value').map(((value, index, arr) => ({...value, last: index === arr.length - 1})))
         }
         return {
             classEnumName: this.enumName,
