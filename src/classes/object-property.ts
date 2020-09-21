@@ -5,7 +5,8 @@ import {UniqueArray} from "./unique-array";
 import {splitByLineBreak} from "../function/split-by-line-break";
 import {FolderManager} from "./folder-manager";
 import {convertClassName} from "../function/convert-class-name";
-import {sorted, sortedBy} from "../utils";
+import {sortBy} from "../function/sortBy";
+import {sort} from "../function/sort";
 
 export const HTTP_FUNCTION_REF = (folder: FolderManager) => {
     return {
@@ -110,10 +111,10 @@ export class ObjectProperty implements IPropertyClass {
     }
 
     render(): IRenderResult {
-        const renderedFunctions = sortedBy(Object.entries(this.functions), '1').map(e => e[1]).map(fun => {
+        const renderedFunctions = sortBy(Object.entries(this.functions), '1').map(e => e[1]).map(fun => {
             return {imports: fun.imports || [], render: renderMustache('function-class.mustache', fun.data)}
         });
-        const renderProperties = sortedBy(Object.entries(this.properties), '0').map(e => e[1]).map((prop) => {
+        const renderProperties = sortBy(Object.entries(this.properties), '0').map(e => e[1]).map((prop) => {
             return {import: prop.import, render: renderMustache('property-class.mustache', prop.data)}
         });
 
@@ -126,7 +127,7 @@ export class ObjectProperty implements IPropertyClass {
             className: this.className,
             isInterface: Object.values(this.functions).length == 0,
             isImport: this.imports.get().length > 0,
-            imports: sorted(this.imports.get()),
+            imports: sort(this.imports.get()),
 
             isDescription: (this.description || '').length > 0,
             description: this.description,
