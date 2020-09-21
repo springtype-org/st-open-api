@@ -4,7 +4,8 @@ import {renderMustache} from "../function/render-mustache";
 import {UniqueArray} from "./unique-array";
 import {splitByLineBreak} from "../function/split-by-line-break";
 import {convertClassName} from "../function/convert-class-name";
-import {sorted, sortedBy} from "../utils";
+import {sortBy} from "../function/sortBy";
+import {sort} from "../function/sort";
 
 
 export class InterfaceProperty implements IPropertyClass {
@@ -42,7 +43,7 @@ export class InterfaceProperty implements IPropertyClass {
     }
 
     render(): IRenderResult {
-        const renderProperties = sortedBy(Object.entries(this.properties), '0').map(e => e[1]).map((prop) => {
+        const renderProperties = sortBy(Object.entries(this.properties), '0').map(e => e[1]).map((prop) => {
             return {import: prop.import, render: renderMustache('property-class.mustache', prop.data)}
         });
 
@@ -52,7 +53,7 @@ export class InterfaceProperty implements IPropertyClass {
 
             interfaceName: this.interfaceName,
             isImport: this.imports.get().length > 0,
-            imports: sorted(this.imports.get()),
+            imports: sort(this.imports.get()),
 
             isDescription: (this.description || '').length > 0,
             description: this.description,

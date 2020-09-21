@@ -1,10 +1,10 @@
 import {GROUP_SERVICE} from "../classes/ref";
 import {renderMustache} from "./render-mustache";
 import {appendFileSync} from "fs";
-import {join} from "path";
 import {kebabCaseToSnake} from "./kebab-case-to-snake";
 import {configuration} from "./config";
-import {sorted} from "../utils";
+import {sort} from "./sort";
+import {join} from "path"
 
 export interface IReactProviderMustache {
     services: Array<{
@@ -27,7 +27,7 @@ export const createStaticServices = () => {
             serviceClassName: v.className
         })),
         isImport: services.length > 0,
-        imports: sorted(services.map(v => reference.getImportAndTypeByRef(
+        imports: sort(services.map(v => reference.getImportAndTypeByRef(
             v.refKey,
             folder.getReactProviderFolder()).import
         ))
