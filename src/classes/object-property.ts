@@ -16,12 +16,21 @@ export const HTTP_FUNCTION_REF = (folder: FolderManager) => {
         folderPath: folder.getFunctionFolder()
     }
 }
-export const HTTP_REQUEST_FUNCTION_REF = (folder: FolderManager) => {
+export const HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF = (folder: FolderManager) => {
     return {
-        fileName: "http",
-        refKey: "HTTP_REQUEST_FUNCTION_REF",
-        className: "IRequest",
-        folderPath: folder.getFunctionFolder()
+        fileName: "i-$-open-api",
+        refKey: "HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF",
+        className: "RequestInterceptor",
+        folderPath: folder.getInterfaceFolder()
+    }
+}
+
+export const HTTP_ERROR_HANDLER_INTERFACE_REF = (folder: FolderManager) => {
+    return {
+        fileName: "i-$-open-api",
+        refKey: "HTTP_ERROR_HANDLER_INTERFACE_REF",
+        className: "ErrorHandler",
+        folderPath: folder.getInterfaceFolder()
     }
 }
 
@@ -42,6 +51,14 @@ export const QUERY_PARAMETER_FUNCTION_REF = (folder: FolderManager) => {
         folderPath: folder.getFunctionFolder()
     }
 }
+
+export const OBJECT_REFERENCES = [
+    HTTP_FUNCTION_REF,
+    HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF,
+    HTTP_ERROR_HANDLER_INTERFACE_REF,
+    OPEN_API_FUNCTION_REF,
+    QUERY_PARAMETER_FUNCTION_REF
+]
 
 export class ObjectProperty implements IPropertyClass {
 

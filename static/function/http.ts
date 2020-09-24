@@ -1,4 +1,5 @@
 import {getQueryParameters, IQueryParam} from "./get-query-params";
+import {ErrorHandler, RequestInterceptor} from "../interface/i-$-open-api";
 
 /**
  * Build url replace parameter
@@ -37,9 +38,8 @@ export interface IParameter {
  * @param errorHandler handles errors
  */
 export const http = async (request: IRequest,
-                           requestInterceptor: (request: IRequest
-                           ) => Promise<IRequest>,
-                           errorHandler: (error:IError) => IError | false): Promise<string> => {
+                           requestInterceptor: RequestInterceptor,
+                           errorHandler: ErrorHandler): Promise<string> => {
 
     if (requestInterceptor) {
         request = await requestInterceptor(request);

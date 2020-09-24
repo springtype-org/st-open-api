@@ -6,13 +6,7 @@ import {getInterfaceOrEnumFromSchema} from "./get-property";
 import {ISchema} from "../interface/open-api-mine/i-schema";
 import * as fs from "fs";
 import * as nodePath from "path";
-import {
-    HTTP_FUNCTION_REF,
-    HTTP_REQUEST_FUNCTION_REF,
-    IFunction,
-    ObjectProperty,
-    OPEN_API_FUNCTION_REF,
-} from "../classes/object-property";
+import {IFunction, OBJECT_REFERENCES, ObjectProperty,} from "../classes/object-property";
 import {kebabCaseToCamel} from "./kebab-case-to-camel";
 import {firstCharacterLower} from "./first-character-lower";
 import {configuration} from "./config";
@@ -83,9 +77,13 @@ export const getServiceHttpFunction = (objProperty: ObjectProperty, httpMethod: 
             operationFunction.imports.push(reference.getImportAndTypeByRef(schemaName, folder.getServiceFolder()).import);
         }
 
-        objProperty.addImports(reference.getImportAndTypeByRef(HTTP_FUNCTION_REF(folder).refKey, folder.getServiceFolder()).import);
-        objProperty.addImports(reference.getImportAndTypeByRef(HTTP_REQUEST_FUNCTION_REF(folder).refKey, folder.getServiceFolder()).import);
-        objProperty.addImports(reference.getImportAndTypeByRef(OPEN_API_FUNCTION_REF(folder).refKey, folder.getServiceFolder()).import);
+        OBJECT_REFERENCES
+            .map(fun => fun(folder))
+            .map(httpRef =>
+                reference.getImportAndTypeByRef(httpRef.refKey, folder.getServiceFolder())
+            )
+            .forEach(refResult => objProperty.addImports(refResult.import))
+
         objProperty.addFunction(operationFunction);
     }
 }
