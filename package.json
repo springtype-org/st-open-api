@@ -18,8 +18,10 @@
   "scripts": {
     "prestart": "npx st-rm-rf dist",
     "prebuild": "npx st-rm-rf dist",
+    "test:watch": "jest --watch",
+    "test": "jest",
     "build": "tsc",
-    "postbuild": "npx st-cp package.json README.md static schema template banner.txt dist"
+    "postbuild": "npx st-cp package.json README.md static schema template banner.txt dist && yarn test"
   },
   "engines": {
     "node": ">=10"
@@ -47,12 +49,15 @@
     "mustache": "^4.0.1",
     "node-fetch": "^2.6.0",
     "st-rm-rf": "^2.0.0-beta.1",
-    "valid-url": "^1.0.9",
-    "typescript": "^3.8.3"
+    "typescript": "^4.0.3",
+    "valid-url": "^1.0.9"
   },
   "devDependencies": {
+    "@types/jest": "^26.0.15",
     "@types/mustache": "^4.0.1",
     "@types/node": "^13.11.1",
-    "@types/node-fetch": "^2.5.6"
+    "@types/node-fetch": "^2.5.6",
+    "jest": "^26.6.0",
+    "ts-jest": "^26.4.1"
   }
 }
