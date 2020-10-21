@@ -16,7 +16,7 @@ export class InterfaceProperty implements IPropertyClass {
     imports: UniqueArray<string> = new UniqueArray<string>();
     properties: { [name: string]: { data: IMustacheProperty, import?: string } } = {}
 
-    constructor(public originalName: string, public isArray: boolean = false) {
+    constructor(public originalName: string) {
         this.convertName(originalName);
     }
 

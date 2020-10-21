@@ -9,8 +9,9 @@ import {convertClassName} from "./convert-class-name";
 import {InterfaceProperty} from "../classes/interface-property";
 import {mkdir} from "../classes/folder-manager";
 import {configuration} from "./config";
+import {InterfaceArrayProperty} from "../classes/interface-array-property";
 
-export const getInterfaceOrEnumFromSchema = (className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | undefined => {
+export const getInterfaceOrEnumFromSchema = (className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | InterfaceArrayProperty => {
     const isDebug = configuration.isDebug();
     if (isDebug) {
         console.log(`Get enum or interface ${className}`)
@@ -19,20 +20,27 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
     let isArray = false;
     if (schema.type === 'array') {
         isArray = true;
+        if(!!schema.items && schema.items["$ref"]){
+           const ref = configuration.getReference().getImportAndTypeByRef( schema.items["$ref"], path);
+            return new InterfaceArrayProperty(className, ref.import,ref.className)
+        }
         schema = schema.items;
         schema.type = 'object';
     }
     if (schema.type === 'object' || schema.properties) {
         if (isDebug) {
-            console.log(`Schema ${className}`, JSON.stringify(schema, null, 2))
+            console.log(`Object Schema ${className} (array=${isArray})`, JSON.stringify(schema, null, 2))
         }
-        const interfaceProperty = new InterfaceProperty(className, isArray);
-        for (const propertyName of Object.keys(schema.properties)) {
-            const property = schema.properties[propertyName];
-            const isRequired = (schema.required || []).indexOf(propertyName) > -1;
-            interfaceProperty.addProperty(getProperty(className, originalName, propertyName, isRequired, property, path))
+        if (!!schema.properties) {
+            const interfaceProperty = new InterfaceProperty(className);
+            for (const propertyName of Object.keys(schema.properties)) {
+                const property = schema.properties[propertyName];
+                const isRequired = (schema.required || []).indexOf(propertyName) > -1;
+                interfaceProperty.addProperty(getProperty(className, originalName, propertyName, isRequired, property, path))
+            }
+            return interfaceProperty;
         }
-        return interfaceProperty;
+        //getReference(schema);
 
     } else if (schema.enum) {
         const enumClass = new EnumProperty(className);

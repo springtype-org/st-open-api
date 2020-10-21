@@ -11,6 +11,7 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
     const folder = configuration.getFolderManager();
 
     const success = responses['200'];
+    // TODO: Refactor me !!!
     if (!!success && !!success.content) {
         const successContent = success.content;
         let isJson = false;
@@ -24,7 +25,6 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
                 responseType = importAndType.className;
                 _import = importAndType.import;
             } else {
-                //TODO: refactor me
                 const schemaName = `${operationId}Response`
                 const className = 'I' + convertClassName(schemaName)
                 let interfaceOrEnumeration = getInterfaceOrEnumFromSchema(className, schemaName, responseSchema, folder.getInterfaceResponseFolder())

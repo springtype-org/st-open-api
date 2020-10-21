@@ -13,11 +13,6 @@ export class EnumProperty implements IPropertyClass {
     values: Array<{ isString: boolean, value: string }> = [];
 
     constructor(originalName: string) {
-        // Todo: do not do this here do it on hire level
-        //if (!originalName.toUpperCase().endsWith('enum')) {
-        //    originalName += 'Enum';
-        //}
-
         this.convertName(originalName);
     }
 
