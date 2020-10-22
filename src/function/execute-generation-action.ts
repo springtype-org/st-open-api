@@ -11,6 +11,7 @@ import {transpileToJs} from "./transpile-to-js";
 import {createReactProvider} from "./create-react-provider";
 import {createStaticServices} from "./create-static-services";
 import {configuration} from "./config";
+import {initServiceReference} from "./init-references";
 
 const getSourceAsString = async (source: string): Promise<string> => {
     if (isUri(source)) {
@@ -45,19 +46,21 @@ export const executeGenerationAction = async () => {
                 console.log('Initialize references');
             }
 
-
             createComponentInterfaces(openApi.components);
 
-            createServiceClasses(openApi);
+            if (!configuration.isComponentOnly()) {
+                initServiceReference(configuration.getFolderManager());
+                createServiceClasses(openApi);
 
-            if (configuration.isCreateReactProvider()) {
-                createReactProvider();
-            }
+                if (configuration.isCreateReactProvider()) {
+                    createReactProvider();
+                }
 
-            if (configuration.isCreateStaticServices()) {
-                createStaticServices()
+                if (configuration.isCreateStaticServices()) {
+                    createStaticServices()
+                }
+                copyResources();
             }
-            copyResources();
 
             const language = configuration.getLanguage();
             if (language === 'js' || language === 'onlyJs') {

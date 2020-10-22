@@ -1,10 +1,10 @@
 import {ISchema} from "../interface/open-api-mine/i-schema";
 import {IFunctionRequestBody} from "../classes/object-property";
-import {convertClassName} from "./convert-class-name";
 import {getInterfaceOrEnumFromSchema} from "./get-property";
 import {appendFileSync} from "fs";
 import {join} from "path";
 import {configuration} from "./config";
+import {formatText} from "./formatText";
 
 export const createRequestBodyInterfaces = (operationId: string, requestBody: any): IFunctionRequestBody & { import?: string } => {
     const reference = configuration.getReference();
@@ -24,7 +24,7 @@ export const createRequestBodyInterfaces = (operationId: string, requestBody: an
             } else {
                 //TODO: refactor me
                 const schemaName = `${operationId}Request`
-                const className = 'I' + convertClassName(schemaName)
+                const className = 'I' + formatText(schemaName, 'ANY', 'PascalCase')
                 let interfaceOrEnumeration = getInterfaceOrEnumFromSchema(className, schemaName, requestBody, folder.getInterfaceRequestFolder())
 
                 if (!!interfaceOrEnumeration) {

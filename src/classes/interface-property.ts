@@ -1,11 +1,10 @@
 import {IPropertyClass, IRenderResult} from "../interface/i-property-class";
-import {camelToKebabCase} from "../function/camel-to-kebab-case";
 import {renderMustache} from "../function/render-mustache";
 import {UniqueArray} from "./unique-array";
 import {splitByLineBreak} from "../function/split-by-line-break";
-import {convertClassName} from "../function/convert-class-name";
 import {sortBy} from "../function/sortBy";
 import {sort} from "../function/sort";
+import {formatText} from "../function/formatText";
 
 
 export class InterfaceProperty implements IPropertyClass {
@@ -21,9 +20,8 @@ export class InterfaceProperty implements IPropertyClass {
     }
 
     private convertName(originalName: string) {
-        let interfaceName = convertClassName(originalName);
-        this.interfaceName = interfaceName;
-        this.fileName = camelToKebabCase(interfaceName);
+        this.interfaceName = formatText(originalName, 'ANY', 'PascalCase');
+        this.fileName = formatText(originalName, 'ANY', 'KebabCase');
     }
 
     addImports(_import: string) {

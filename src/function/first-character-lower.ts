@@ -1,6 +1,2 @@
 export const firstCharacterLower = (str: string) => {
-    if (!!str) {
-        return str.substr(0, 1).toLowerCase() + str.substr(1);
-    }
-    return str;
-}
+    return !!str && str[0].toLowerCase() + str.slice(1);}

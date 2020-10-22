@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.3.13",
+  "version": "1.3.14",
   "publishConfig": {
     "access": "public"
   },
@@ -16,7 +16,6 @@
     "url": "git+https://github.com/springtype-org/st-open-api.git"
   },
   "scripts": {
-    "prestart": "npx st-rm-rf dist",
     "prebuild": "npx st-rm-rf dist",
     "build": "tsc",
     "postbuild": "npx st-cp package.json README.md static schema template banner.txt dist"

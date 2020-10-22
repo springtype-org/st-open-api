@@ -37,7 +37,7 @@ import {printBanner} from "./function/printBanner";
         .option('-r, --react', 'create react provider component', false)
         .option('-t, --static', 'create static services', false)
         .option('-y, --type', 'use types instead of enumerations')
-        .option('-c, --config <path>', 'the url to an config js')
+        .option('-c, --component', 'only build components, this flag will disable all others', false)
 
         .action((options) => {
                 configuration.setConfig(options);

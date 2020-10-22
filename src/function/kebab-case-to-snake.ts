@@ -1,5 +1,5 @@
+import {formatText} from "./formatText";
+
 export const kebabCaseToSnake = (kebab: string) => {
-    return kebab.split('-')
-        .filter(v => !!v)
-        .join('_');
+    return formatText(kebab, 'KebabCase', 'SnakeCase')
 }

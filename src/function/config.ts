@@ -1,5 +1,4 @@
 import {FolderManager} from "../classes/folder-manager";
-import {initReference} from "./init-references";
 import {Ref} from "../classes/ref";
 
 export class Configuration {
@@ -12,7 +11,7 @@ export class Configuration {
         this.config = config;
         this.folder = new FolderManager(this.config.output);
         this.outputDirectory = this.folder.getOutputFolder()
-        this.reference = initReference(this.folder);
+        this.reference = new Ref();
     }
 
     getConfig() {
@@ -41,6 +40,10 @@ export class Configuration {
 
     isType() {
         return !!this.config.type;
+    }
+
+    isComponentOnly() {
+        return !!this.config.component;
     }
 
     ignoreValidation() {

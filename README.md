@@ -18,6 +18,8 @@ usage:
 
 -n **serviceSuffix** _optional_ choose your service suffix: default _Service_
 
+-c **component** _optional_ generate only components
+
 ### Configuration
 
 configure the global _openApi_ can be manipulate some variables and every request.

@@ -1,13 +1,8 @@
 import {IPropertyClass, IRenderResult} from "../interface/i-property-class";
-import {camelToKebabCase} from "../function/camel-to-kebab-case";
 import {renderMustache} from "../function/render-mustache";
-import {convertClassName} from "../function/convert-class-name";
-import {configuration} from "../function/config";
-import {sortBy} from "../function/sortBy";
 import {UniqueArray} from "./unique-array";
-import {splitByLineBreak} from "../function/split-by-line-break";
 import {sort} from "../function/sort";
-import {IProperty} from "./interface-property";
+import {formatText} from "../function/formatText";
 
 
 export class InterfaceArrayProperty implements IPropertyClass {
@@ -23,9 +18,8 @@ export class InterfaceArrayProperty implements IPropertyClass {
     }
 
     private convertName(originalName: string) {
-        let interfaceName = convertClassName(originalName);
-        this.interfaceName = interfaceName;
-        this.fileName = camelToKebabCase(interfaceName);
+        this.interfaceName = formatText(originalName, 'ANY', 'PascalCase');
+        this.fileName = formatText(originalName, 'ANY', 'KebabCase');
     }
 
 
@@ -48,10 +42,11 @@ export class InterfaceArrayProperty implements IPropertyClass {
         }
     }
 }
+
 interface IMustacheInterfaceArray {
     interfaceName: string;
     refClassName: string;
-    isImport:  boolean;
+    isImport: boolean;
     imports: Array<string>;
 
     isDescription: boolean;

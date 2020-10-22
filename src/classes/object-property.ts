@@ -1,12 +1,11 @@
 import {IPropertyClass, IRenderResult} from "../interface/i-property-class";
-import {camelToKebabCase} from "../function/camel-to-kebab-case";
 import {renderMustache} from "../function/render-mustache";
 import {UniqueArray} from "./unique-array";
 import {splitByLineBreak} from "../function/split-by-line-break";
 import {FolderManager} from "./folder-manager";
-import {convertClassName} from "../function/convert-class-name";
 import {sortBy} from "../function/sortBy";
 import {sort} from "../function/sort";
+import {formatText} from "../function/formatText";
 
 export const HTTP_FUNCTION_REF = (folder: FolderManager) => {
     return {
@@ -52,7 +51,7 @@ export const QUERY_PARAMETER_FUNCTION_REF = (folder: FolderManager) => {
     }
 }
 
-export const OBJECT_REFERENCES = [
+export const SERVICE_REFERENCES = [
     HTTP_FUNCTION_REF,
     HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF,
     HTTP_ERROR_HANDLER_INTERFACE_REF,
@@ -74,9 +73,8 @@ export class ObjectProperty implements IPropertyClass {
     }
 
     private convertName(originalName: string) {
-        let className = convertClassName(originalName);
-        this.className = className;
-        this.fileName = camelToKebabCase(className);
+        this.className = formatText(originalName, 'ANY', 'PascalCase');
+        this.fileName = formatText(originalName, 'ANY', 'KebabCase');
     }
 
     addImports(_import: string) {

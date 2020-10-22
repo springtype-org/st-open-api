@@ -1,12 +1,10 @@
 import {IComponents} from "../interface/open-api-mine/i-components";
 import {appendFileSync} from "fs";
 import {join} from "path";
-
-import {camelToKebabCase} from "./camel-to-kebab-case";
 import {ISchema} from "../interface/open-api-mine/i-schema";
 import {getInterfaceOrEnumFromSchema} from "./get-property";
-import {convertClassName} from "./convert-class-name";
 import {configuration} from "./config";
+import {formatText} from "./formatText";
 
 
 export const createComponentInterfaces = (components: IComponents) => {
@@ -20,9 +18,8 @@ export const createComponentInterfaces = (components: IComponents) => {
         }
         const schemas = components.schemas;
         for (const schemaName of Object.keys(schemas)) {
-            const className = 'I' + convertClassName(schemaName);
-            const fileName = camelToKebabCase(className);
-
+            const className = 'I' + formatText(schemaName, 'ANY', 'PascalCase');
+            const fileName = formatText(className, 'PascalCase', 'KebabCase');
 
             reference.addReference(`#/components/schemas/${schemaName}`, {
                 fileName: fileName,
@@ -39,7 +36,7 @@ export const createComponentInterfaces = (components: IComponents) => {
                 console.log(`Create interface ${schemaName}`)
                 console.log(`Schema  ${schemaName}`, JSON.stringify(schema, null, 2))
             }
-            let interfaceOrEnumeration = getInterfaceOrEnumFromSchema('I' + convertClassName(schemaName), schemaName, schema, folderManager.getInterfaceComponentsFolder());
+            let interfaceOrEnumeration = getInterfaceOrEnumFromSchema('I' + formatText(schemaName, 'ANY', 'PascalCase'), schemaName, schema, folderManager.getInterfaceComponentsFolder());
             if (!!interfaceOrEnumeration) {
                 const rendered = interfaceOrEnumeration.render();
                 appendFileSync(join(folderManager.getInterfaceComponentsFolder(), `${rendered.fileName}.ts`), rendered.render)

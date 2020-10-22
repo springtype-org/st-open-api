@@ -1,17 +1,16 @@
 import {Ref} from "../classes/ref";
-import {OBJECT_REFERENCES} from "../classes/object-property";
+import {SERVICE_REFERENCES} from "../classes/object-property";
 import {FolderManager} from "../classes/folder-manager";
+import {configuration} from "./config";
 
-export const initReference = (folder: FolderManager): Ref => {
-    const ref = new Ref();
-
-    OBJECT_REFERENCES.map(fun => fun(folder))
+export const initServiceReference = (folder: FolderManager) => {
+    const ref = configuration.getReference();
+    SERVICE_REFERENCES.map(fun => fun(folder))
         .forEach(httpRef => ref.addReference(httpRef.refKey, {
             folderPath: httpRef.folderPath,
             className: httpRef.className,
             fileName: httpRef.fileName
         }))
 
-    return ref;
 }
 

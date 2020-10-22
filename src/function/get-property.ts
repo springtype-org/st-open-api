@@ -5,11 +5,11 @@ import * as fs from "fs";
 import * as nodePath from "path";
 import {join} from "path";
 
-import {convertClassName} from "./convert-class-name";
 import {InterfaceProperty} from "../classes/interface-property";
 import {mkdir} from "../classes/folder-manager";
 import {configuration} from "./config";
 import {InterfaceArrayProperty} from "../classes/interface-array-property";
+import {formatText} from "./formatText";
 
 export const getInterfaceOrEnumFromSchema = (className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | InterfaceArrayProperty => {
     const isDebug = configuration.isDebug();
@@ -99,7 +99,7 @@ const getProperty = (className: string, originalName: string, propertyName: stri
         let newOriginal = `${propertyName}${originalName.substring(0, 1).toUpperCase()}${originalName.substring(1)}`;
         const nestedPath = getNestedPath(path, 'enumeration');
 
-        const enumeration = getInterfaceOrEnumFromSchema(`I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
+        const enumeration = getInterfaceOrEnumFromSchema(`I${formatText(newOriginal, 'ANY', 'PascalCase')}`, newOriginal, schema, nestedPath) as EnumProperty;
         const rendered = enumeration.render();
         fs.appendFileSync(nodePath.join(nestedPath, `${rendered.fileName}.ts`), rendered.render)
 
@@ -116,7 +116,7 @@ const getProperty = (className: string, originalName: string, propertyName: stri
         let newOriginal = `${propertyName}${originalName.substring(0, 1).toUpperCase()}${originalName.substring(1)}`;
         const nestedPath = getNestedPath(path, 'interface');
 
-        const object = getInterfaceOrEnumFromSchema(`I${convertClassName(newOriginal)}`, newOriginal, schema, nestedPath) as EnumProperty;
+        const object = getInterfaceOrEnumFromSchema(`I${formatText(newOriginal, 'ANY', 'PascalCase')}`, newOriginal, schema, nestedPath) as EnumProperty;
         const rendered = object.render();
         fs.appendFileSync(nodePath.join(nestedPath, `${rendered.fileName}.ts`), rendered.render)
 

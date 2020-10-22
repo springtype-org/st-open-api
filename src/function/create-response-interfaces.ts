@@ -1,10 +1,10 @@
 import {ISchema} from "../interface/open-api-mine/i-schema";
 import {IFunctionResponse} from "../classes/object-property";
 import {getInterfaceOrEnumFromSchema} from "./get-property";
-import {convertClassName} from "./convert-class-name";
 import {appendFileSync} from "fs";
 import {join} from "path";
 import {configuration} from "./config";
+import {formatText} from "./formatText";
 
 export const createResponseInterfaces = (operationId: string, responses: any): IFunctionResponse & { import?: string } => {
     const reference = configuration.getReference();
@@ -26,7 +26,7 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
                 _import = importAndType.import;
             } else {
                 const schemaName = `${operationId}Response`
-                const className = 'I' + convertClassName(schemaName)
+                const className = 'I' + formatText(schemaName, 'ANY', 'PascalCase')
                 let interfaceOrEnumeration = getInterfaceOrEnumFromSchema(className, schemaName, responseSchema, folder.getInterfaceResponseFolder())
 
                 if (!!interfaceOrEnumeration) {
