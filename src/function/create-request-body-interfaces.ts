@@ -39,8 +39,7 @@ export const createRequestBodyInterfaces = (operationId: string, requestBody: an
                     });
                     const importAndType = reference.getImportAndTypeByRef(refKey, folder.getServiceFolder());
 
-                    //TODO: fix this on higher level
-                    responseType = requestBody.type === 'array' ? `Array<${importAndType.className}>` : importAndType.className;
+                    responseType = importAndType.className;
                     _import = importAndType.import;
                 }
             }
