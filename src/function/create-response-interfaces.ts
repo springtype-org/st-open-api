@@ -41,8 +41,7 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
                     });
                     const importAndType = reference.getImportAndTypeByRef(refKey, folder.getServiceFolder());
 
-                    //TODO: fix this on higher level in mustache template
-                    responseType = responseSchema.type === 'array' ? `Array<${importAndType.className}>` : importAndType.className;
+                    responseType = importAndType.className;
                     importAndType.className;
                     _import = importAndType.import;
                 }
