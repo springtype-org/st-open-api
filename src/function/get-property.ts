@@ -27,16 +27,25 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
         schema = schema.items;
         schema.type = 'object';
     }
-    if (schema.type === 'object' || schema.properties) {
+    if (schema.type === 'object' || schema.properties || schema.additionalProperties) {
         if (isDebug) {
             console.log(`Object Schema ${className} (array=${isArray})`, JSON.stringify(schema, null, 2))
         }
-        if (!!schema.properties) {
+
+        if (!!schema.properties || typeof schema.additionalProperties === 'object') {
             const interfaceProperty = new InterfaceProperty(className);
-            for (const propertyName of Object.keys(schema.properties)) {
+            for (const propertyName of Object.keys(schema.properties || {})) {
                 const property = schema.properties[propertyName];
                 const isRequired = (schema.required || []).indexOf(propertyName) > -1;
                 interfaceProperty.addProperty(getProperty(className, originalName, propertyName, isRequired, property, path))
+            }
+            if(typeof schema.additionalProperties === 'object' && !!schema.additionalProperties.type){
+               const isArray = schema.additionalProperties.type === 'array'
+                if(isArray) {
+                    interfaceProperty.addAdditionalProperties(schema.additionalProperties.items.type, true);
+                }else {
+                    interfaceProperty.addAdditionalProperties(schema.additionalProperties.type);
+                }
             }
             return interfaceProperty;
         }

@@ -65,8 +65,8 @@ export class ObjectProperty implements IPropertyClass {
     fileName: string;
     description: Array<string> = [];
     imports: UniqueArray<string> = new UniqueArray<string>();
-    functions: { [name: string]: { data: IMustacheFunction, imports: Array<string> } } = {};
-    properties: { [name: string]: { data: IMustacheProperty, import?: string } } = {}
+    functions: Array<{ data: IMustacheFunction, imports: Array<string>, name: string }> = [];
+    properties: Array<{ data: IMustacheProperty, import?: string, name: string }> = [];
 
     constructor(originalName: string) {
         this.convertName(originalName);
@@ -110,7 +110,7 @@ export class ObjectProperty implements IPropertyClass {
             isJsonResponse: !!fun.responseClass && fun.isJsonResponse,
             responseClass: fun.responseClass
         }
-        this.functions[fun.functionName] = {data: data, imports: fun.imports};
+        this.functions.push({data: data, imports: fun.imports, name: fun.functionName});
     }
 
     addProperty(prop: IProperty) {
@@ -122,14 +122,14 @@ export class ObjectProperty implements IPropertyClass {
             propertyName: prop.propertyName,
             isArray: prop.isArray,
         }
-        this.properties[data.propertyName] = {data: data, import: prop.import};
+        this.properties.push({data: data, import: prop.import, name: data.propertyName});
     }
 
     render(): IRenderResult {
-        const renderedFunctions = sortBy(Object.entries(this.functions), '1').map(e => e[1]).map(fun => {
+        const renderedFunctions = sortBy(this.functions, 'name').map(fun => {
             return {imports: fun.imports || [], render: renderMustache('function-class.mustache', fun.data)}
         });
-        const renderProperties = sortBy(Object.entries(this.properties), '0').map(e => e[1]).map((prop) => {
+        const renderProperties = sortBy(this.properties, 'name').map((prop) => {
             return {import: prop.import, render: renderMustache('property-class.mustache', prop.data)}
         });
 

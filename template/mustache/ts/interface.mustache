@@ -24,4 +24,12 @@ export interface {{interfaceName}} {
 {{/.}}
 {{/properties}}
 {{/isProperties}}
+
+{{#isAdditionalProperties}}
+{{#additionalProperties}}
+{{#.}}
+    [additionalProperty: string]: {{#isArray}}Array<{{/isArray}}{{type}}{{#isArray}}>{{/isArray}}
+{{/.}}
+{{/additionalProperties}}
+{{/isAdditionalProperties}}
 }

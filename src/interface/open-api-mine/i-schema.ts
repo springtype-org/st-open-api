@@ -5,6 +5,7 @@ export interface ISchema {
     items?: ISchemaItem;
     required?: Array<string>;
     properties?: { [name: string]: ISchema };
+    additionalProperties?:any;
     '$ref'?: string;
     enum?: Array<string | number>;
     allOf?: Array<{ '$ref': string } | any>

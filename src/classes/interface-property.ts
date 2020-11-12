@@ -14,7 +14,8 @@ export class InterfaceProperty implements IPropertyClass {
     description: Array<string> = [];
     imports: UniqueArray<string> = new UniqueArray<string>();
     properties: { [name: string]: { data: IMustacheProperty, import?: string } } = {}
-
+    //later put here an type
+    additionalProperties: Array<{ type: string; isArray: boolean }> = [];
     constructor(public originalName: string) {
         this.convertName(originalName);
     }
@@ -26,6 +27,10 @@ export class InterfaceProperty implements IPropertyClass {
 
     addImports(_import: string) {
         this.imports.push(_import);
+    }
+
+    addAdditionalProperties(type: string, isArray: boolean = false){
+        this.additionalProperties.push({type, isArray});
     }
 
     addProperty(prop: IProperty) {
@@ -58,7 +63,10 @@ export class InterfaceProperty implements IPropertyClass {
 
 
             isProperties: renderProperties.length > 0,
-            properties: renderProperties.map(rf => splitByLineBreak(rf.render))
+            properties: renderProperties.map(rf => splitByLineBreak(rf.render)),
+
+            isAdditionalProperties: this.additionalProperties.length > 0,
+            additionalProperties: this.additionalProperties
         }
         return {
             classEnumName: this.interfaceName,
@@ -79,6 +87,9 @@ interface IMustacheInterface {
 
     isProperties: boolean;
     properties: Array<Array<string>>;
+
+    isAdditionalProperties: boolean;
+    additionalProperties: Array<{ type: string, isArray: boolean }>;
 
 }
 
