@@ -1,7 +1,6 @@
 import {IPropertyClass, IRenderResult} from "../interface/i-property-class";
 import {renderMustache} from "../function/render-mustache";
 import {UniqueArray} from "./unique-array";
-import {sort} from "../function/sort";
 import {formatText} from "../function/formatText";
 
 
@@ -31,7 +30,7 @@ export class InterfaceArrayProperty implements IPropertyClass {
             refClassName: this.refClassName,
             isImport: this.imports.get().length > 0,
 
-            imports: sort(this.imports.get()),
+            imports: this.imports.get().sort(),
             isDescription: (this.description || '').length > 0,
             description: this.description,
         }

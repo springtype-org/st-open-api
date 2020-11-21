@@ -68,6 +68,7 @@ export const getServiceHttpFunction = (objProperty: ObjectProperty, httpMethod: 
                 }
                 parameterObject.properties[p.name] = p.schema;
             });
+
             const classToRender = getInterfaceOrEnumFromSchema(parameterClassName, functionName, parameterObject, folder.getInterfaceParameterFolder());
 
             const rendered = classToRender.render();

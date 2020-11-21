@@ -3,8 +3,6 @@ import {renderMustache} from "../function/render-mustache";
 import {UniqueArray} from "./unique-array";
 import {splitByLineBreak} from "../function/split-by-line-break";
 import {FolderManager} from "./folder-manager";
-import {sortBy} from "../function/sortBy";
-import {sort} from "../function/sort";
 import {formatText} from "../function/formatText";
 
 export const HTTP_FUNCTION_REF = (folder: FolderManager) => {
@@ -92,13 +90,13 @@ export class ObjectProperty implements IPropertyClass {
             description: splitByLineBreak(fun.description),
 
             isUrlParameter: (fun.urlParameter || []).length > 0,
-            urlParameter: fun.urlParameter || [],
+            urlParameter: (fun.urlParameter || []).sort(),
 
             isParameter: !!fun.parameterClassName,
             parameterClassName: fun.parameterClassName,
 
             isQueryParameter: (fun.queryParameters || []).length > 0,
-            queryParameters: fun.queryParameters || [],
+            queryParameters: (fun.queryParameters || []).sort(),
 
 
             isRequestBody: !!fun.requestBodyClass,
@@ -126,12 +124,16 @@ export class ObjectProperty implements IPropertyClass {
     }
 
     render(): IRenderResult {
-        const renderedFunctions = sortBy(this.functions, 'name').map(fun => {
-            return {imports: fun.imports || [], render: renderMustache('function-class.mustache', fun.data)}
-        });
-        const renderProperties = sortBy(this.properties, 'name').map((prop) => {
-            return {import: prop.import, render: renderMustache('property-class.mustache', prop.data)}
-        });
+        const renderedFunctions = this.functions.map(fun => {
+            return {
+                imports: fun.imports || [],
+                name: fun.name,
+                render: renderMustache('function-class.mustache', fun.data)
+            }
+        }).sort((a, b) => a.name.localeCompare(b.name));
+        const renderProperties = this.properties.map((prop) => {
+            return {import: prop.import, name: prop.name, render: renderMustache('property-class.mustache', prop.data)}
+        }).sort((a, b) => a.name.localeCompare(b.name));
 
         const isFunction = renderedFunctions.length > 0;
 
@@ -142,7 +144,7 @@ export class ObjectProperty implements IPropertyClass {
             className: this.className,
             isInterface: Object.values(this.functions).length == 0,
             isImport: this.imports.get().length > 0,
-            imports: sort(this.imports.get()),
+            imports: this.imports.get().sort(),
 
             isDescription: (this.description || '').length > 0,
             description: this.description,

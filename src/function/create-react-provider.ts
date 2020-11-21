@@ -20,12 +20,13 @@ export const createReactProvider = () => {
     const services = reference.getByGroup(GROUP_SERVICE)
 
     const viewData: IReactProviderMustache = {
-        services: services.map(v => ({propertyName: v.fileName, serviceClassName: v.className})),
+        services: services.sort((a,b)=> a.fileName.localeCompare(b.fileName))
+            .map(v => ({propertyName: v.fileName, serviceClassName: v.className})),
         isImport: services.length > 0,
         imports: services.map(v => reference.getImportAndTypeByRef(
             v.refKey,
             folder.getReactProviderFolder()).import
-        )
+        ).sort()
     }
 
     appendFileSync(

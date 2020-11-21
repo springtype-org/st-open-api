@@ -1,7 +1,6 @@
 import {IPropertyClass, IRenderResult} from "../interface/i-property-class";
 import {renderMustache} from "../function/render-mustache";
 import {configuration} from "../function/config";
-import {sortBy} from "../function/sortBy";
 import {formatText} from "../function/formatText";
 
 
@@ -32,10 +31,11 @@ export class EnumProperty implements IPropertyClass {
     render(): IRenderResult {
         const viewData: IMustacheEnum = {
             enumName: this.enumName,
-            values: sortBy(this.values, 'value').map(((value, index, arr) => ({
-                ...value,
-                last: index === arr.length - 1
-            })))
+            values: this.values.sort((a, b) => a.value.localeCompare(b.value))
+                .map(((value, index, arr) => ({
+                    ...value,
+                    last: index === arr.length - 1
+                })))
         }
         return {
             classEnumName: this.enumName,

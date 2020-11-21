@@ -2,8 +2,6 @@ import {IPropertyClass, IRenderResult} from "../interface/i-property-class";
 import {renderMustache} from "../function/render-mustache";
 import {UniqueArray} from "./unique-array";
 import {splitByLineBreak} from "../function/split-by-line-break";
-import {sortBy} from "../function/sortBy";
-import {sort} from "../function/sort";
 import {formatText} from "../function/formatText";
 
 
@@ -16,6 +14,7 @@ export class InterfaceProperty implements IPropertyClass {
     properties: { [name: string]: { data: IMustacheProperty, import?: string } } = {}
     //later put here an type
     additionalProperties: Array<{ type: string; isArray: boolean }> = [];
+
     constructor(public originalName: string) {
         this.convertName(originalName);
     }
@@ -29,7 +28,7 @@ export class InterfaceProperty implements IPropertyClass {
         this.imports.push(_import);
     }
 
-    addAdditionalProperties(type: string, isArray: boolean = false){
+    addAdditionalProperties(type: string, isArray: boolean = false) {
         this.additionalProperties.push({type, isArray});
     }
 
@@ -46,17 +45,22 @@ export class InterfaceProperty implements IPropertyClass {
     }
 
     render(): IRenderResult {
-        const renderProperties = sortBy(Object.entries(this.properties), '0').map(e => e[1]).map((prop) => {
-            return {import: prop.import, render: renderMustache('property-class.mustache', prop.data)}
-        });
 
-        renderProperties.forEach(property => this.imports.push(property.import));
+        const renderProperties = Object.values(this.properties).map((prop) => {
+            return {
+                import: prop.import,
+                name: prop.data.propertyName,
+                render: renderMustache('property-class.mustache', prop.data)
+            }
+        }).sort((a, b) => a.name.localeCompare(b.name));
+
+        renderProperties.filter(p => !!p.import).forEach(property => this.imports.push(property.import));
 
         const viewData: IMustacheInterface = {
 
             interfaceName: this.interfaceName,
             isImport: this.imports.get().length > 0,
-            imports: sort(this.imports.get()),
+            imports: this.imports.get().sort(),
 
             isDescription: (this.description || '').length > 0,
             description: this.description,
@@ -68,6 +72,7 @@ export class InterfaceProperty implements IPropertyClass {
             isAdditionalProperties: this.additionalProperties.length > 0,
             additionalProperties: this.additionalProperties
         }
+
         return {
             classEnumName: this.interfaceName,
             fileName: this.fileName,
