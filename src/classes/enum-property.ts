@@ -31,7 +31,8 @@ export class EnumProperty implements IPropertyClass {
     render(): IRenderResult {
         const viewData: IMustacheEnum = {
             enumName: this.enumName,
-            values: this.values.sort((a, b) => a.value.localeCompare(b.value))
+            // DO NOT SORT ARRAYS
+            values: this.values
                 .map(((value, index, arr) => ({
                     ...value,
                     last: index === arr.length - 1
