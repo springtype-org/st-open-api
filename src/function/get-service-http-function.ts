@@ -17,6 +17,7 @@ import {
 import {kebabCaseToCamel} from "./kebab-case-to-camel";
 import {firstCharacterLower} from "./first-character-lower";
 import {configuration} from "./config";
+import {formatText} from "./formatText";
 
 export const getServiceHttpFunction = (objProperty: ObjectProperty, httpMethod: string, path: string, operation: IOperation) => {
     const reference = configuration.getReference();
@@ -107,10 +108,18 @@ const getOperationId = (httpMethod: string, path: string, operationId: string | 
     }
     const newPath = path.split('/').filter(p => !!p)
         .map(p => {
-            if (p.startsWith('{') && p.endsWith('}')) {
-                return `By${p.substring(0, 1).toUpperCase()}${p.substring(2)}`
+            if (p.startsWith('{')) {
+                return 'By'+p.substr(1,1).toUpperCase()+ p.substr(2)
             }
-            return p.substring(0, 1).toUpperCase() + p.substring(1);
+            return p
+        }).map(p => {
+            if (p.endsWith('}')) {
+                return p.substr(0, p.length - 1)
+            }
+            return p
+        })
+        .map(p => {
+            return formatText(p, 'ANY', 'PascalCase');
         }).join('');
-    return `${httpMethod.toUpperCase()}${newPath}`
+    return `${httpMethod.toLowerCase()}${newPath}`
 }
