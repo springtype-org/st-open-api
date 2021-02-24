@@ -22,7 +22,7 @@ export const getQueryParameters = (parameters: Array<IQueryParam> = []): string 
 };
 
 const getQueryParameter = (paramName: string, paramValue: string) => {
-    return `${encodeURI(paramName)}=${encodeURI(paramValue)}`;
+    return `${encodeURIComponent(paramName)}=${encodeURIComponent(paramValue)}`;
 };
 
 export interface IQueryParam {

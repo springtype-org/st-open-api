@@ -9,7 +9,7 @@ import {ErrorHandler, RequestInterceptor} from "../interface/i-$-open-api";
 const buildUrl = (url: string, urlParameter: IParameter = {}): string => {
     let resultUrl = url;
     for (const key of Object.keys(urlParameter)) {
-        resultUrl = resultUrl.replace(`{${key}}`, encodeURI(urlParameter[key]));
+        resultUrl = resultUrl.replace(`{${key}}`, encodeURIComponent(urlParameter[key]));
     }
     return resultUrl;
 };
