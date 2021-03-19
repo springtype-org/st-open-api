@@ -5,16 +5,18 @@
 {{/description}}
  */
 {{/isDescription}}
-{{functionName}} = async ({{#isPathParameters}}pathParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}},{{/isRequestBody}} interceptor: RequestInterceptor{{^forceInterceptor}} = openApi.requestInterceptor{{/forceInterceptor}}, errorHandler: ErrorHandler = openApi.errorHandler): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
+{{functionName}} = async ({{#isPathParameters}}pathParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}interceptor: RequestInterceptor{{^forceInterceptor}} = openApi.requestInterceptor{{/forceInterceptor}}, errorHandler: ErrorHandler = openApi.errorHandler): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
 {{#isQueryParameters}}
-    const queryParams = [
+
+    const queryParam = [
     {{#queryParameters}}
         {name: '{{.}}', value: queryParameter.{{.}}},
     {{/queryParameters}}
     ];
 {{/isQueryParameters}}
 {{#isPathParameters}}
-    const pathParams = {
+
+    const pathParam = {
     {{#pathParameters}}
         '{{.}}': pathParameter.{{.}},
     {{/pathParameters}}
@@ -25,10 +27,10 @@
             method: '{{httpMethod}}',
             url: `${openApi.endpointUrl}{{{originalPath}}}`,
 {{#isQueryParameters}}
-            queryParameter: queryParams,
+            queryParameter: queryParam,
 {{/isQueryParameters}}
 {{#isPathParameters}}
-            urlParameter: pathParams,
+            urlParameter: pathParam,
 {{/isPathParameters}}
             header: {
 {{#isJsonResponse}}
