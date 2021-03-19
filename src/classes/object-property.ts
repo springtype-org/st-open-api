@@ -89,15 +89,17 @@ export class ObjectProperty implements IPropertyClass {
             isDescription: !!fun.description,
             description: splitByLineBreak(fun.description),
 
-            isUrlParameter: (fun.urlParameter || []).length > 0,
-            urlParameter: (fun.urlParameter || []).sort(),
+            isPathParameters: !!fun.pathParameters,
+            pathParameters: fun.pathParameters?.params,
+            pathParameterClassName: fun.pathParameters?.className,
 
-            isParameter: !!fun.parameterClassName,
-            parameterClassName: fun.parameterClassName,
+            isQueryParameters: !!fun.queryParameters,
+            queryParameters: fun.queryParameters?.params,
+            queryParameterClassName: fun.queryParameters?.className,
 
-            isQueryParameter: (fun.queryParameters || []).length > 0,
-            queryParameters: (fun.queryParameters || []).sort(),
-
+            isHeaderParameters: !!fun.headerParameters,
+            headerParameters: fun.headerParameters?.params,
+            headerParameterClassName: fun.headerParameters?.className,
 
             isRequestBody: !!fun.requestBodyClass,
             isRequestBodyJson: !!fun.requestBodyClass && fun.isRequestBodyJson,
@@ -187,11 +189,9 @@ interface IMustacheFunction {
     httpMethod: string;
     originalPath: string;
 
-    isUrlParameter: boolean;
-    urlParameter: Array<string>;
-
-    isParameter: boolean;
-    parameterClassName: string;
+    isPathParameters: boolean;
+    pathParameterClassName?: string;
+    pathParameters?: Array<string>;
 
     isJsonResponse: boolean;
     isRequestBodyJson: boolean;
@@ -199,8 +199,13 @@ interface IMustacheFunction {
     isDescription: boolean;
     description?: Array<string>;
 
-    isQueryParameter: boolean;
-    queryParameters: Array<string>;
+    isQueryParameters: boolean;
+    queryParameterClassName?: string;
+    queryParameters?: Array<string>;
+
+    isHeaderParameters: boolean;
+    headerParameterClassName?: string;
+    headerParameters?: Array<string>;
 
     isRequestBody: boolean;
     requestBodyClass?: string;
@@ -216,13 +221,21 @@ export interface IFunction extends IFunctionResponse, IFunctionRequestBody {
 
     httpMethod: string;
     originalPath: string;
-    urlParameter: Array<string>;
+
+    pathParameters?: {
+        className: string;
+        params: Array<string>
+    };
+    headerParameters?: {
+        className: string;
+        params: Array<string>
+    };
+    queryParameters?: {
+        className: string;
+        params: Array<string>
+    };
 
     description: string;
-
-    parameterClassName?: string;
-
-    queryParameters: Array<string>;
     forceInterceptor: boolean;
 }
 

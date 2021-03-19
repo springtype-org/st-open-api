@@ -5,31 +5,31 @@
 {{/description}}
  */
 {{/isDescription}}
-{{functionName}} = async ({{#isParameter}}parameter: {{parameterClassName}}, {{/isParameter}}{{#isRequestBody}}body: {{{requestBodyClass}}},{{/isRequestBody}} interceptor: RequestInterceptor{{^forceInterceptor}} = openApi.requestInterceptor{{/forceInterceptor}}, errorHandler: ErrorHandler = openApi.errorHandler): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
-{{#isQueryParameter}}
+{{functionName}} = async ({{#isPathParameters}}pathParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}},{{/isRequestBody}} interceptor: RequestInterceptor{{^forceInterceptor}} = openApi.requestInterceptor{{/forceInterceptor}}, errorHandler: ErrorHandler = openApi.errorHandler): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
+{{#isQueryParameters}}
     const queryParams = [
     {{#queryParameters}}
-        {name: '{{.}}', value: parameter.{{.}}},
+        {name: '{{.}}', value: queryParameter.{{.}}},
     {{/queryParameters}}
     ];
-{{/isQueryParameter}}
-{{#isUrlParameter}}
+{{/isQueryParameters}}
+{{#isPathParameters}}
     const pathParams = {
-    {{#urlParameter}}
-        '{{.}}': parameter.{{.}},
-    {{/urlParameter}}
+    {{#pathParameters}}
+        '{{.}}': pathParameter.{{.}},
+    {{/pathParameters}}
     };
-{{/isUrlParameter}}
+{{/isPathParameters}}
 
     {{#isResponse}}const response = {{/isResponse}}await http({
             method: '{{httpMethod}}',
             url: `${openApi.endpointUrl}{{{originalPath}}}`,
-{{#isQueryParameter}}
+{{#isQueryParameters}}
             queryParameter: queryParams,
-{{/isQueryParameter}}
-{{#isUrlParameter}}
+{{/isQueryParameters}}
+{{#isPathParameters}}
             urlParameter: pathParams,
-{{/isUrlParameter}}
+{{/isPathParameters}}
             header: {
 {{#isJsonResponse}}
                 Accept: 'application/json',
@@ -37,6 +37,11 @@
 {{#isRequestBodyJson}}
                 'Content-Type': 'application/json',
 {{/isRequestBodyJson}}
+{{#isHeaderParameters}}
+{{#headerParameters}}
+                '{{.}}': headerParameter.{{.}},
+{{/headerParameters}}
+{{/isHeaderParameters}}
             },
 {{#isRequestBody}}
             body: JSON.stringify(body),

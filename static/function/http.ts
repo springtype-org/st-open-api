@@ -28,7 +28,7 @@ export interface IError {
 }
 
 export interface IParameter {
-    [name: string]: string
+    [name: string]: string | number | boolean
 }
 
 /**
@@ -59,7 +59,7 @@ export const http = async (request: IRequest,
         // 2.1 Set header
         if (request.header) {
             for (const headerName of Object.keys(request.header)) {
-                xhr.setRequestHeader(headerName, request.header[headerName]);
+                xhr.setRequestHeader(headerName, `${request.header[headerName]}`);
             }
         }
 
