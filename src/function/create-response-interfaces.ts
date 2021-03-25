@@ -11,12 +11,16 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
     const folder = configuration.getFolderManager();
 
     const success = responses['200'] || responses['201'];
+
     // TODO: Refactor me !!!
     if (!!success && !!success.content) {
         const successContent = success.content;
         let isJson = false;
         let responseType = 'string';
         let _import;
+
+        const isPlaintext = !!successContent['text/plain'];
+
         if (!!successContent['application/json']) {
             isJson = true;
             const responseSchema = success.content['application/json'].schema as ISchema;
@@ -50,11 +54,13 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
         return {
             responseClass: responseType,
             isJsonResponse: isJson,
+            isPlaintextResponse: isPlaintext,
             import: _import,
         }
     } else {
         return {
-            isJsonResponse: false
+            isJsonResponse: false,
+            isPlaintextResponse: true,
         }
     }
 }

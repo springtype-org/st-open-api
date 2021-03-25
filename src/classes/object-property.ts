@@ -108,6 +108,7 @@ export class ObjectProperty implements IPropertyClass {
             forceInterceptor: fun.forceInterceptor,
             isResponse: !!fun.responseClass,
             isJsonResponse: !!fun.responseClass && fun.isJsonResponse,
+            isPlaintextResponse: fun.isPlaintextResponse,
             responseClass: fun.responseClass
         }
         this.functions.push({data: data, imports: fun.imports, name: fun.functionName});
@@ -194,6 +195,7 @@ interface IMustacheFunction {
     pathParameters?: Array<string>;
 
     isJsonResponse: boolean;
+    isPlaintextResponse: boolean;
     isRequestBodyJson: boolean;
 
     isDescription: boolean;
@@ -241,6 +243,7 @@ export interface IFunction extends IFunctionResponse, IFunctionRequestBody {
 
 export interface IFunctionResponse {
     isJsonResponse: boolean;
+    isPlaintextResponse: boolean;
     responseClass?: string;
 }
 

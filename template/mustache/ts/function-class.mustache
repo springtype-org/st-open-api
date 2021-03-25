@@ -36,6 +36,9 @@
 {{#isJsonResponse}}
                 Accept: 'application/json',
 {{/isJsonResponse}}
+{{#isPlaintextResponse}}
+                Accept: 'text/plain',
+{{/isPlaintextResponse}}
 {{#isRequestBodyJson}}
                 'Content-Type': 'application/json',
 {{/isRequestBodyJson}}
@@ -55,4 +58,7 @@
 {{#isJsonResponse}}
     return JSON.parse(response);
 {{/isJsonResponse}}
+{{#isPlaintextResponse}}
+    return response;
+{{/isPlaintextResponse}}
 };
