@@ -60,7 +60,7 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
     } else {
         return {
             isJsonResponse: false,
-            isPlaintextResponse: true,
+            isPlaintextResponse: false,
         }
     }
 }

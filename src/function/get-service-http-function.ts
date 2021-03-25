@@ -37,6 +37,11 @@ const createParameter = (
         properties: {}
     }
     Object.values(parameters).forEach(p => {
+
+        // HTTP authorization header shall be added via interceptor,
+        // not be necessary to be provided for every single request
+        if (p.name === 'authorization' && type === 'header') return;
+
         if (p.required) {
             parameterObject.required.push(p.name);
         }
