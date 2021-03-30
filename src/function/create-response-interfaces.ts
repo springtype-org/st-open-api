@@ -16,10 +16,14 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
     if (!!success && !!success.content) {
         const successContent = success.content;
         let isJson = false;
-        let responseType = 'string';
+        let responseType;
         let _import;
 
         const isPlaintext = !!successContent['text/plain'];
+        if(isPlaintext){
+            responseType = "string";
+        }
+        const isDownload = !!successContent['application/octet-stream'];
 
         if (!!successContent['application/json']) {
             isJson = true;
@@ -55,12 +59,14 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
             responseClass: responseType,
             isJsonResponse: isJson,
             isPlaintextResponse: isPlaintext,
+            isDownloadResponse: isDownload,
             import: _import,
         }
     } else {
         return {
             isJsonResponse: false,
             isPlaintextResponse: false,
+            isDownloadResponse: false,
         }
     }
 }

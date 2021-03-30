@@ -109,6 +109,7 @@ export class ObjectProperty implements IPropertyClass {
             isResponse: !!fun.responseClass,
             isJsonResponse: !!fun.responseClass && fun.isJsonResponse,
             isPlaintextResponse: fun.isPlaintextResponse,
+            isDownloadResponse: fun.isDownloadResponse,
             responseClass: fun.responseClass
         }
         this.functions.push({data: data, imports: fun.imports, name: fun.functionName});
@@ -196,6 +197,7 @@ interface IMustacheFunction {
 
     isJsonResponse: boolean;
     isPlaintextResponse: boolean;
+    isDownloadResponse: boolean;
     isRequestBodyJson: boolean;
 
     isDescription: boolean;
@@ -244,6 +246,7 @@ export interface IFunction extends IFunctionResponse, IFunctionRequestBody {
 export interface IFunctionResponse {
     isJsonResponse: boolean;
     isPlaintextResponse: boolean;
+    isDownloadResponse: boolean;
     responseClass?: string;
 }
 

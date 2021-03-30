@@ -36,6 +36,9 @@
 {{#isJsonResponse}}
                 Accept: 'application/json',
 {{/isJsonResponse}}
+{{#isDownloadResponse}}
+                Accept: 'application/octet-stream',
+{{/isDownloadResponse}}
 {{#isPlaintextResponse}}
                 Accept: 'text/plain',
 {{/isPlaintextResponse}}
