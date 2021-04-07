@@ -5,7 +5,7 @@
 {{/description}}
  */
 {{/isDescription}}
-{{functionName}} = async ({{#isPathParameters}}pathParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}interceptor: RequestInterceptor{{^forceInterceptor}} = openApi.requestInterceptor{{/forceInterceptor}}, errorHandler: ErrorHandler = openApi.errorHandler): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
+{{functionName}} = async ({{#isPathParameters}}pathParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}options?: Partial<HttpOption>): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
 {{#isQueryParameters}}
 
     const queryParam = [
@@ -23,7 +23,7 @@
     };
 {{/isPathParameters}}
 
-    {{#isResponse}}const response = {{/isResponse}}await http({
+    {{#isResponse}}return {{/isResponse}}await http{{#isResponse}}<{{{responseClass}}}>{{/isResponse}}({
             method: '{{httpMethod}}',
             url: `${openApi.endpointUrl}{{{originalPath}}}`,
 {{#isQueryParameters}}
@@ -51,17 +51,27 @@
 {{/headerParameters}}
 {{/isHeaderParameters}}
             },
-{{#isRequestBody}}
+{{#isRequestBodyJson}}
             body: JSON.stringify(body),
-{{/isRequestBody}}
+{{/isRequestBodyJson}}
+{{#isRequestBodyUpload}}
+            body: convertRequestToFormData(body),
+{{/isRequestBodyUpload}}
         },
-        interceptor,
-        errorHandler
-    );
+        options?.interceptor,
+        options?.errorHandler,
+        {
 {{#isJsonResponse}}
-    return JSON.parse(response);
+            load: onJsonLoad,
 {{/isJsonResponse}}
 {{#isPlaintextResponse}}
-    return response;
+            load: onPlainTextLoad,
 {{/isPlaintextResponse}}
+{{#isDownloadResponse}}
+            beforeSend: onBinaryBeforeSend,
+            load: onBinaryLoad,
+{{/isDownloadResponse}}
+            ...options?.eventListener,
+        }
+    );
 };

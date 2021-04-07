@@ -19,7 +19,7 @@
       "dom",
       "es2017"
     ],
-    "types": ["node"]
+    "types": ["node","jest"]
   },
   "include": [
     "src"
