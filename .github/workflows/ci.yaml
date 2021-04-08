@@ -11,12 +11,15 @@ jobs:
           node-version: 10
       - run: yarn
       - run: yarn build
+      - name: 'install peer dependencies'
+        run: cd dist && yarn
+      - name: tar files
+        run: tar -cvf dist.tar dist
       - name: Add artifact to github
         uses: actions/upload-artifact@v2
         with:
           name: artifact
-          path: dist
-
+          path: dist.tar
   npm-publish:
     needs: [build]
     name: npm-publish
@@ -32,7 +35,8 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: artifact
-          path: dist
+      - name: untar files
+        run: tar -xvf dist.tar
       - name: Publish if version in package.json change
         uses: springtype-org/github-action-npm-publish@master
         with:

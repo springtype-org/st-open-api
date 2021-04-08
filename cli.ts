@@ -141,8 +141,6 @@ export class CLI {
                 || sortedInputs.longCommands.map(v => v[0]).indexOf('-'+flag.longCmd)> -1
             , [])
             console.log(selectedFlags);
-
-
         }
     }
 }
