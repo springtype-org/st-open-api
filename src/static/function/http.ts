@@ -83,8 +83,8 @@ const buildUrl = (url: string, urlParameter: Parameter = {}): string => {
 
 export const onError = (errorHandler: ErrorHandler) => (evt: ProgressEvent<ExtXMLHttpRequest>) => {
   const xhr = evt.target as ExtXMLHttpRequest;
-
-  const errorResp = errorHandler({ status: xhr.status, message: xhr.responseText });
+  const errorMessage = xhr.responseType === 'text' || xhr.responseType === '';
+  const errorResp = errorHandler({ status: xhr.status, message: errorMessage ? xhr.responseText : '' });
   if (errorResp) {
     xhr.reject(errorResp);
   }
