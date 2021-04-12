@@ -1,8 +1,11 @@
 import { resolve } from 'path';
 import { readFileSync } from 'fs';
+import { getPackageInfo } from './get-package-info';
 
 export const printBanner = () => {
-  console.log('__dirname', __dirname);
+  const info = getPackageInfo();
   const banner = resolve(__dirname, '../banner.txt');
   console.log(readFileSync(banner, 'utf-8'));
+  console.log(`--- Version: ${info.version}`);
+  console.log();
 };
