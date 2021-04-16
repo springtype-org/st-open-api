@@ -1,6 +1,6 @@
 import { isUri } from 'valid-url';
 import { readFileSync, writeFileSync } from 'fs';
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
 import { join } from 'path';
 import { download } from './download';
 

@@ -43,8 +43,9 @@
   "dependencies": {
     "ajv": "^6.12.2",
     "commander": "^5.1.0",
+    "formdata-node": "^3.1.0",
     "mustache": "^4.0.1",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "st-rm-rf": "^2.0.0-beta.1",
     "typescript": "^4.2.3",
     "valid-url": "^1.0.9"

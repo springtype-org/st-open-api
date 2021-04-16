@@ -10,13 +10,13 @@
     "rootDirs": [
       "src"
     ],
+    "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false,
     "downlevelIteration":true,
     "sourceMap": true,
     "lib": [
-      "dom",
       "es2017"
     ],
     "types": ["node","jest"]
