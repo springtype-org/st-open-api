@@ -24,7 +24,7 @@ const getQueryParameter = (paramName: string, paramValue: string) =>
 export const getQueryParameters = (parameters: Array<QueryParam> = []): string => {
   const keyValue: Array<string> = [];
   for (const parameter of parameters) {
-    if (parameter.value) {
+    if (typeof parameter.value !== 'undefined') {
       if (Array.isArray(parameter.value)) {
         parameter.value.forEach((v) => keyValue.push(getQueryParameter(parameter.name, v)));
       } else {
@@ -135,20 +135,25 @@ export const onBinaryLoad = (evt: ProgressEvent<ExtXMLHttpRequest>) => {
     const dispositionMap = getDispositionMap(contentDisposition);
 
     const blob = new Blob([xhr.response], { type: contentType });
+    const fileName = dispositionMap.filename || ''
 
-    const a = document.createElement('a');
-    a.setAttribute('style', 'display: none');
+    if ((window as any).navigator && (window as any).navigator.msSaveOrOpenBlob) {
+      window.navigator.msSaveOrOpenBlob(blob, fileName);
+    } else {
 
-    const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.setAttribute('style', 'display: none');
 
-    a.href = url;
-    a.download = dispositionMap.filename || '';
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
+      const url = window.URL.createObjectURL(blob);
 
-    xhr.resolve();
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+    }
+
   } else if (xhr.eventListener.error) {
     xhr.eventListener.error(evt);
   }
