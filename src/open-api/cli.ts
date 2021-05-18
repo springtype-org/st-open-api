@@ -9,7 +9,7 @@ import { printBanner } from './function/printBanner';
 
 (async () => {
   // if nothing added get help
-  if (process.argv.length == 2) {
+  if (process.argv.length === 2) {
     process.argv.push('-h');
   }
 
