@@ -109,6 +109,7 @@ export const onLoad = (evt: ProgressEvent<ExtXMLHttpRequest>) => {
     xhr.resolve();
   } else if (xhr.eventListener.error) {
     xhr.eventListener.error(evt);
+    xhr.reject();
   }
 };
 
@@ -119,6 +120,7 @@ export const onJsonLoad = (evt: ProgressEvent<ExtXMLHttpRequest>) => {
     xhr.resolve(JSON.parse(xhr.responseText));
   } else if (xhr.eventListener.error) {
     xhr.eventListener.error(evt);
+    xhr.reject();
   }
 };
 
@@ -135,12 +137,11 @@ export const onBinaryLoad = (evt: ProgressEvent<ExtXMLHttpRequest>) => {
     const dispositionMap = getDispositionMap(contentDisposition);
 
     const blob = new Blob([xhr.response], { type: contentType });
-    const fileName = dispositionMap.filename || ''
+    const fileName = dispositionMap.filename || '';
 
     if ((window as any).navigator && (window as any).navigator.msSaveOrOpenBlob) {
       window.navigator.msSaveOrOpenBlob(blob, fileName);
     } else {
-
       const a = document.createElement('a');
       a.setAttribute('style', 'display: none');
 
@@ -153,9 +154,10 @@ export const onBinaryLoad = (evt: ProgressEvent<ExtXMLHttpRequest>) => {
       window.URL.revokeObjectURL(url);
       a.remove();
     }
-
+    xhr.resolve();
   } else if (xhr.eventListener.error) {
     xhr.eventListener.error(evt);
+    xhr.reject();
   }
 };
 
