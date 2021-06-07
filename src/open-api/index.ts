@@ -15,7 +15,7 @@ declare module globalThis {
   let File: typeof NodeFile;
   let Blob: typeof NodeBlob;
 }
-∆
+
 if (!globalThis.fetch) {
   globalThis.fetch = nodeFetch;
 }

@@ -57,6 +57,13 @@ export const getInterfaceOrEnumFromSchema = (
           interfaceProperty.addAdditionalProperties(schema.additionalProperties.type);
         }
       }
+      if (typeof schema.additionalProperties === 'object' && !!schema.additionalProperties.$ref) {
+        const additionalPropertiesImport = configuration
+          .getReference()
+          .getImportAndTypeByRef(schema.additionalProperties.$ref, path);
+        interfaceProperty.addImports(additionalPropertiesImport);
+        interfaceProperty.addAdditionalProperties(additionalPropertiesImport.className);
+      }
       return interfaceProperty;
     }
     // getReference(schema);
