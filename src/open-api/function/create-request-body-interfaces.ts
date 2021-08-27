@@ -10,6 +10,7 @@ import { IRefResult } from '../classes/ref';
 export const createRequestBodyInterfaces = (
   operationId: string,
   requestBody: any,
+  serviceFolder: string,
 ): IFunctionRequestBody & { import?: IRefResult } => {
   const reference = configuration.getReference();
   const folder = configuration.getFolderManager();
@@ -25,7 +26,7 @@ export const createRequestBodyInterfaces = (
       const newRequestBody = content['application/json'] || content['multipart/form-data'];
       const jsonRequestBody = newRequestBody.schema as ISchema;
       if (jsonRequestBody.$ref) {
-        const importAndType = reference.getImportAndTypeByRef(jsonRequestBody.$ref, folder.getServiceFolder());
+        const importAndType = reference.getImportAndTypeByRef(jsonRequestBody.$ref, serviceFolder);
         responseType = importAndType.className;
         refImport = importAndType;
       } else {
@@ -50,7 +51,7 @@ export const createRequestBodyInterfaces = (
             className,
             folderPath: folder.getInterfaceRequestFolder(),
           });
-          const importAndType = reference.getImportAndTypeByRef(refKey, folder.getServiceFolder());
+          const importAndType = reference.getImportAndTypeByRef(refKey, serviceFolder);
 
           responseType = importAndType.className;
           refImport = importAndType;

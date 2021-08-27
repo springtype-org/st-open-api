@@ -28,8 +28,12 @@ export class FolderManager {
     return this.outputFolder;
   }
 
-  getServiceFolder() {
-    return mkdir(join(this.outputFolder, 'service'));
+  getAuthServiceFolder() {
+    return mkdir(join(this.outputFolder, 'service', 'auth'));
+  }
+
+  getNoAuthServiceFolder() {
+    return mkdir(join(this.outputFolder, 'service', 'no-auth'));
   }
 
   getFunctionFolder() {

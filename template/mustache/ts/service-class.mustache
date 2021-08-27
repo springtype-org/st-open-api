@@ -16,6 +16,8 @@
 {{/isDescription}}
 export class {{className}} {
 
+    constructor(private config: OpenApi) {}
+
 {{#isProperties}}
 {{#properties}}
 {{#.}}

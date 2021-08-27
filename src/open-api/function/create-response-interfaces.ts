@@ -5,11 +5,12 @@ import { IFunctionResponse } from '../classes/object-property';
 import { getInterfaceOrEnumFromSchema } from './get-property';
 import { configuration } from './config';
 import { formatText } from './formatText';
-import {IRefResult} from "../classes/ref";
+import { IRefResult } from '../classes/ref';
 
 export const createResponseInterfaces = (
   operationId: string,
   responses: any,
+  serviceFolder: string,
 ): IFunctionResponse & { import?: IRefResult } => {
   const reference = configuration.getReference();
   const folder = configuration.getFolderManager();
@@ -33,7 +34,7 @@ export const createResponseInterfaces = (
       isJson = true;
       const responseSchema = success.content['application/json'].schema as ISchema;
       if (responseSchema.$ref) {
-        const importAndType = reference.getImportAndTypeByRef(responseSchema.$ref, folder.getServiceFolder());
+        const importAndType = reference.getImportAndTypeByRef(responseSchema.$ref, serviceFolder);
         responseType = importAndType.className;
         _import = importAndType;
       } else {
@@ -56,7 +57,7 @@ export const createResponseInterfaces = (
             className,
             folderPath: folder.getInterfaceResponseFolder(),
           });
-          const importAndType = reference.getImportAndTypeByRef(refKey, folder.getServiceFolder());
+          const importAndType = reference.getImportAndTypeByRef(refKey, serviceFolder);
 
           responseType = importAndType.className;
           importAndType.className;

@@ -1,6 +1,7 @@
 import { relative, sep } from 'path';
 
 export const GROUP_SERVICE = 'SERVICE';
+export const GROUP_NO_AUTH_SERVICE = 'SERVICE_NO_AUTH';
 
 export class Ref {
   refs: { [ref: string]: IRef } = {};
@@ -25,21 +26,15 @@ export class Ref {
     };
   };
 
-  addReference = (refKey: string, data: IRef, group: string | undefined = undefined) => {
-    const ref = {
-      fileName: data.fileName,
-      className: data.className,
-      folderPath: data.folderPath,
-    };
-
-    this.refs[refKey] = ref;
+  addReference = (refKey: string, refData: IRef, group: string | undefined = undefined) => {
+    this.refs[refKey] = refData;
     if (group) {
       let groupArr = this.groups[group];
       if (!groupArr) {
         groupArr = [];
         this.groups[group] = groupArr;
       }
-      groupArr.push({ ...ref, refKey });
+      groupArr.push({ ...refData, refKey });
     }
   };
 
@@ -52,6 +47,7 @@ export interface IRef {
   fileName: string;
   className: string;
   folderPath: string;
+  definition?: any;
 }
 
 export interface IRefResult {

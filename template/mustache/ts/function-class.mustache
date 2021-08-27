@@ -25,7 +25,7 @@
 
     {{#isResponse}}return {{/isResponse}}await http{{#isResponse}}<{{{responseClass}}}>{{/isResponse}}({
             method: '{{httpMethod}}',
-            url: `${openApi.endpointUrl}{{{originalPath}}}`,
+            url: `${this.config.endpointUrl}{{{originalPath}}}`,
 {{#isQueryParameters}}
             queryParameter: queryParam,
 {{/isQueryParameters}}
@@ -58,8 +58,8 @@
             body: convertRequestToFormData(body),
 {{/isRequestBodyUpload}}
         },
-        options?.interceptor,
-        options?.errorHandler,
+        options?.interceptor || this.config.requestInterceptor,
+        options?.errorHandler || this.config.errorHandler,
         {
 {{#isJsonResponse}}
             load: onJsonLoad,

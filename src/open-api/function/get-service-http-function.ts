@@ -16,7 +16,7 @@ import {
   HTTP_OPTION_INTERFACE_REF,
   IFunction,
   ObjectProperty,
-  OPEN_API_FUNCTION_REF,
+  OPEN_API_INTERFACE_REF,
 } from '../classes/object-property';
 import { kebabCaseToCamel } from './kebab-case-to-camel';
 import { firstCharacterLower } from './first-character-lower';
@@ -29,6 +29,7 @@ const createParameter = (
   type: 'query' | 'header' | 'path' | 'cookie',
   functionName: string,
   parameters: { [parameterName: string]: IParameter },
+  serviceFolder: string,
 ): IRefResult => {
   const parameterClassName = `I${functionName.substring(0, 1).toUpperCase()}${functionName.substring(
     1,
@@ -70,7 +71,7 @@ const createParameter = (
     folderPath: folder.getInterfaceParameterFolder(),
   });
 
-  return reference.getImportAndTypeByRef(schemaName, folder.getServiceFolder());
+  return reference.getImportAndTypeByRef(schemaName, serviceFolder);
 };
 
 const getOperationId = (httpMethod: string, path: string, operationId: string | undefined): string => {
@@ -98,18 +99,23 @@ const getOperationId = (httpMethod: string, path: string, operationId: string | 
 };
 
 export const getServiceHttpFunction = (
-  objProperty: ObjectProperty,
+  objPropertyAuth: ObjectProperty,
+  objPropertyNoAuth: ObjectProperty,
   httpMethod: string,
   path: string,
   operation: IOperation,
 ) => {
-  const reference = configuration.getReference();
-  const folder = configuration.getFolderManager();
-
   if (operation) {
+    const reference = configuration.getReference();
+    const folder = configuration.getFolderManager();
+
+    const hasSecurity = operation.security;
+    const objProperty = hasSecurity ? objPropertyAuth : objPropertyNoAuth;
+    const serviceFolder = hasSecurity ? folder.getAuthServiceFolder() : folder.getNoAuthServiceFolder();
+
     const functionName = getOperationId(httpMethod, path, operation.operationId);
-    const requestBody = createRequestBodyInterfaces(functionName, operation.requestBody);
-    const response = createResponseInterfaces(functionName, operation.responses);
+    const requestBody = createRequestBodyInterfaces(functionName, operation.requestBody, serviceFolder);
+    const response = createResponseInterfaces(functionName, operation.responses, serviceFolder);
 
     const sortedParameter = getSortedParameter(path, operation.parameters);
 
@@ -130,7 +136,7 @@ export const getServiceHttpFunction = (
     operationFunction.imports.push(response.import);
 
     if (Object.keys(sortedParameter.query).length > 0) {
-      const importRef = createParameter('query', functionName, sortedParameter.query);
+      const importRef = createParameter('query', functionName, sortedParameter.query, serviceFolder);
       operationFunction.queryParameters = {
         className: importRef.className,
         params: Object.keys(sortedParameter.query),
@@ -139,7 +145,7 @@ export const getServiceHttpFunction = (
     }
 
     if (Object.keys(sortedParameter.header).length > 0) {
-      const importRef = createParameter('header', functionName, sortedParameter.header);
+      const importRef = createParameter('header', functionName, sortedParameter.header, serviceFolder);
       operationFunction.headerParameters = {
         className: importRef.className,
         params: Object.keys(sortedParameter.header),
@@ -148,12 +154,12 @@ export const getServiceHttpFunction = (
     }
 
     if (Object.keys(sortedParameter.path).length > 0) {
-      const importRef = createParameter('path', functionName, sortedParameter.path);
+      const importRef = createParameter('path', functionName, sortedParameter.path, serviceFolder);
       operationFunction.pathParameters = { className: importRef.className, params: Object.keys(sortedParameter.path) };
       operationFunction.imports.push(importRef);
     }
 
-    const functionImports = [HTTP_FUNCTION_REF, HTTP_OPTION_INTERFACE_REF, OPEN_API_FUNCTION_REF];
+    const functionImports = [HTTP_FUNCTION_REF, HTTP_OPTION_INTERFACE_REF, OPEN_API_INTERFACE_REF];
 
     if (!!operationFunction.responseClass && operationFunction.isJsonResponse) {
       functionImports.push(HTTP_ON_JSON_LOAD_FUNCTION_REF);
@@ -174,7 +180,7 @@ export const getServiceHttpFunction = (
 
     functionImports
       .map((fun) => fun(folder))
-      .map((httpRef) => reference.getImportAndTypeByRef(httpRef.refKey, folder.getServiceFolder()))
+      .map((httpRef) => reference.getImportAndTypeByRef(httpRef.refKey, serviceFolder))
       .forEach((refResult) => objProperty.addImports(refResult));
 
     objProperty.addFunction(operationFunction);

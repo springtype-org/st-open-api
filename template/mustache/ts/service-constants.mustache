@@ -7,17 +7,8 @@
 {{/imports}}
 {{/isImport}}
 
+export const {{ServiceConstantName}} = (config: OpenApi) => ({
 {{#services}}
-export const {{propertyName}} = new {{serviceClassName}}();
+    {{propertyName}}: new {{serviceClassName}}(config),
 {{/services}}
-
-if (process.env.NODE_ENV !== 'production') {
-    // eslint-disable-next-line no-console
-    console.groupCollapsed('Constant Services registered');
-{{#services}}
-    // eslint-disable-next-line no-console
-    console.info({{propertyName}});
-{{/services}}
-    // eslint-disable-next-line no-console
-    console.groupEnd();
-}
+})

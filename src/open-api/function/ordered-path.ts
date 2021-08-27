@@ -4,7 +4,6 @@ import { configuration } from './config';
 
 export const orderedPath = (openApi: IOpenApi): IOrderedPaths => {
   const orderPath: IOrderedPaths = {};
-
   if (openApi.paths) {
     for (const path of Object.keys(openApi.paths)) {
       let manipulatedPath = path;

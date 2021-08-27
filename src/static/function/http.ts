@@ -8,7 +8,7 @@ import {
   Request,
   RequestInterceptor,
 } from '../interface/open-api';
-import { openApi } from './open-api';
+import { DEFAULT_ERROR_HANDLER, DEFAULT_REQUEST_INTERCEPTOR } from './open-api';
 
 export const EMPTY_STRING = '';
 export const HEADER_CONTENT_TYPE = 'Content-Type';
@@ -170,8 +170,8 @@ export const onBinaryLoad = (evt: ProgressEvent<ExtXMLHttpRequest>) => {
  */
 export const http = async <T>(
   request: Request,
-  interceptor: RequestInterceptor = openApi.requestInterceptor,
-  errorHandler: ErrorHandler = openApi.errorHandler,
+  interceptor: RequestInterceptor = DEFAULT_REQUEST_INTERCEPTOR,
+  errorHandler: ErrorHandler = DEFAULT_ERROR_HANDLER,
   eventListener: EventListener = {},
 ): Promise<T> => {
   if (interceptor) {

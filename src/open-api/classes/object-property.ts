@@ -54,6 +54,13 @@ export const HTTP_OPTION_INTERFACE_REF = (folder: FolderManager) => ({
   folderPath: folder.getInterfaceFolder(),
 });
 
+export const OPEN_API_INTERFACE_REF = (folder: FolderManager) => ({
+  fileName: 'open-api',
+  refKey: 'OPEN_API_INTERFACE_REF',
+  className: 'OpenApi',
+  folderPath: folder.getInterfaceFolder(),
+});
+
 export const OPEN_API_FUNCTION_REF = (folder: FolderManager) => ({
   fileName: 'open-api',
   refKey: 'OPEN_API_FUNCTION_REF',
@@ -69,7 +76,7 @@ export const SERVICE_REFERENCES = [
   HTTP_ON_BINARY_BEFORE_SEND_FUNCTION_REF,
   HTTP_ON_BINARY_LOAD_FUNCTION_REF,
   HTTP_OPTION_INTERFACE_REF,
-  OPEN_API_FUNCTION_REF,
+  OPEN_API_INTERFACE_REF,
 ];
 
 export class ObjectProperty implements IPropertyClass {
