@@ -1,7 +1,7 @@
 import { IPropertyClass, IRenderResult } from '../interface/i-property-class';
 import { renderMustache } from '../function/render-mustache';
 import { configuration } from '../function/config';
-import { formatText } from '../function/formatText';
+import { formatText } from '../common/function/text/formatText';
 
 export class EnumProperty implements IPropertyClass {
   enumName: string;
@@ -15,8 +15,8 @@ export class EnumProperty implements IPropertyClass {
   }
 
   convertName(originalName: string) {
-    this.enumName = formatText(originalName, 'ANY', 'PascalCase');
-    this.fileName = formatText(originalName, 'ANY', 'KebabCase');
+    this.enumName = formatText(originalName, 'Any', 'PascalCase');
+    this.fileName = formatText(originalName, 'Any', 'KebabCase');
   }
 
   setValues(values: Array<number | string>) {

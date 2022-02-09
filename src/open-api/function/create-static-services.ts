@@ -2,9 +2,8 @@ import { appendFileSync } from 'fs';
 import { join } from 'path';
 import { GROUP_NO_AUTH_SERVICE, GROUP_SERVICE, IRef } from '../classes/ref';
 import { renderMustache } from './render-mustache';
-import { kebabCaseToSnake } from './kebab-case-to-snake';
 import { configuration } from './config';
-import { formatText } from './formatText';
+import { formatText } from '../common/function/text/formatText';
 import { OPEN_API_INTERFACE_REF } from '../classes/object-property';
 
 export interface IReactProviderMustache {

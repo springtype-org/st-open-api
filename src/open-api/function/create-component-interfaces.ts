@@ -4,7 +4,7 @@ import { IComponents } from '../interface/open-api-mine/i-components';
 import { ISchema } from '../interface/open-api-mine/i-schema';
 import { getInterfaceOrEnumFromSchema } from './get-property';
 import { configuration } from './config';
-import { formatText } from './formatText';
+import { formatText } from '../common/function/text/formatText';
 
 export const createComponentInterfaces = (components: IComponents) => {
   const isDebug = configuration.isDebug();
@@ -17,7 +17,7 @@ export const createComponentInterfaces = (components: IComponents) => {
     }
     const { schemas } = components;
     for (const schemaName of Object.keys(schemas)) {
-      const className = `I${formatText(schemaName, 'ANY', 'PascalCase')}`;
+      const className = `I${formatText(schemaName, 'Any', 'PascalCase')}`;
       const fileName = formatText(className, 'PascalCase', 'KebabCase');
 
       reference.addReference(`#/components/schemas/${schemaName}`, {
@@ -38,7 +38,7 @@ export const createComponentInterfaces = (components: IComponents) => {
           console.log(`Schema  ${schemaName}`, JSON.stringify(schema, null, 2));
         }
         const interfaceOrEnumeration = getInterfaceOrEnumFromSchema(
-          `I${formatText(schemaName, 'ANY', 'PascalCase')}`,
+          `I${formatText(schemaName, 'Any', 'PascalCase')}`,
           schemaName,
           schema,
           folderManager.getInterfaceComponentsFolder(),

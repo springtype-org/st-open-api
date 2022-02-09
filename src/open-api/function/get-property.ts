@@ -10,7 +10,7 @@ import { InterfaceProperty } from '../classes/interface-property';
 import { mkdir } from '../classes/folder-manager';
 import { configuration } from './config';
 import { InterfaceArrayProperty } from '../classes/interface-array-property';
-import { formatText } from './formatText';
+import { formatText } from '../common/function/text/formatText';
 import { IRefResult } from '../classes/ref';
 
 export const getInterfaceOrEnumFromSchema = (
@@ -134,7 +134,7 @@ const getProperty = (
     const nestedPath = getNestedPath(path, 'enumeration');
 
     const enumeration = getInterfaceOrEnumFromSchema(
-      `I${formatText(newOriginal, 'ANY', 'PascalCase')}`,
+      `I${formatText(newOriginal, 'Any', 'PascalCase')}`,
       newOriginal,
       schema,
       nestedPath,
@@ -156,7 +156,7 @@ const getProperty = (
     const nestedPath = getNestedPath(path, 'interface');
 
     const object = getInterfaceOrEnumFromSchema(
-      `I${formatText(newOriginal, 'ANY', 'PascalCase')}`,
+      `I${formatText(newOriginal, 'Any', 'PascalCase')}`,
       newOriginal,
       schema,
       nestedPath,

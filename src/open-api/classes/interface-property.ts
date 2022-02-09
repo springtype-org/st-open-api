@@ -1,7 +1,7 @@
 import { IPropertyClass, IRenderResult } from '../interface/i-property-class';
 import { renderMustache } from '../function/render-mustache';
 import { splitByLineBreak } from '../function/split-by-line-break';
-import { formatText } from '../function/formatText';
+import { formatText } from '../common/function/text/formatText';
 import { IRefResult } from './ref';
 import { convertRefsToImports } from '../function/convertRefsToImports';
 
@@ -24,8 +24,8 @@ export class InterfaceProperty implements IPropertyClass {
   }
 
   private convertName(originalName: string) {
-    this.interfaceName = formatText(originalName, 'ANY', 'PascalCase');
-    this.fileName = formatText(originalName, 'ANY', 'KebabCase');
+    this.interfaceName = formatText(originalName, 'Any', 'PascalCase');
+    this.fileName = formatText(originalName, 'Any', 'KebabCase');
   }
 
   addImports(newImport: IRefResult) {

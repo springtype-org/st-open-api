@@ -4,7 +4,7 @@ import { ISchema } from '../interface/open-api-mine/i-schema';
 import { IFunctionRequestBody } from '../classes/object-property';
 import { getInterfaceOrEnumFromSchema } from './get-property';
 import { configuration } from './config';
-import { formatText } from './formatText';
+import { formatText } from '../common/function/text/formatText';
 import { IRefResult } from '../classes/ref';
 
 export const createRequestBodyInterfaces = (
@@ -32,7 +32,7 @@ export const createRequestBodyInterfaces = (
       } else {
         // TODO: refactor me
         const schemaName = `${operationId}Request`;
-        const className = `I${formatText(schemaName, 'ANY', 'PascalCase')}`;
+        const className = `I${formatText(schemaName, 'Any', 'PascalCase')}`;
         const interfaceOrEnumeration = getInterfaceOrEnumFromSchema(
           className,
           schemaName,

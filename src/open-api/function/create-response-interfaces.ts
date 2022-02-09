@@ -4,7 +4,7 @@ import { ISchema } from '../interface/open-api-mine/i-schema';
 import { IFunctionResponse } from '../classes/object-property';
 import { getInterfaceOrEnumFromSchema } from './get-property';
 import { configuration } from './config';
-import { formatText } from './formatText';
+import { formatText } from '../common/function/text/formatText';
 import { IRefResult } from '../classes/ref';
 
 export const createResponseInterfaces = (
@@ -39,7 +39,7 @@ export const createResponseInterfaces = (
         _import = importAndType;
       } else {
         const schemaName = `${operationId}Response`;
-        const className = `I${formatText(schemaName, 'ANY', 'PascalCase')}`;
+        const className = `I${formatText(schemaName, 'Any', 'PascalCase')}`;
         const interfaceOrEnumeration = getInterfaceOrEnumFromSchema(
           className,
           schemaName,

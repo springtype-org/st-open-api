@@ -2,9 +2,9 @@ import { IPropertyClass, IRenderResult } from '../interface/i-property-class';
 import { renderMustache } from '../function/render-mustache';
 import { splitByLineBreak } from '../function/split-by-line-break';
 import { FolderManager } from './folder-manager';
-import { formatText } from '../function/formatText';
 import { IRefResult } from './ref';
 import { convertRefsToImports } from '../function/convertRefsToImports';
+import { formatText } from '../common/function/text/formatText';
 
 export const HTTP_FUNCTION_REF = (folder: FolderManager) => ({
   fileName: 'http',
@@ -97,8 +97,8 @@ export class ObjectProperty implements IPropertyClass {
   }
 
   private convertName(originalName: string) {
-    this.className = formatText(originalName, 'ANY', 'PascalCase');
-    this.fileName = formatText(originalName, 'ANY', 'KebabCase');
+    this.className = formatText(originalName, 'Any', 'PascalCase');
+    this.fileName = formatText(originalName, 'Any', 'KebabCase');
   }
 
   addImports(newImport: IRefResult) {
