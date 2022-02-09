@@ -40,8 +40,8 @@ export const getInterfaceOrEnumFromSchema = (
       console.log(`Object Schema ${className} (array=${isArray})`, JSON.stringify(schema, null, 2));
     }
 
+    const interfaceProperty = new InterfaceProperty(className);
     if (!!schema.properties || typeof schema.additionalProperties === 'object') {
-      const interfaceProperty = new InterfaceProperty(className);
       for (const propertyName of Object.keys(schema.properties || {})) {
         const property = schema.properties[propertyName];
         const isRequired = (schema.required || []).indexOf(propertyName) > -1;
@@ -64,16 +64,19 @@ export const getInterfaceOrEnumFromSchema = (
         interfaceProperty.addImports(additionalPropertiesImport);
         interfaceProperty.addAdditionalProperties(additionalPropertiesImport.className);
       }
-      return interfaceProperty;
+    } else if (schema.type === 'object') {
+      // only object in as type
+      interfaceProperty.addAdditionalProperties('any', false);
     }
-    // getReference(schema);
-  } else if (schema.enum) {
+    return interfaceProperty;
+  }
+
+  if (schema.enum) {
     const enumClass = new EnumProperty(className);
     enumClass.setValues(schema.enum);
     return enumClass;
-  } else {
-    console.log(className, originalName, 'no mapping for schema found');
   }
+  console.log(className, originalName, 'no mapping for schema found');
 };
 
 const getProperty = (
@@ -158,6 +161,7 @@ const getProperty = (
       schema,
       nestedPath,
     ) as EnumProperty;
+
     const rendered = object.render();
     fs.appendFileSync(nodePath.join(nestedPath, `${rendered.fileName}.ts`), rendered.render);
 

@@ -30,7 +30,7 @@ export const createResponseInterfaces = (
     }
     const isDownload = !!successContent['application/octet-stream'];
 
-    if (successContent['application/json']) {
+    if (!isDownload && successContent['application/json']) {
       isJson = true;
       const responseSchema = success.content['application/json'].schema as ISchema;
       if (responseSchema.$ref) {

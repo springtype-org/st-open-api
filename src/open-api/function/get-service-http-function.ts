@@ -47,11 +47,11 @@ const createParameter = (
     // HTTP authorization header shall be added via interceptor,
     // not be necessary to be provided for every single request
     if (p.name === 'authorization' && type === 'header') return;
-
+    const normalizedName = formatText(p.name, 'ANY', 'CamelCase');
     if (p.required) {
-      parameterObject.required.push(p.name);
+      parameterObject.required.push(normalizedName);
     }
-    parameterObject.properties[p.name] = p.schema;
+    parameterObject.properties[normalizedName] = p.schema;
   });
 
   const classToRender = getInterfaceOrEnumFromSchema(
@@ -76,7 +76,7 @@ const createParameter = (
 
 const getOperationId = (httpMethod: string, path: string, operationId: string | undefined): string => {
   if (operationId) {
-    return firstCharacterLower(kebabCaseToCamel(operationId.replace('_', '-')));
+    return firstCharacterLower(kebabCaseToCamel(operationId.replace('.', '_').replace('_', '-')));
   }
   const newPath = path
     .split('/')
@@ -139,7 +139,10 @@ export const getServiceHttpFunction = (
       const importRef = createParameter('query', functionName, sortedParameter.query, serviceFolder);
       operationFunction.queryParameters = {
         className: importRef.className,
-        params: Object.keys(sortedParameter.query),
+        params: Object.keys(sortedParameter.query).map((headerName) => ({
+          name: headerName,
+          value: formatText(headerName, 'ANY', 'CamelCase'),
+        })),
       };
       operationFunction.imports.push(importRef);
     }
@@ -148,14 +151,23 @@ export const getServiceHttpFunction = (
       const importRef = createParameter('header', functionName, sortedParameter.header, serviceFolder);
       operationFunction.headerParameters = {
         className: importRef.className,
-        params: Object.keys(sortedParameter.header),
+        params: Object.keys(sortedParameter.header).map((headerName) => ({
+          name: headerName,
+          value: formatText(headerName, 'ANY', 'CamelCase'),
+        })),
       };
       operationFunction.imports.push(importRef);
     }
 
     if (Object.keys(sortedParameter.path).length > 0) {
       const importRef = createParameter('path', functionName, sortedParameter.path, serviceFolder);
-      operationFunction.pathParameters = { className: importRef.className, params: Object.keys(sortedParameter.path) };
+      operationFunction.pathParameters = {
+        className: importRef.className,
+        params: Object.keys(sortedParameter.path).map((headerName) => ({
+          name: headerName,
+          value: formatText(headerName, 'ANY', 'CamelCase'),
+        })),
+      };
       operationFunction.imports.push(importRef);
     }
 

@@ -224,7 +224,7 @@ interface IMustacheFunction {
 
   isPathParameters: boolean;
   pathParameterClassName?: string;
-  pathParameters?: Array<string>;
+  pathParameters?: Array<{ name: string; value: string }>;
 
   isJsonResponse: boolean;
   isPlaintextResponse: boolean;
@@ -237,11 +237,11 @@ interface IMustacheFunction {
 
   isQueryParameters: boolean;
   queryParameterClassName?: string;
-  queryParameters?: Array<string>;
+  queryParameters?: Array<{ name: string; value: string }>;
 
   isHeaderParameters: boolean;
   headerParameterClassName?: string;
-  headerParameters?: Array<string>;
+  headerParameters?: Array<{ name: string; value: string }>;
 
   isRequestBody: boolean;
   requestBodyClass?: string;
@@ -260,15 +260,15 @@ export interface IFunction extends IFunctionResponse, IFunctionRequestBody {
 
   pathParameters?: {
     className: string;
-    params: Array<string>;
+    params: Array<{ name: string; value: string }>;
   };
   headerParameters?: {
     className: string;
-    params: Array<string>;
+    params: Array<{ name: string; value: string }>;
   };
   queryParameters?: {
     className: string;
-    params: Array<string>;
+    params: Array<{ name: string; value: string }>;
   };
 
   description: string;

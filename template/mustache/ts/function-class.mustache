@@ -1,7 +1,7 @@
 {{#isDescription}}
 /*
 {{#description}}
- * {{.}}
+ * {{{.}}}
 {{/description}}
  */
 {{/isDescription}}
@@ -10,7 +10,7 @@
 
     const queryParam = [
     {{#queryParameters}}
-        {name: '{{.}}', value: queryParameter.{{.}}},
+        {name: '{{name}}', value: queryParameter.{{value}}},
     {{/queryParameters}}
     ];
 {{/isQueryParameters}}
@@ -18,7 +18,7 @@
 
     const pathParam = {
     {{#pathParameters}}
-        '{{.}}': pathParameter.{{.}},
+        '{{name}}': pathParameter.{{value}},
     {{/pathParameters}}
     };
 {{/isPathParameters}}
@@ -47,7 +47,7 @@
 {{/isRequestBodyJson}}
 {{#isHeaderParameters}}
 {{#headerParameters}}
-                '{{.}}': headerParameter.{{.}},
+                '{{name}}': headerParameter.{{value}},
 {{/headerParameters}}
 {{/isHeaderParameters}}
             },
