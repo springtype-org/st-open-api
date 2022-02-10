@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "publishConfig": {
     "access": "public"
   },
@@ -16,6 +16,7 @@
     "url": "git+https://github.com/springtype-org/st-open-api.git"
   },
   "scripts": {
+    "audit-fix": "npm_config_yes=true npx yarn-audit-fix",
     "prebuild": "npx st-rm-rf dist",
     "start": "node ./dist/cli.js",
     "watch": "tsc --watch",
@@ -55,7 +56,6 @@
   "devDependencies": {
     "@types/mustache": "^4.0.1",
     "@types/node": "^13.11.1",
-    "@types/node-fetch": "^2.5.6",
-    "jest": "^26.6.3"
+    "@types/node-fetch": "^2.5.6"
   }
 }
