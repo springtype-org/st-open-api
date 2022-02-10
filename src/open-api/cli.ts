@@ -32,6 +32,7 @@ import { printBanner } from './function/printBanner';
     .option('-r, --react', 'create react provider component', false)
     .option('-t, --static', 'create static services', false)
     .option('-y, --type', 'use types instead of enumerations')
+    .option('-p, --provider <providerName>', 'used to set the provider from "browser" to e.g. "node"', 'node')
     .option('-c, --component', 'only build components, this flag will disable all others', false)
 
     .action((options) => {

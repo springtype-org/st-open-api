@@ -15,7 +15,7 @@ import { mapPrimitiveValues } from '../common/function/mapPrimitiveValues';
 export class Configuration {
   private config: any;
 
-  private folder: FolderManager = new FolderManager('/tmp');
+  private folder: FolderManager = new FolderManager();
 
   private reference: Register = new Register();
 
@@ -41,7 +41,7 @@ export class Configuration {
 
   setConfig(config: any) {
     this.config = config;
-    this.folder = new FolderManager(this.config.output);
+    this.folder.reset(this.config.output);
     this.outputDirectory = this.folder.getOutputFolder();
     this.logger = new ConsoleLogger(this.config?.debug ? 'DEBUG' : 'WARN');
   }
@@ -138,23 +138,29 @@ export class Configuration {
     return writeFileSync;
   }
 
+  getProviderName(): string {
+    return this.config.provider;
+  }
+
   getMapPrimitiveValuesFn() {
     return this.mapPrimitiveValues;
   }
 
   print() {
-    console.log('--- Configuration');
-    console.log();
-    console.log(`OpenApi Source File: ${this.getOpenApiFile()}`);
-    console.log(`Output folder: ${this.getOutputFolder()}`);
-    console.log(`Debug: ${this.isDebug()}`);
-    console.log(`Create static services: ${this.isCreateStaticServices().toString()}`);
-    console.log(`Create react provider: ${this.isCreateReactProvider().toString()}`);
-    console.log(`Use types and not enumerations: ${this.isType().toString()}`);
-    console.log(`Ignore open api validation: ${this.ignoreValidation().toString()}`);
-    console.log(`Force to add request interceptor: ${this.forceInterceptor().toString()}`);
-    console.log(`Current service suffix: ${this.getServiceSuffix()}`);
-    console.log(`Client language: ${this.getLanguage()}`);
+    const logger = this.getLogger();
+    logger.info('--- Configuration');
+    logger.info();
+    logger.info(`OpenApi Source File: ${this.getOpenApiFile()}`);
+    logger.info(`Output folder: ${this.getOutputFolder()}`);
+    logger.info(`Debug: ${this.isDebug()}`);
+    logger.info(`Create static services: ${this.isCreateStaticServices().toString()}`);
+    logger.info(`Create react provider: ${this.isCreateReactProvider().toString()}`);
+    logger.info(`Use types and not enumerations: ${this.isType().toString()}`);
+    logger.info(`Ignore open api validation: ${this.ignoreValidation().toString()}`);
+    logger.info(`Force to add request interceptor: ${this.forceInterceptor().toString()}`);
+    logger.info(`Current service suffix: ${this.getServiceSuffix()}`);
+    logger.info(`Client language: ${this.getLanguage()}`);
+    logger.info(`Provider: ${this.getProviderName()}`);
   }
 }
 

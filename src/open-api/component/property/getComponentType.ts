@@ -6,7 +6,7 @@ export const getComponentType = (
   schema: any,
   config: Configuration = configuration,
 ): Exclude<ComponentType, 'CLASS'> | undefined => {
-  if (schema.type === 'object') {
+  if (schema.type === 'object' || schema.allOf || schema.$ref) {
     return 'INTERFACE';
   }
   if (schema.enum) {

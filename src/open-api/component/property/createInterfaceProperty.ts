@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import { getPropertyFactory, PropertyFactoryOptions } from './getPropertyFactory';
 import { InterfaceProperty } from '../../classes/interface-property';
 import { IPropertyClass } from '../../interface/i-property-class';
@@ -12,8 +11,30 @@ export const createInterfaceProperty = (
   config: Configuration = configuration,
 ): Array<IPropertyClass> => {
   const result: Array<IPropertyClass> = [];
-  const { schemaName, schema, round, prefixRefKey, folderPath } = options;
+  const { schemaName, schema: rawSchema, round, prefixRefKey, folderPath } = options;
   const logger = config.getLogger();
+
+  const schemasAllOf = rawSchema.allOf;
+  let schema = rawSchema;
+  if (schemasAllOf) {
+    schema = schemasAllOf
+      .map((allOfSchema) => {
+        const schemaRef = allOfSchema.$ref;
+        if (schemaRef) {
+          return config.getReference().getImportAndTypeByRef(schemaRef, folderPath).schema;
+        }
+        return allOfSchema;
+      })
+      .filter((v) => !!v)
+      .reduce(
+        (prev, curr) => ({
+          ...prev,
+          required: [...(prev?.required || []), ...(curr?.required || [])],
+          properties: { ...(prev?.properties || {}), ...(curr?.properties || {}) },
+        }),
+        { type: 'object' },
+      );
+  }
 
   const interfaceProperty = new InterfaceProperty(schemaName, folderPath, prefixRefKey, config);
 

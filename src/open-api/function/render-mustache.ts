@@ -6,8 +6,8 @@ const TYPE_TEMPLATE_DIR = path.join(__dirname, '..', 'template', 'mustache', 'ts
 
 const cache: { [filePath: string]: string } = {};
 
-export const renderMustache = (templateName: string, viewData: any) => {
-  const templatePath = path.join(TYPE_TEMPLATE_DIR, templateName);
+export const renderMustacheBuilder = (templateFolder: string) => (templateName: string, viewData: any) => {
+  const templatePath = path.join(templateFolder, templateName);
   let templateString;
 
   if (cache[templatePath]) {
@@ -18,3 +18,5 @@ export const renderMustache = (templateName: string, viewData: any) => {
   }
   return Mustache.render(templateString, viewData);
 };
+
+export const renderMustache = renderMustacheBuilder(TYPE_TEMPLATE_DIR);

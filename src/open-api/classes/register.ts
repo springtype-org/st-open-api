@@ -24,6 +24,7 @@ export class Register {
       import: `import {${reference.className}} from '${relativePath}${reference.fileName}';`,
       importPath: relativePath + reference.fileName,
       fileName: reference.fileName,
+      schema: reference.schema,
     };
   };
 
@@ -48,7 +49,7 @@ export interface IRef {
   fileName: string;
   className: string;
   folderPath: string;
-  definition?: any;
+  schema?: any;
 }
 
 export interface IRefResult {
@@ -56,4 +57,5 @@ export interface IRefResult {
   className: string;
   importPath: string;
   fileName: string;
+  schema?: any;
 }

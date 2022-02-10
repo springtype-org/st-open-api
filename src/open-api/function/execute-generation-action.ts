@@ -1,6 +1,7 @@
 import { isUri } from 'valid-url';
 import { readFileSync, writeFileSync } from 'fs';
 import Ajv from 'ajv';
+import YAML from 'yaml';
 import { join } from 'path';
 import OPEN_API_SCHEMA from 'ajv/lib/refs/json-schema-draft-04.json';
 import { download } from './download';
@@ -13,12 +14,23 @@ import { configuration } from './config';
 import { initServiceReference } from './init-references';
 import { getPackageInfo } from './get-package-info';
 import { createComponents } from '../component/createComponents';
+import { saveApiFile } from './saveApiFile';
 
 const getSourceAsString = async (source: string): Promise<string> => {
   if (isUri(source)) {
     return download(source);
   }
   return readFileSync(source).toString('utf-8');
+};
+
+export type SpecMimeType = 'yaml' | 'json';
+
+export const getSpecMimeType = (filePath: string): SpecMimeType => {
+  const lowerCasedFilePath = filePath.toLowerCase();
+  if (lowerCasedFilePath.indexOf('.yaml') > -1) {
+    return 'yaml';
+  }
+  return 'json';
 };
 
 const JSON_SCHEMA_3_0_X = JSON.parse(
@@ -36,32 +48,36 @@ const validate = async (openApiSchema: object): Promise<boolean> => {
 };
 
 export const executeGenerationAction = async () => {
-  const isDebug = configuration.isDebug();
+  const logger = configuration.getLogger();
   configuration.print();
 
   try {
-    const rawOpenApiJson = await getSourceAsString(configuration.getOpenApiFile());
-    const openApi = JSON.parse(rawOpenApiJson);
-    const valid = await validate(openApi);
+    let openApiSpec;
+    const openApiFileName = configuration.getOpenApiFile();
+    const openApiRawData = await getSourceAsString(openApiFileName);
+    const isYamlFile = getSpecMimeType(openApiFileName) === 'yaml';
 
-    if (isDebug) {
-      console.log('OpenApi Json is valid :', valid);
+    if (isYamlFile) {
+      openApiSpec = YAML.parse(openApiRawData);
+    } else {
+      openApiSpec = JSON.parse(openApiRawData);
     }
-    if (valid || configuration.ignoreValidation()) {
-      if (isDebug) {
-        console.log('Initialize references');
-      }
 
-      createComponents(openApi.components);
+    const valid = await validate(openApiSpec);
+
+    logger.debug('OpenApi Json is valid :', valid);
+
+    if (valid || configuration.ignoreValidation()) {
+      logger.debug('Initialize references');
+
+      createComponents(openApiSpec.components);
 
       if (!configuration.isComponentOnly()) {
         const folderManager = configuration.getFolderManager();
         initServiceReference(folderManager);
 
         // save open api.json
-        const schemaFilePath = join(folderManager.getOutputFolder(), 'open-api.json');
-        writeFileSync(schemaFilePath, JSON.stringify(JSON.parse(rawOpenApiJson), null, 2));
-
+        saveApiFile(isYamlFile, openApiRawData);
         // save creation info
         const packageInfo = getPackageInfo();
         const versionInfo = join(folderManager.getOutputFolder(), 'version.json');
@@ -79,7 +95,7 @@ export const executeGenerationAction = async () => {
           ),
         );
 
-        createServiceClasses(openApi);
+        createServiceClasses(openApiSpec);
 
         if (configuration.isCreateReactProvider()) {
           createReactProvider();
@@ -96,12 +112,12 @@ export const executeGenerationAction = async () => {
         transpileToJs();
       }
     } else {
-      console.error('OpenApi Json not valid.');
+      logger.warn('OpenApi Json not valid.');
       process.exit(1);
       return;
     }
   } catch (e) {
-    console.error(e.message);
+    logger.warn(e.message);
     process.exit(1);
   }
 };

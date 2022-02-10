@@ -23,7 +23,7 @@ export const registerComponent = (
     fileName,
     className: name,
     folderPath,
-    definition: schema,
+    schema,
   });
 
   logger.debug(`Register component ${schemaName}`);

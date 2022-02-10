@@ -18,7 +18,8 @@
     "downlevelIteration":true,
     "sourceMap": true,
     "lib": [
-      "ES2020"
+      "ES2020",
+      "webworker"
     ],
     "types": ["node","jest"]
   },

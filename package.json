@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.3.26",
+  "version": "1.4.0",
   "publishConfig": {
     "access": "public"
   },
@@ -10,16 +10,18 @@
     "client-generator",
     "springtype"
   ],
-  "description": "This project creates from open-api 3.0 an typescript client",
+  "description": "st-open-api generates API client SDKs from an OpenAPI specification written in OpenAPI version 3.x.x",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/springtype-org/st-open-api.git"
   },
   "scripts": {
+    "start": "node dist/cli.js",
+    "watch": "tsc --watch",
     "prebuild": "npx st-rm-rf dist",
     "build": "tsc --project tsconfig.build.json",
-    "test": "jest",
-    "postbuild": "node postbuild.js && cd dist && yarn install --production"
+    "postbuild": "node postbuild.js && cd dist",
+    "test": "jest"
   },
   "engines": {
     "node": ">=10"
@@ -36,7 +38,7 @@
   "bin": {
     "st-open-api": "./cli.js"
   },
-  "author": "Michael Mannseicher",
+  "author": "Michael Mannseicher, Aron Homberg",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/springtype-org/st-open-api/issues"
@@ -44,32 +46,28 @@
   "dependencies": {
     "ajv": "^6.12.2",
     "commander": "^5.1.0",
-    "formdata-node": "^3.1.0",
-    "mustache": "^4.0.1",
+    "mustache": "^4.2.0",
     "node-fetch": "^2.6.1",
     "st-rm-rf": "^2.0.0-beta.1",
     "typescript": "^4.5.5",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
     "@types/mustache": "^4.0.1",
     "@types/node": "^13.11.1",
     "@types/node-fetch": "^2.5.6",
-    "@typescript-eslint/eslint-plugin": "^4.15.1",
-    "@typescript-eslint/parser": "^4.15.1",
-    "eslint": "^7.20.0",
-    "eslint-config-airbnb": "^18.2.1",
-    "eslint-config-airbnb-typescript": "^12.0.0",
-    "eslint-config-prettier": "^7.2.0",
-    "eslint-plugin-import": "^2.22.1",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "axios": "^0.25.0",
+    "eslint": "^8.8.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-jest": "^24.1.3",
-    "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-prettier": "^3.3.1",
-    "eslint-plugin-react": "^7.22.0",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "jest": "^27.5.1",
-    "prettier": "^2.2.1",
+    "json-schema-faker": "^0.5.0-rcv.41",
+    "prettier": "^2.3.2",
     "ts-jest": "^27.1.3",
     "ts-node": "^10.5.0"
   }

@@ -17,11 +17,15 @@ const resolvePath = (outputFolder) => {
 };
 
 export class FolderManager {
-  private readonly outputFolder: string;
+  private outputFolder: string;
 
-  constructor(outputFolder: string) {
+  reset(outputFolder: string) {
     this.outputFolder = resolvePath(outputFolder);
-    deletePathOrFile(this.outputFolder, { printInfo: false, printWarning: false, printError: true });
+    deletePathOrFile(this.outputFolder, {
+      printInfo: false,
+      printWarning: false,
+      printError: true,
+    });
   }
 
   getOutputFolder() {

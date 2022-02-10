@@ -1,4 +1,3 @@
-/* eslint-disable import/no-cycle */
 import { ISchema } from '../../interface/open-api-mine/i-schema';
 import { IPropertyClass } from '../../interface/i-property-class';
 import { createInterfaceProperty } from './createInterfaceProperty';

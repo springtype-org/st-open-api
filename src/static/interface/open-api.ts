@@ -1,4 +1,9 @@
-export type ExtXMLHttpRequest = XMLHttpRequest & { resolve: Function; reject: Function; eventListener: EventListener };
+// @ts-nocheck
+export type ExtXMLHttpRequest = XMLHttpRequest & {
+  resolve: Function;
+  reject: Function;
+  eventListener: EventListener;
+};
 
 export interface IQueryParam {
   name: string;

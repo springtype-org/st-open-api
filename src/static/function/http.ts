@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   ErrorHandler,
   EventListener,
@@ -21,12 +22,16 @@ const getQueryParameter = (paramName: string, paramValue: string) =>
  * Build the query
  * @param parameters
  */
-export const getQueryParameters = (parameters: Array<QueryParam> = []): string => {
+export const getQueryParameters = (
+  parameters: Array<QueryParam> = [],
+): string => {
   const keyValue: Array<string> = [];
   for (const parameter of parameters) {
     if (typeof parameter.value !== 'undefined') {
       if (Array.isArray(parameter.value)) {
-        parameter.value.forEach((v) => keyValue.push(getQueryParameter(parameter.name, v)));
+        parameter.value.forEach((v) =>
+          keyValue.push(getQueryParameter(parameter.name, v)),
+        );
       } else {
         keyValue.push(getQueryParameter(parameter.name, parameter.value));
       }
@@ -47,7 +52,9 @@ export const convertRequestToFormData = (
     const [key, value] = entry;
     const newKeyPrefix = `${prefix}${key}`;
     if (Array.isArray(value)) {
-      value.forEach((arrValue) => convertRequestToFormData(arrValue, formData, `${newKeyPrefix}[]`));
+      value.forEach((arrValue) =>
+        convertRequestToFormData(arrValue, formData, `${newKeyPrefix}[]`),
+      );
     } else if (typeof value === 'object' && !(value instanceof File)) {
       convertRequestToFormData(value, formData, newKeyPrefix);
     } else if (typeof value === 'boolean') {
@@ -59,7 +66,9 @@ export const convertRequestToFormData = (
   return formData;
 };
 
-export const getDispositionMap = (contentDisposition: string): { [key: string]: string } =>
+export const getDispositionMap = (
+  contentDisposition: string,
+): { [key: string]: string } =>
   contentDisposition.split(';').reduce((prev, curr) => {
     const [key, value = ''] = curr.trim().split('=');
     if (value.startsWith('"') && value.endsWith('"')) {
@@ -76,19 +85,26 @@ export const getDispositionMap = (contentDisposition: string): { [key: string]: 
 const buildUrl = (url: string, urlParameter: Parameter = {}): string => {
   let resultUrl = url;
   for (const key of Object.keys(urlParameter)) {
-    resultUrl = resultUrl.replace(`{${key}}`, encodeURIComponent(urlParameter[key]));
+    resultUrl = resultUrl.replace(
+      `{${key}}`,
+      encodeURIComponent(urlParameter[key]),
+    );
   }
   return resultUrl;
 };
 
-export const onError = (errorHandler: ErrorHandler) => (evt: ProgressEvent<ExtXMLHttpRequest>) => {
-  const xhr = evt.target as ExtXMLHttpRequest;
-  const errorMessage = xhr.responseType === 'text' || xhr.responseType === '';
-  const errorResp = errorHandler({ status: xhr.status, message: errorMessage ? xhr.responseText : '' });
-  if (errorResp) {
-    xhr.reject(errorResp);
-  }
-};
+export const onError =
+  (errorHandler: ErrorHandler) => (evt: ProgressEvent<ExtXMLHttpRequest>) => {
+    const xhr = evt.target as ExtXMLHttpRequest;
+    const errorMessage = xhr.responseType === 'text' || xhr.responseType === '';
+    const errorResp = errorHandler({
+      status: xhr.status,
+      message: errorMessage ? xhr.responseText : '',
+    });
+    if (errorResp) {
+      xhr.reject(errorResp);
+    }
+  };
 
 export const onPlainTextLoad = (evt: ProgressEvent<ExtXMLHttpRequest>) => {
   const xhr = evt.target as ExtXMLHttpRequest;
@@ -133,13 +149,17 @@ export const onBinaryLoad = (evt: ProgressEvent<ExtXMLHttpRequest>) => {
 
   if (xhr.status >= 200 && xhr.status < 400) {
     const contentType = xhr.getResponseHeader(HEADER_CONTENT_TYPE) || '';
-    const contentDisposition = xhr.getResponseHeader(HEADER_CONTENT_DISPOSITION) || '';
+    const contentDisposition =
+      xhr.getResponseHeader(HEADER_CONTENT_DISPOSITION) || '';
     const dispositionMap = getDispositionMap(contentDisposition);
 
     const blob = new Blob([xhr.response], { type: contentType });
     const fileName = dispositionMap.filename || '';
 
-    if ((window as any).navigator && (window as any).navigator.msSaveOrOpenBlob) {
+    if (
+      (window as any).navigator &&
+      (window as any).navigator.msSaveOrOpenBlob
+    ) {
       window.navigator.msSaveOrOpenBlob(blob, fileName);
     } else {
       const a = document.createElement('a');
@@ -197,9 +217,15 @@ export const http = async <T>(
     }
 
     // 3.1 Check if default event listener is registered
-    const isErrorListener = !!Object.keys(eventListener).find((k) => k === 'error');
-    const isLoadListener = !!Object.keys(eventListener).find((k) => k === 'load');
-    const isAbortListener = !!Object.keys(eventListener).find((k) => k === 'abort');
+    const isErrorListener = !!Object.keys(eventListener).find(
+      (k) => k === 'error',
+    );
+    const isLoadListener = !!Object.keys(eventListener).find(
+      (k) => k === 'load',
+    );
+    const isAbortListener = !!Object.keys(eventListener).find(
+      (k) => k === 'abort',
+    );
 
     if (!isErrorListener) {
       eventListener.error = onError(errorHandler);
