@@ -184,7 +184,7 @@ let retryCount = 0;
 // responseInterceptor is called before the response is resolve()'d
 // is is called for non-error and error cases (that's why error is optional)
 openApi.responseInterceptor = async(
-  request: IRequest, response: Response, http: HttpRequestFn, error?: IError
+  request: IRequest, response: Response, retry: HttpRequestFn, error?: IError
 ) => {
 
     // the retry() function is a reference to the function that has been called
