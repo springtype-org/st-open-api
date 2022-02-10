@@ -1,8 +1,10 @@
 import { IType } from './i-type';
 
 export interface ISchema {
-  type: IType | 'object' | 'array';
-  items?: ISchemaItem;
+  type?: IType | 'object' | 'array';
+  maxLength?: number;
+  minLength?: number;
+  items?: ISchema;
   required?: Array<string>;
   properties?: { [name: string]: ISchema };
   additionalProperties?: any;
@@ -10,10 +12,4 @@ export interface ISchema {
   enum?: Array<string | number>;
   allOf?: Array<{ $ref: string } | any>;
   format?: string;
-}
-
-export interface ISchemaItem {
-  type: 'string' | 'integer';
-  enum?: Array<string | number>;
-  $ref: string;
 }

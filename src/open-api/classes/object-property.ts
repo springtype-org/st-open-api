@@ -4,7 +4,9 @@ import { splitByLineBreak } from '../function/split-by-line-break';
 import { FolderManager } from './folder-manager';
 import { IRefResult } from './ref';
 import { convertRefsToImports } from '../function/convertRefsToImports';
-import { formatText } from '../common/function/text/formatText';
+import { createComponentReference } from '../common/function/createComponentReference';
+import { Configuration, configuration } from '../function/config';
+import { ComponentType } from '../component/ComponentType';
 
 export const HTTP_FUNCTION_REF = (folder: FolderManager) => ({
   fileName: 'http',
@@ -84,6 +86,10 @@ export class ObjectProperty implements IPropertyClass {
 
   fileName: string;
 
+  type: ComponentType = 'CLASS';
+
+  refKey: string;
+
   description: Array<string> = [];
 
   imports: Array<IRefResult> = [];
@@ -92,13 +98,22 @@ export class ObjectProperty implements IPropertyClass {
 
   properties: Array<{ data: IMustacheProperty; import?: IRefResult; name: string }> = [];
 
-  constructor(originalName: string) {
-    this.convertName(originalName);
+  constructor(
+    public originalName: string,
+    private folderPath: string,
+    private prefixRefKey: string,
+    private schema: any,
+    private config: Configuration = configuration,
+  ) {
+    const { refKey, fileName, name } = createComponentReference(originalName, this.type, prefixRefKey, config);
+
+    this.refKey = refKey;
+    this.className = name;
+    this.fileName = fileName;
   }
 
-  private convertName(originalName: string) {
-    this.className = formatText(originalName, 'Any', 'PascalCase');
-    this.fileName = formatText(originalName, 'Any', 'KebabCase');
+  getReferenceKey(): string {
+    return this.refKey;
   }
 
   addImports(newImport: IRefResult) {
@@ -196,6 +211,30 @@ export class ObjectProperty implements IPropertyClass {
       fileName: this.fileName,
       render: renderMustache('service-class.mustache', viewData),
     };
+  }
+
+  getName(): string {
+    return this.className;
+  }
+
+  getOriginalName(): string {
+    return this.originalName;
+  }
+
+  getType(): ComponentType {
+    return this.type;
+  }
+
+  getFolderPath(): string {
+    return this.folderPath;
+  }
+
+  getFileName(): string {
+    return this.fileName;
+  }
+
+  getSchema(): any {
+    return this.schema;
   }
 }
 

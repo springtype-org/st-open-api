@@ -30,7 +30,7 @@ export const getInterfaceOrEnumFromSchema = (
     isArray = true;
     if (!!schema.items && schema.items.$ref) {
       const ref = configuration.getReference().getImportAndTypeByRef(schema.items.$ref, path);
-      return new InterfaceArrayProperty(className, ref, ref.className);
+      return new InterfaceArrayProperty(className, ref, ref.className, path, schema);
     }
     schema = schema.items;
     schema.type = 'object';
@@ -40,7 +40,7 @@ export const getInterfaceOrEnumFromSchema = (
       console.log(`Object Schema ${className} (array=${isArray})`, JSON.stringify(schema, null, 2));
     }
 
-    const interfaceProperty = new InterfaceProperty(className);
+    const interfaceProperty = new InterfaceProperty(className, path, path, schema);
     if (!!schema.properties || typeof schema.additionalProperties === 'object') {
       for (const propertyName of Object.keys(schema.properties || {})) {
         const property = schema.properties[propertyName];
@@ -72,7 +72,7 @@ export const getInterfaceOrEnumFromSchema = (
   }
 
   if (schema.enum) {
-    const enumClass = new EnumProperty(className);
+    const enumClass = new EnumProperty(className, path, path, schema);
     enumClass.setValues(schema.enum);
     return enumClass;
   }
@@ -134,7 +134,7 @@ const getProperty = (
     const nestedPath = getNestedPath(path, 'enumeration');
 
     const enumeration = getInterfaceOrEnumFromSchema(
-      `I${formatText(newOriginal, 'Any', 'PascalCase')}`,
+      formatText(['I', newOriginal], 'Any', 'PascalCase'),
       newOriginal,
       schema,
       nestedPath,
@@ -156,7 +156,7 @@ const getProperty = (
     const nestedPath = getNestedPath(path, 'interface');
 
     const object = getInterfaceOrEnumFromSchema(
-      `I${formatText(newOriginal, 'Any', 'PascalCase')}`,
+      formatText(['I', newOriginal], 'Any', 'PascalCase'),
       newOriginal,
       schema,
       nestedPath,

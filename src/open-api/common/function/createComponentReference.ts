@@ -1,12 +1,6 @@
-import { createClassName } from './createClassName';
-import { createFileName } from './createFileName';
-import { createRefKey } from './createRefKey';
-
-export type ComponentRefOptions = {
-  createClassName: (schemaName: string) => string;
-  createFileName: (schemaName: string) => string;
-  createRefKey: (prefixPath: string, schemaName: string) => string;
-};
+import { Configuration, configuration } from '../../function/config';
+import { getNormalizedName } from '../../component/property/getNoramlizedName';
+import { ComponentType } from '../../component/ComponentType';
 
 export type ComponentRef = {
   className: string;
@@ -14,32 +8,19 @@ export type ComponentRef = {
   refKey: string;
 };
 
-export const DEFAULT_OPTIONS: ComponentRefOptions = {
-  createClassName,
-  createFileName,
-  createRefKey,
-};
-
-export const getComponentRefOptions = (options: Partial<ComponentRefOptions> | undefined): ComponentRefOptions => ({
-  createFileName: options?.createFileName || DEFAULT_OPTIONS.createFileName,
-  createClassName: options?.createClassName || DEFAULT_OPTIONS.createClassName,
-  createRefKey: options?.createRefKey || DEFAULT_OPTIONS.createRefKey,
-});
-
 export const createComponentReference = (
   schemaName: string,
+  type: ComponentType,
   refkey: string,
-  partialOptions: Partial<ComponentRefOptions> = DEFAULT_OPTIONS,
+  config: Configuration = configuration,
 ) => {
-  const options = getComponentRefOptions(partialOptions);
+  const fileName = config.getCreateFileNameFn()(type, schemaName);
+  const name = getNormalizedName(schemaName, type, config);
 
-  const className = options.createClassName(schemaName);
-  const fileName = options.createFileName(schemaName);
-
-  const refKey = options.createRefKey(refkey, schemaName);
+  const refKey = config.getCreateRefKeyFn()(refkey, schemaName);
 
   return {
-    className,
+    name,
     fileName,
     refKey,
   };

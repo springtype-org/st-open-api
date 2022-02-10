@@ -34,8 +34,8 @@ export const createServiceClasses = (openApi: IOpenApi) => {
   for (const groupName of Object.keys(orderedPaths)) {
     const className = groupName.charAt(0).toUpperCase() + groupName.slice(1);
     const group = orderedPaths[groupName];
-    const objectPropertyAuth = new ObjectProperty(className);
-    const objectPropertyNoAuth = new ObjectProperty(className);
+    const objectPropertyAuth = new ObjectProperty(className, 'service/auth/', 'service/auth/', group);
+    const objectPropertyNoAuth = new ObjectProperty(className, 'service/no-auth/', 'service/no-auth/', group);
 
     for (const subPath of Object.keys(group)) {
       const item = group[subPath];

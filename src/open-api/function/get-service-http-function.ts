@@ -46,7 +46,7 @@ const createParameter = (
     // HTTP authorization header shall be added via interceptor,
     // not be necessary to be provided for every single request
     if (p.name === 'authorization' && type === 'header') return;
-    const normalizedName = formatText(p.name, 'Any', 'CamelCase');
+    const normalizedName = formatText([p.name], 'Any', 'CamelCase');
     if (p.required) {
       parameterObject.required.push(normalizedName);
     }
@@ -92,7 +92,7 @@ const getOperationId = (httpMethod: string, path: string, operationId: string | 
       }
       return p;
     })
-    .map((p) => formatText(p, 'Any', 'PascalCase'))
+    .map((p) => formatText([p], 'Any', 'PascalCase'))
     .join('');
   return `${httpMethod.toLowerCase()}${newPath}`;
 };
@@ -140,7 +140,7 @@ export const getServiceHttpFunction = (
         className: importRef.className,
         params: Object.keys(sortedParameter.query).map((headerName) => ({
           name: headerName,
-          value: formatText(headerName, 'Any', 'CamelCase'),
+          value: formatText([headerName], 'Any', 'CamelCase'),
         })),
       };
       operationFunction.imports.push(importRef);
@@ -152,7 +152,7 @@ export const getServiceHttpFunction = (
         className: importRef.className,
         params: Object.keys(sortedParameter.header).map((headerName) => ({
           name: headerName,
-          value: formatText(headerName, 'Any', 'CamelCase'),
+          value: formatText([headerName], 'Any', 'CamelCase'),
         })),
       };
       operationFunction.imports.push(importRef);
@@ -164,7 +164,7 @@ export const getServiceHttpFunction = (
         className: importRef.className,
         params: Object.keys(sortedParameter.path).map((headerName) => ({
           name: headerName,
-          value: formatText(headerName, 'Any', 'CamelCase'),
+          value: formatText([headerName], 'Any', 'CamelCase'),
         })),
       };
       operationFunction.imports.push(importRef);

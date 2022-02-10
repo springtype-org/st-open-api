@@ -1,3 +1,13 @@
 import { formatText } from './text/formatText';
+import { ComponentType } from '../../component/ComponentType';
 
-export const createFileName = (schemaName: string) => formatText(schemaName, 'Any', 'KebabCase');
+export const createFileName = (type: ComponentType, schemaName: string, ...other: Array<string>) => {
+  const fileNameMap: Record<ComponentType, () => string> = {
+    ARRAY: () => formatText([schemaName, ...other], 'Any', 'PascalCase'),
+    ENUM: () => formatText([schemaName, ...other], 'Any', 'PascalCase'),
+    INTERFACE: () => formatText([schemaName, ...other], 'Any', 'PascalCase'),
+    CLASS: () => formatText([schemaName, ...other], 'Any', 'PascalCase'),
+  };
+
+  return fileNameMap[type]();
+};

@@ -23,6 +23,7 @@ export class Ref {
       className: reference.className,
       import: `import {${reference.className}} from '${relativePath}${reference.fileName}';`,
       importPath: relativePath + reference.fileName,
+      fileName: reference.fileName,
     };
   };
 
@@ -54,4 +55,5 @@ export interface IRefResult {
   import: string;
   className: string;
   importPath: string;
+  fileName: string;
 }

@@ -39,7 +39,7 @@ export const createResponseInterfaces = (
         _import = importAndType;
       } else {
         const schemaName = `${operationId}Response`;
-        const className = `I${formatText(schemaName, 'Any', 'PascalCase')}`;
+        const className = formatText(['I', schemaName], 'Any', 'PascalCase');
         const interfaceOrEnumeration = getInterfaceOrEnumFromSchema(
           className,
           schemaName,

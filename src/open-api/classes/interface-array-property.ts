@@ -1,26 +1,50 @@
 import { IPropertyClass, IRenderResult } from '../interface/i-property-class';
 import { renderMustache } from '../function/render-mustache';
-import { formatText } from '../common/function/text/formatText';
 import { IRefResult } from './ref';
 import { convertRefsToImports } from '../function/convertRefsToImports';
+import { Configuration, configuration } from '../function/config';
+import { createComponentReference } from '../common/function/createComponentReference';
+import { ComponentType } from '../component/ComponentType';
 
 export class InterfaceArrayProperty implements IPropertyClass {
   interfaceName: string;
 
   fileName: string;
 
+  type: ComponentType = 'ARRAY';
+
+  refClassName: string;
+
+  refKey: string;
+
   description: Array<string> = [];
 
   imports: Array<IRefResult> = [];
 
-  constructor(public originalName: string, importRef: IRefResult, public refClassName: string) {
-    this.convertName(originalName);
+  constructor(
+    public originalName: string,
+    importRef: IRefResult,
+    public folderPath: string,
+    public prefixRefKey: string,
+    public schema: any,
+    public config: Configuration = configuration,
+  ) {
+    const { refKey, fileName, name } = createComponentReference(
+      originalName,
+      this.type,
+      `${prefixRefKey}/item`,
+      config,
+    );
+    this.refKey = refKey;
+
+    this.refClassName = importRef.className;
+    this.interfaceName = name;
+    this.fileName = fileName;
     this.imports.push(importRef);
   }
 
-  private convertName(originalName: string) {
-    this.interfaceName = formatText(originalName, 'Any', 'PascalCase');
-    this.fileName = formatText(originalName, 'Any', 'KebabCase');
+  getReferenceKey(): string {
+    return this.refKey;
   }
 
   render(): IRenderResult {
@@ -38,6 +62,30 @@ export class InterfaceArrayProperty implements IPropertyClass {
       fileName: this.fileName,
       render: renderMustache('interface-array.mustache', viewData),
     };
+  }
+
+  getName(): string {
+    return this.interfaceName;
+  }
+
+  getOriginalName(): string {
+    return this.originalName;
+  }
+
+  getType(): ComponentType {
+    return this.type;
+  }
+
+  getFolderPath(): string {
+    return this.folderPath;
+  }
+
+  getFileName(): string {
+    return this.fileName;
+  }
+
+  getSchema(): any {
+    return this.schema;
   }
 }
 

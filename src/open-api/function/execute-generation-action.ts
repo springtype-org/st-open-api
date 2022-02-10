@@ -2,9 +2,8 @@ import { isUri } from 'valid-url';
 import { readFileSync, writeFileSync } from 'fs';
 import Ajv from 'ajv';
 import { join } from 'path';
+import OPEN_API_SCHEMA from 'ajv/lib/refs/json-schema-draft-04.json';
 import { download } from './download';
-
-import { createComponentInterfaces } from './create-component-interfaces';
 import { copyResources } from './copy-resources';
 import { createServiceClasses } from './create-service-classes';
 import { transpileToJs } from './transpile-to-js';
@@ -13,6 +12,7 @@ import { createStaticServices } from './create-static-services';
 import { configuration } from './config';
 import { initServiceReference } from './init-references';
 import { getPackageInfo } from './get-package-info';
+import { createComponents } from '../component/createComponents';
 
 const getSourceAsString = async (source: string): Promise<string> => {
   if (isUri(source)) {
@@ -21,13 +21,14 @@ const getSourceAsString = async (source: string): Promise<string> => {
   return readFileSync(source).toString('utf-8');
 };
 
+const JSON_SCHEMA_3_0_X = JSON.parse(
+  readFileSync(join(__dirname, '..', 'schema/open-api-3-0-x.json')).toString('utf-8'),
+);
+
 const validate = async (openApiSchema: object): Promise<boolean> => {
-  const JSON_SCHEMA_3_0_x = JSON.parse(
-    readFileSync(join(__dirname, '..', 'schema/open-api-3-0-x.json')).toString('utf-8'),
-  );
   const ajv = Ajv({ schemaId: 'auto', allErrors: true });
-  ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
-  const valid = ajv.validate(JSON_SCHEMA_3_0_x, openApiSchema);
+  ajv.addMetaSchema(OPEN_API_SCHEMA);
+  const valid = ajv.validate(JSON_SCHEMA_3_0_X, openApiSchema);
   if (!valid && configuration.isDebug()) {
     console.log(ajv.errors);
   }
@@ -51,7 +52,7 @@ export const executeGenerationAction = async () => {
         console.log('Initialize references');
       }
 
-      createComponentInterfaces(openApi.components);
+      createComponents(openApi.components);
 
       if (!configuration.isComponentOnly()) {
         const folderManager = configuration.getFolderManager();

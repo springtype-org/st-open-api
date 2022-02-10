@@ -70,8 +70,9 @@ export const TO_CASE_MAP: Record<TextCase, (parts: Array<string>) => string> = {
   KebabCase: toKebabCase,
 };
 
-export const formatText = (str: string, from: TextCase | 'Any', to: TextCase): string => {
-  const parts: Array<string> = FROM_CASE_MAP[from](str)
+export const formatText = (strs: Array<string>, from: TextCase | 'Any', to: TextCase): string => {
+  const parts: Array<string> = strs
+    .flatMap((str) => FROM_CASE_MAP[from](str))
     .filter((v) => !!v)
     .map((v) => v.toLowerCase());
   return TO_CASE_MAP[to](parts);

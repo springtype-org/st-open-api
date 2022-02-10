@@ -25,7 +25,7 @@ const renderStaticServices = (
   const viewData: IReactProviderMustache = {
     ServiceConstantName: variableName,
     services: services.map((v) => ({
-      propertyName: formatText(v.fileName, 'KebabCase', 'CamelCase'),
+      propertyName: formatText([v.fileName], 'KebabCase', 'CamelCase'),
       serviceClassName: v.className,
     })),
     isImport: services.length > 0,

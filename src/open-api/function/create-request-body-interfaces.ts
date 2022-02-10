@@ -32,7 +32,7 @@ export const createRequestBodyInterfaces = (
       } else {
         // TODO: refactor me
         const schemaName = `${operationId}Request`;
-        const className = `I${formatText(schemaName, 'Any', 'PascalCase')}`;
+        const className = formatText(['I', schemaName], 'Any', 'PascalCase');
         const interfaceOrEnumeration = getInterfaceOrEnumFromSchema(
           className,
           schemaName,

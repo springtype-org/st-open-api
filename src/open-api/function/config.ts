@@ -1,21 +1,49 @@
 /* eslint-disable no-console */
+import { writeFileSync } from 'fs';
 import { FolderManager } from '../classes/folder-manager';
 import { Ref } from '../classes/ref';
+import { ConsoleLogger, Logger } from '../classes/Logger';
+import { createClassName } from '../common/function/createClassName';
+import { createFileName } from '../common/function/createFileName';
+import { createRefKey } from '../common/function/createRefKey';
+import { createPropertyName } from '../common/function/createPropertyName';
+import { createInterfaceName } from '../common/function/createInterfaceName';
+import { createEnumName } from '../common/function/createEnumName';
+import { createArrayName } from '../common/function/createArrayName';
+import { mapPrimitiveValues } from '../common/function/mapPrimitiveValues';
 
 export class Configuration {
   private config: any;
 
-  private folder: FolderManager;
+  private folder: FolderManager = new FolderManager('/tmp');
 
-  private reference: Ref;
+  private reference: Ref = new Ref();
 
-  private outputDirectory;
+  private outputDirectory = this.folder.getOutputFolder();
+
+  private logger: Logger = new ConsoleLogger('WARN');
+
+  private createInterfaceName = createInterfaceName;
+
+  private createPropertyName = createPropertyName;
+
+  private createEnumName = createEnumName;
+
+  private createArrayName = createArrayName;
+
+  private createClassName = createClassName;
+
+  private createFileName = createFileName;
+
+  private createRefKey = createRefKey;
+
+  private mapPrimitiveValues = mapPrimitiveValues;
 
   setConfig(config: any) {
     this.config = config;
     this.folder = new FolderManager(this.config.output);
     this.outputDirectory = this.folder.getOutputFolder();
-    this.reference = new Ref();
+    this.logger = new ConsoleLogger(this.config?.debug ? 'DEBUG' : 'WARN');
   }
 
   getConfig() {
@@ -72,6 +100,46 @@ export class Configuration {
 
   getReference(): Ref {
     return this.reference;
+  }
+
+  getLogger(): Logger {
+    return this.logger;
+  }
+
+  getCreateInterfaceNameFn() {
+    return this.createInterfaceName;
+  }
+
+  getCreatePropertyNameFn() {
+    return this.createPropertyName;
+  }
+
+  getCreateEnumNameFn() {
+    return this.createEnumName;
+  }
+
+  getCreateArrayNameFn() {
+    return this.createArrayName;
+  }
+
+  getCreateClassNameFn() {
+    return this.createClassName;
+  }
+
+  getCreateFileNameFn() {
+    return this.createFileName;
+  }
+
+  getCreateRefKeyFn() {
+    return this.createRefKey;
+  }
+
+  getWriteFileSyncFn() {
+    return writeFileSync;
+  }
+
+  getMapPrimitiveValuesFn() {
+    return this.mapPrimitiveValues;
   }
 
   print() {
