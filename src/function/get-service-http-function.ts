@@ -10,6 +10,7 @@ import {
     HTTP_ERROR_HANDLER_INTERFACE_REF,
     HTTP_FUNCTION_REF,
     HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF,
+    HTTP_RESPONSE_INTERCEPTOR_INTERFACE_REF,
     IFunction,
     ObjectProperty,
     OPEN_API_FUNCTION_REF,
@@ -112,6 +113,7 @@ export const getServiceHttpFunction = (objProperty: ObjectProperty, httpMethod: 
         [
             HTTP_FUNCTION_REF,
             HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF,
+            HTTP_RESPONSE_INTERCEPTOR_INTERFACE_REF,
             HTTP_ERROR_HANDLER_INTERFACE_REF,
             OPEN_API_FUNCTION_REF,
         ]

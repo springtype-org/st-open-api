@@ -149,6 +149,86 @@ export function SomeOtherComponent() {
 }
 ````
 
+#### Request Interceptor
+
+You can customize request data using the `async requestInterceptor(request: IRequest)` callback function:
+
+````ts
+// this can be useful for Authorization using JWT tokens or other use-cases
+// requestInterceptor is called before the actual HTTP request is sent to the server
+openApi.requestInterceptor = async(request: IRequest) => {
+
+    console.log('requestInterceptor called with request', request)
+
+    // e.g. set a token to be used by all requests
+    request.header['Authorization'] = `Bearer ${SOME_JWT_TOKEN}`
+
+    // e.g. add some custom headers to any request or filter using logic based on request object
+    request.header['X-Forwarded-For'] = '...'
+
+    return request
+}
+````
+
+#### Response Interceptor
+
+When a response is returned, you might want to do addtional tasks; in debug mode
+it might be helpful to log in general; in error cases, it might be helpful to
+put a general purpose retry logic -- sometimes you might want to refresh the
+JWT token automatically (exchange long term token with a short-term token): 
+
+
+````ts
+let retryCount = 0;
+
+// responseInterceptor is called before the response is resolve()'d
+// is is called for non-error and error cases (that's why error is optional)
+openApi.responseInterceptor = async(
+  request: IRequest, response: Response, http: HttpRequestFn, error?: IError
+) => {
+
+    // the retry() function is a reference to the function that has been called
+    // internally to run the request. The request object contains all parameters
+    // so we can mutate them if necessary, and rety.
+
+    console.log('responseInterceptor called with', request, response, retry, error)
+
+    retryCount++;
+    
+    request.header['X-Retry-Count'] = retryCount
+
+    if (error && retryCount <= 3) {
+        await retry(request)
+    }
+
+    // this method is async and awaited in outer scope.
+    // you can run more requests here just by using the retry() function reference
+    // as long as it is awaited
+}
+````
+
+#### Error handler
+
+The error handler is meant to be implemented for general error handling.
+It is called if the HTTP status is not between 200 and 399 or in any case
+of a JavaScript runtime error while executing the HTTP request.
+
+If the error handler is implemented, it must return the error object
+provided, else the internal implementation will mask and ignore the error.
+
+````ts
+// errorHandler is called before the responseInterceptor is invoked
+// is can be used to filter and mask errors by returning false
+openApi.errorHandler = (error: IError) => {
+
+    console.log('errorHandler called with error', error)
+
+    // e.g. do tracing here
+
+    return error;
+}
+````
+
 ## Roadmap
 - add suffix for enumerations and add a get values list 
 - naming strategy hook function (service naming from path)

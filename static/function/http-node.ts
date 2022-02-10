@@ -1,80 +1,62 @@
-
 import { IncomingHttpHeaders, IncomingMessage, request as httpRequest } from "http"
 import { request as httpsRequest } from "https"
-import { RequestInterceptor, ErrorHandler } from "../interface/i-$-open-api"
-import { IQueryParam, getQueryParameters } from "./get-query-params"
-
-type HTTP_METHOD = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
-
-export const HEADER_CONTENT_TYPE = "Content-Type"
-export const HEADER_ACCEPT = "Accept"
-export const HEADER_CONTENT_DISPOSITION = "Content-Disposition"
-
-const buildUrl = (url: string, urlParameter: IParameter = {}): string => {
-    let resultUrl = url;
-    for (const key of Object.keys(urlParameter)) {
-        resultUrl = resultUrl.replace(`{${key}}`, encodeURIComponent(urlParameter[key]));
-    }
-    return resultUrl;
-};
-
-export interface IRequest {
-    method: HTTP_METHOD;
-    url: string;
-    urlParameter?: IParameter;
-    queryParameter?: Array<IQueryParam>;
-    header?: IParameter;
-    body?: string;
-}
-
-export interface IError {
-    status: number;
-    message: string;
-}
-
-export interface IParameter {
-    [name: string]: string | number | boolean
-}
-
-export type ResponseInterceptor =  (request: IRequest, response: Response) => Promise<Response>;
+import { RequestInterceptor, ErrorHandler, ResponseInterceptor, HttpRequestFn } from "../interface/i-$-open-api"
+import { getQueryParameters } from "./get-query-params"
+import { buildUrl, HTTP_METHOD, IRequest } from "./open-api";
 
 export const http = async (request: IRequest,
                            requestInterceptor: RequestInterceptor,
-                           errorHandler: ErrorHandler): Promise<string> => {
+                           errorHandler: ErrorHandler,
+                           responseInterceptor: ResponseInterceptor<Response>): Promise<string> => {
 
     if (requestInterceptor) {
         request = await requestInterceptor(request);
     }
 
-    return await new Promise(async(resolve, reject) => {
+    return await new Promise((resolve, reject) => {
 
-        const queryParams = getQueryParameters(request.queryParameter)
-        const url = `${buildUrl(request.url, request.urlParameter)}${queryParams}`
+        (async() => {
 
-        try {
-            const response = await fetch(url, {
-                method: request.method,
-                headers: request.header as IncomingHttpHeaders,
-                body: request.body
-            })
+            const run: HttpRequestFn = async(request) => {
+                const queryParams = getQueryParameters(request.queryParameter)
+                const url = `${buildUrl(request.url, request.urlParameter)}${queryParams}`
 
-            if (response.status >= 200 && response.status < 400) {
-                resolve(await response.text());
-            } else {
-                const errorResp = errorHandler({status: response.status, message: response.statusText});
-                if (!!errorResp) {
-                    reject(errorResp);
+                try {
+                    const response = await fetch(url, {
+                        method: request.method,
+                        headers: request.header as IncomingHttpHeaders,
+                        body: request.body
+                    })
+
+                    if (response.status >= 200 && response.status < 400) {
+                        if (responseInterceptor) {
+                            await responseInterceptor(request, response, run);
+                        }
+                        resolve(await response.text());
+                    } else {
+                        const errorResp = errorHandler({status: response.status, message: response.statusText});
+                        if (!!errorResp) {
+
+                            if (responseInterceptor) {
+                                await responseInterceptor(request, response, run, errorResp);
+                            }
+                            reject(errorResp);
+                        }
+                    }
+                } catch (e) {
+                    const errorResp = errorHandler({status: e.status, message: e.responseText});
+                    if (!!errorResp) {
+                        if (responseInterceptor) {
+                            await responseInterceptor(request, null, run, errorResp);
+                        }
+                        reject(errorResp);
+                    }
                 }
             }
-        } catch (e) {
-            const errorResp = errorHandler({status: e.status, message: e.responseText});
-            if (!!errorResp) {
-                reject(errorResp);
-            }
-        }
+            await run(request)
+        })()
     });
-};
-
+}
 
 interface RequestOptions {
     body?: string|Buffer

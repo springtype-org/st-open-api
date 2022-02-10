@@ -5,7 +5,7 @@
 {{/description}}
  */
 {{/isDescription}}
-{{functionName}} = async ({{#isPathParameters}}pathParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}interceptor: RequestInterceptor{{^forceInterceptor}} = openApi.requestInterceptor{{/forceInterceptor}}, errorHandler: ErrorHandler = openApi.errorHandler): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
+{{functionName}} = async ({{#isPathParameters}}pathParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}interceptor: RequestInterceptor{{^forceInterceptor}} = openApi.requestInterceptor{{/forceInterceptor}}, errorHandler: ErrorHandler = openApi.errorHandler, responseInterceptor: ResponseInterceptor<any> = openApi.responseInterceptor): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
 {{#isQueryParameters}}
 
     const queryParam = [
@@ -56,7 +56,8 @@
 {{/isRequestBody}}
         },
         interceptor,
-        errorHandler
+        errorHandler,
+        responseInterceptor
     );
 {{#isJsonResponse}}
     return JSON.parse(response);

@@ -13,11 +13,21 @@ export const HTTP_FUNCTION_REF = (folder: FolderManager) => {
         folderPath: folder.getFunctionFolder()
     }
 }
+
 export const HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF = (folder: FolderManager) => {
     return {
         fileName: "i-$-open-api",
         refKey: "HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF",
         className: "RequestInterceptor",
+        folderPath: folder.getInterfaceFolder()
+    }
+}
+
+export const HTTP_RESPONSE_INTERCEPTOR_INTERFACE_REF = (folder: FolderManager) => {
+    return {
+        fileName: "i-$-open-api",
+        refKey: "HTTP_RESPONSE_INTERCEPTOR_INTERFACE_REF",
+        className: "ResponseInterceptor",
         folderPath: folder.getInterfaceFolder()
     }
 }
@@ -52,6 +62,7 @@ export const QUERY_PARAMETER_FUNCTION_REF = (folder: FolderManager) => {
 export const SERVICE_REFERENCES = [
     HTTP_FUNCTION_REF,
     HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF,
+    HTTP_RESPONSE_INTERCEPTOR_INTERFACE_REF,
     HTTP_ERROR_HANDLER_INTERFACE_REF,
     OPEN_API_FUNCTION_REF,
     QUERY_PARAMETER_FUNCTION_REF
