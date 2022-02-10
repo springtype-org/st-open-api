@@ -3,7 +3,7 @@ import { relative, sep } from 'path';
 export const GROUP_SERVICE = 'SERVICE';
 export const GROUP_NO_AUTH_SERVICE = 'SERVICE_NO_AUTH';
 
-export class Ref {
+export class Register {
   refs: { [ref: string]: IRef } = {};
 
   groups: { [group: string]: Array<IRef & { refKey: string }> } = {};

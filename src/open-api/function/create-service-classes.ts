@@ -4,7 +4,7 @@ import { orderedPath } from './ordered-path';
 import { IOpenApi } from '../interface/open-api-mine/i-open-api';
 import { getServiceHttpFunction } from './get-service-http-function';
 import { ObjectProperty } from '../classes/object-property';
-import { GROUP_NO_AUTH_SERVICE, GROUP_SERVICE } from '../classes/ref';
+import { GROUP_NO_AUTH_SERVICE, GROUP_SERVICE } from '../classes/register';
 import { configuration } from './config';
 
 const renderServiceClass = (objectProperty: ObjectProperty, subPath: 'auth' | 'no-auth') => {

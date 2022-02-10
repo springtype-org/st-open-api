@@ -5,7 +5,7 @@ import { IFunctionResponse } from '../classes/object-property';
 import { getInterfaceOrEnumFromSchema } from './get-property';
 import { configuration } from './config';
 import { formatText } from '../common/function/text/formatText';
-import { IRefResult } from '../classes/ref';
+import { IRefResult } from '../classes/register';
 
 export const createResponseInterfaces = (
   operationId: string,

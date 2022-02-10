@@ -2,7 +2,7 @@ import { IPropertyClass, IRenderResult } from '../interface/i-property-class';
 import { renderMustache } from '../function/render-mustache';
 import { splitByLineBreak } from '../function/split-by-line-break';
 import { FolderManager } from './folder-manager';
-import { IRefResult } from './ref';
+import { IRefResult } from './register';
 import { convertRefsToImports } from '../function/convertRefsToImports';
 import { createComponentReference } from '../common/function/createComponentReference';
 import { Configuration, configuration } from '../function/config';

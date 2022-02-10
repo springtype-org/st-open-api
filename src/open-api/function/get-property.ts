@@ -11,7 +11,7 @@ import { mkdir } from '../classes/folder-manager';
 import { configuration } from './config';
 import { InterfaceArrayProperty } from '../classes/interface-array-property';
 import { formatText } from '../common/function/text/formatText';
-import { IRefResult } from '../classes/ref';
+import { IRefResult } from '../classes/register';
 
 export const getInterfaceOrEnumFromSchema = (
   className: string,

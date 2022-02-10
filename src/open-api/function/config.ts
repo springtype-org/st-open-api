@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { writeFileSync } from 'fs';
 import { FolderManager } from '../classes/folder-manager';
-import { Ref } from '../classes/ref';
+import { Register } from '../classes/register';
 import { ConsoleLogger, Logger } from '../classes/Logger';
 import { createClassName } from '../common/function/createClassName';
 import { createFileName } from '../common/function/createFileName';
@@ -17,7 +17,7 @@ export class Configuration {
 
   private folder: FolderManager = new FolderManager('/tmp');
 
-  private reference: Ref = new Ref();
+  private reference: Register = new Register();
 
   private outputDirectory = this.folder.getOutputFolder();
 
@@ -98,7 +98,7 @@ export class Configuration {
     return this.folder;
   }
 
-  getReference(): Ref {
+  getReference(): Register {
     return this.reference;
   }
 

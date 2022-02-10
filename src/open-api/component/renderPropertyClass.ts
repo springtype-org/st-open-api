@@ -14,6 +14,7 @@ export const renderPropertyClass = (propertyClass: IPropertyClass, config: Confi
   const schema = propertyClass.getSchema();
   const fileName = propertyClass.getFileName();
 
+  // TODO: do this language specific
   const filePath = join(folderPath, `${fileName}.ts`);
 
   // TODO: check if already exists

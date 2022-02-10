@@ -1,8 +1,8 @@
-import { Ref } from '../classes/ref';
+import { Register } from '../classes/register';
 import { FolderManager } from '../classes/folder-manager';
 
 export interface IGenerateConfig {
-  ref: Ref;
+  ref: Register;
   folder: FolderManager;
   serviceSuffix: string;
   verbose: boolean;

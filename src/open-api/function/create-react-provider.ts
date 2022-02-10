@@ -1,6 +1,6 @@
 import { appendFileSync } from 'fs';
 import { join } from 'path';
-import { GROUP_SERVICE } from '../classes/ref';
+import { GROUP_SERVICE } from '../classes/register';
 import { renderMustache } from './render-mustache';
 import { configuration } from './config';
 

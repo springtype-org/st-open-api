@@ -21,7 +21,7 @@ import {
 import { kebabCaseToCamel } from './kebab-case-to-camel';
 import { configuration } from './config';
 import { IParameter } from '../interface/open-api-mine/i-parameter';
-import { IRefResult } from '../classes/ref';
+import { IRefResult } from '../classes/register';
 import { firstCharacterLower, formatText } from '../common/function/text/formatText';
 
 const createParameter = (

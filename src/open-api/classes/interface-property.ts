@@ -1,7 +1,7 @@
 import { IPropertyClass, IRenderResult } from '../interface/i-property-class';
 import { renderMustache } from '../function/render-mustache';
 import { splitByLineBreak } from '../function/split-by-line-break';
-import { IRefResult } from './ref';
+import { IRefResult } from './register';
 import { convertRefsToImports } from '../function/convertRefsToImports';
 import { Configuration, configuration } from '../function/config';
 import { createComponentReference } from '../common/function/createComponentReference';

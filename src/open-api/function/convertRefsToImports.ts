@@ -1,4 +1,4 @@
-import { IRefResult } from '../classes/ref';
+import { IRefResult } from '../classes/register';
 
 export const convertRefsToImports = (refs: Array<IRefResult>): Array<string> => {
   const importMap: { [path: string]: { [className: string]: true } } = {};
