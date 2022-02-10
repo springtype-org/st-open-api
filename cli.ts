@@ -147,9 +147,9 @@ export class CLI {
     }
 }
 
-(async () => {
+(() => {
     const cli = new CLI('st-open-api')
-        .version('2.3.4')
+        .version('2.3.4') // TODO: use version from package.json
         .description('the test project description')
         .option<string>({
             shortCmd: 't',

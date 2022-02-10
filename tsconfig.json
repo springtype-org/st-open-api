@@ -13,13 +13,15 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "strictPropertyInitialization": false,
-    "downlevelIteration":true,
+    "downlevelIteration": true,
     "sourceMap": true,
     "lib": [
       "dom",
       "es2017"
     ],
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
   "include": [
     "src"

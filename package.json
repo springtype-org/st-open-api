@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.3.26",
+  "version": "1.4.0",
   "publishConfig": {
     "access": "public"
   },
@@ -10,15 +10,17 @@
     "client-generator",
     "springtype"
   ],
-  "description": "This project creates from open-api 3.0 an typescript client",
+  "description": "st-open-api generates API client SDKs from an OpenAPI specification written in OpenAPI version 3.x.x",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/springtype-org/st-open-api.git"
   },
   "scripts": {
     "prebuild": "npx st-rm-rf dist",
+    "start": "node ./dist/cli.js",
+    "watch": "tsc --watch",
     "build": "tsc",
-    "postbuild": "npx st-cp package.json README.md static schema template banner.txt node_modules dist"
+    "postbuild": "npx st-cp package.json README.md static schema template banner.txt dist"
   },
   "engines": {
     "node": ">=10"
@@ -35,7 +37,7 @@
   "bin": {
     "st-open-api": "./cli.js"
   },
-  "author": "Michael Mannseicher",
+  "author": "Michael Mannseicher, Aron Homberg",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/springtype-org/st-open-api/issues"
@@ -47,12 +49,14 @@
     "node-fetch": "^2.6.0",
     "st-rm-rf": "^2.0.0-beta.1",
     "typescript": "^3.8.3",
-    "valid-url": "^1.0.9"
+    "valid-url": "^1.0.9",
+    "yaml": "^1.10.2"
   },
   "devDependencies": {
     "@types/mustache": "^4.0.1",
     "@types/node": "^13.11.1",
     "@types/node-fetch": "^2.5.6",
-    "jest": "^26.6.3"
+    "jest": "^26.6.3",
+    "axios": "^0.25.0"
   }
 }

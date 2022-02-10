@@ -1,0 +1,315 @@
+openapi: 3.0.1
+info:
+  title: Offset API
+  contact: {}
+  version: "1.0"
+servers:
+  - url: //localhost:8000/
+    description: Local
+tags:
+  - name: Offset Service
+    description: Offset management service
+  - name: Health Check Service
+    description: System health management service
+paths:
+
+  /v1/healthcheck:
+    get:
+      tags:
+        - Health Check Service
+      summary: Used to check the system health of the API
+      operationId: getHealth
+      responses:
+        200:
+          description: OK
+          content: { }
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+
+  /v1/offset:
+    post:
+      tags:
+        - Offset Service
+      summary: Creates a offset for scheduled processing
+      operationId: createOffset
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OffsetRequest'
+        required: true
+      responses:
+        200:
+          description: OK; Offset has been scheduled correctly
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OffsetResponse'}
+        400:
+          description: Bad Request; Validation failed; missing parameters, wrong format, price mismatch, wrong project id, non-supported currency
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        401:
+          description: Unauthorized; Authentication failed
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        403:
+          description: Forbidden; Authentication corrent but permissions missing
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        422:
+          description: Unprocessable Entity; this offset has been scheduled already
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        500:
+          description: Internal Server Error; Unexpected internal error
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+      x-codegen-request-body-name: createOffset
+
+  /v1/offset/{offsetId}:
+    get:
+      tags:
+        - Offset Service
+      summary: Returns a offset
+      operationId: getOffset
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: offsetId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OffsetResponse'}
+        400:
+          description: Bad Request; Validation failed / wrong parameter format
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        404:
+          description: Not Found; Offset with this id has not been scheduled before
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+    delete:
+      tags:
+        - Offset Service
+      summary: Cancels and refunds an existing offset
+      operationId: cancelOffset
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: offsetId
+          required: true
+          in: path
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/OffsetResponse'}
+        400:
+          description: Bad Request; Validation failed / wrong parameter format
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        401:
+          description: Unauthorized
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        403:
+          description: Forbidden
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        404:
+          description: Not Found; Offset with this id has not been scheduled before
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/StatusResponse'}
+
+components:
+  schemas:
+    
+    StatusResponse:
+      title: StatusResponse
+      required:
+        - type
+        - message
+      type: object
+      properties:
+        type:
+          type: string
+          description: Can be "SUCCESS" or "ERROR"
+        message:
+          type: string
+          description: Lengthly status message explaining the error
+
+    ContactInfoRequest:
+      title: ContactInfoRequest
+      required:
+        - firstName
+        - lastName
+        - email
+        - addressLine1
+        - city
+        - zipCode
+        - country
+        - language
+      type: object
+      properties:
+        companyName:
+          type: string
+          maxLength: 255
+          description: Company name in B2B2C case/business
+        firstName:
+          type: string
+          maxLength: 255
+        lastName:
+          type: string
+          maxLength: 255
+          description: In case of middle name etc. this is the field to concatenate
+        email:
+          type: string
+          format: email
+          maxLength: 255
+          description: Email alias
+        addressLine1:
+          type: string
+          maxLength: 255
+          description: Street name and house number, apartment number
+        city:
+          type: string
+          maxLength: 255
+        zipCode:
+          type: string
+          maxLength: 255
+          description: Can be arbitrary formatted to support diverse countries
+        country:
+          type: string
+          minLength: 2
+          maxLength: 2
+          pattern: ^[A-Z]{2}$
+          description: ISO 3166-1 alpha-2, e.g. DE, EN
+        language:
+          type: string
+          maxLength: 2
+          description: Language of the tracking
+          enum: [DE, EN]
+
+    OffsetInfoRequest:
+      title: OffsetInfoRequest
+      type: object
+      required:
+        - projectNumber
+        - emissionsInKg
+        - description1
+        - description2
+      properties:
+        projectNumber:
+          type: integer
+          minLength: 4
+          description: FPM project number, e.g. 1345
+        emissionsInKg:
+          type: integer
+          description: Non-fractional kg amount; e.g. 45677
+        description1:
+          type: string
+          maxLength: 255
+          description: Will be shown in the ID tracking page (e.g. customer name)
+        description2:
+          type: string
+          maxLength: 255
+          description: Will be shown in the ID tracking page (e.g. order description)
+        externalReference:
+          type: string
+          maxLength: 128
+          description: Used for the accounting reference
+
+    OffsetInfoResponse:
+      title: OffsetInfoResponse
+      allOf:
+        - $ref: '#/components/schemas/OffsetInfoRequest'
+        - type: object
+          required:
+            - status
+          properties:
+            offsetId:
+              type: string
+              description: Primary identifier (unique id) to reference the offset on our side (UUIDv4); this one is to be used for cancellation too
+            cpid:
+              type: string
+              description: current offset cpid (raw 3-part identifier to be used for the tracking; see trackingUrl for the hashed/anonymous URL)
+            status:
+              type: string
+              description: Latest status of the offset in journal (e.g. ORDER_PENDING)
+            trackingUrl:
+              type: string
+              description: For tracking the offset
+
+    OffsetRequest:
+      title: OffsetRequest
+      required:
+        - offsetInfo
+        - contactInfo
+      type: object
+      properties:
+        offsetInfo:
+          $ref: '#/components/schemas/OffsetInfoRequest'
+        contactInfo:
+          $ref: '#/components/schemas/ContactInfoRequest'
+
+    OffsetResponse:
+      title: OffsetResponse
+      required:
+        - status
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/StatusResponse'
+        result:
+          $ref: '#/components/schemas/OffsetInfoResponse'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

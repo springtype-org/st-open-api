@@ -1,17 +1,17 @@
-import {download} from "./download";
+import {download} from "../function/download";
 import {isUri} from "valid-url";
 import {readFileSync} from "fs";
-
+import * as YAML from "yaml";
 import * as Ajv from 'ajv';
-import {createComponentInterfaces} from "./create-component-interfaces";
-import {copyResources} from "./copy-resources";
-import {createServiceClasses} from "./create-service-classes";
+import {createComponentInterfaces} from "../function/create-component-interfaces";
+import {copyResources} from "../function/copy-resources";
+import {createServiceClasses} from "../function/create-service-classes";
 import {join} from "path";
-import {transpileToJs} from "./transpile-to-js";
-import {createReactProvider} from "./create-react-provider";
-import {createStaticServices} from "./create-static-services";
-import {configuration} from "./config";
-import {initServiceReference} from "./init-references";
+import {transpileToJs} from "../function/transpile-to-js";
+import {createReactProvider} from "../function/create-react-provider";
+import {createStaticServices} from "../function/create-static-services";
+import {configuration} from "../function/config";
+import {initServiceReference} from "../function/init-references";
 
 const getSourceAsString = async (source: string): Promise<string> => {
     if (isUri(source)) {
@@ -30,27 +30,49 @@ const validate = async (openApiSchema: object): Promise<boolean> => {
     return valid
 }
 
+export type SpecMimeType = 'yaml' | 'json'
+
+export const getSpecMimeType = (filePath: string): SpecMimeType => {
+
+    const lowerCasedFilePath = filePath.toLowerCase();
+    if (lowerCasedFilePath.indexOf('.yaml') > -1) {
+        return 'yaml'
+    }
+    return 'json'
+}
+
 export const executeGenerationAction = async () => {
     const isDebug = configuration.isDebug();
     configuration.print();
 
+    let openApiSpec;
+    const openApiFileName = configuration.getOpenApiFile();
+
+    // trasnform YAML to JSON
+    if (getSpecMimeType(openApiFileName) === 'yaml') {
+
+        openApiSpec = YAML.parse(readFileSync(openApiFileName, 'utf8'));
+
+    } else {
+        openApiSpec = JSON.parse(await getSourceAsString(openApiFileName));
+    }
+
     try {
-        const openApi = JSON.parse(await getSourceAsString(configuration.getOpenApiFile()));
-        const valid = await validate(openApi);
+        const valid = await validate(openApiSpec);
 
         if (isDebug) {
-            console.log('OpenApi Json is valid :', valid);
+            console.log('OpenApi JSON is valid :', valid);
         }
         if (valid || configuration.ignoreValidation()) {
             if (isDebug) {
                 console.log('Initialize references');
             }
 
-            createComponentInterfaces(openApi.components);
+            createComponentInterfaces(openApiSpec.components);
 
             if (!configuration.isComponentOnly()) {
                 initServiceReference(configuration.getFolderManager());
-                createServiceClasses(openApi);
+                createServiceClasses(openApiSpec);
 
                 if (configuration.isCreateReactProvider()) {
                     createReactProvider();
@@ -59,7 +81,7 @@ export const executeGenerationAction = async () => {
                 if (configuration.isCreateStaticServices()) {
                     createStaticServices()
                 }
-                copyResources();
+                copyResources(configuration);
             }
 
             const language = configuration.getLanguage();
@@ -70,7 +92,6 @@ export const executeGenerationAction = async () => {
         } else {
             console.error("OpenApi Json not valid.")
             process.exit(1);
-            return;
         }
     } catch (e) {
         console.error(e.message);

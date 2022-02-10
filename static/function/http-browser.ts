@@ -1,5 +1,5 @@
-import {getQueryParameters, IQueryParam} from "./get-query-params";
-import {ErrorHandler, RequestInterceptor} from "../interface/i-$-open-api";
+import { RequestInterceptor, ErrorHandler } from "../interface/i-$-open-api"
+import { IQueryParam, getQueryParameters } from "./get-query-params"
 
 export const HEADER_CONTENT_TYPE = "Content-Type"
 export const HEADER_ACCEPT = "Accept"
@@ -7,7 +7,9 @@ export const HEADER_CONTENT_DISPOSITION = "Content-Disposition"
 
 export const getDispositionMap = (contentDisposition: string): { [key: string]: string } => {
     return contentDisposition.split(';').reduce((prev, curr) => {
+        
         let [key, value = ''] = curr.trim().split('=');
+
         if (value.startsWith('"') && value.endsWith('"')) {
             return {...prev, [key]: value.substr(1, value.length - 2)};
         }

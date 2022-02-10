@@ -42,9 +42,9 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
             if(typeof schema.additionalProperties === 'object' && !!schema.additionalProperties.type){
                const isArray = schema.additionalProperties.type === 'array'
                 if(isArray) {
-                    interfaceProperty.addAdditionalProperties(schema.additionalProperties.items.type, true);
+                    interfaceProperty.addAdditionalProperties(mapType(schema.additionalProperties.items.type), true);
                 }else {
-                    interfaceProperty.addAdditionalProperties(schema.additionalProperties.type);
+                    interfaceProperty.addAdditionalProperties(mapType(schema.additionalProperties.type));
                 }
             }
             return interfaceProperty;

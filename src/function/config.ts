@@ -59,6 +59,10 @@ export class Configuration {
         return this.config.suffix;
     }
 
+    getProviderName(): string {
+        return this.config.provider;
+    }
+
     getLanguage(): 'ts' | 'js' | 'onlyJs' {
         return this.config.language
     }
