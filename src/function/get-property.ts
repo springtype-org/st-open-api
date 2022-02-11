@@ -27,6 +27,27 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
         schema = schema.items;
         schema.type = 'object';
     }
+    const schemasAllOf = schema.allOf;
+    if (schemasAllOf) {
+        schema = schemasAllOf
+            .map((allOfSchema) => {
+                const schemaRef = allOfSchema.$ref;
+                if (schemaRef) {
+                    return configuration.getReference().getImportAndTypeByRef(schemaRef, path).schema;
+                }
+                return allOfSchema;
+            })
+            .filter((v) => !!v)
+            .reduce(
+                (prev, curr) => ({
+                    ...prev,
+                    required: [...(prev?.required || []), ...(curr?.required || [])],
+                    properties: { ...(prev?.properties || {}), ...(curr?.properties || {}) },
+                }),
+                { type: 'object' },
+            );
+    }
+
     if (schema.type === 'object' || schema.properties || schema.additionalProperties) {
         if (isDebug) {
             console.log(`Object Schema ${className} (array=${isArray})`, JSON.stringify(schema, null, 2))

@@ -24,7 +24,8 @@ export const createComponentInterfaces = (components: IComponents) => {
             reference.addReference(`#/components/schemas/${schemaName}`, {
                 fileName: fileName,
                 className: className,
-                folderPath: folderManager.getInterfaceComponentsFolder()
+                folderPath: folderManager.getInterfaceComponentsFolder(),
+                schema: schemas[schemaName]
             });
             if (isDebug) {
                 console.log(`Add new reference ${className} -> ${fileName}`)

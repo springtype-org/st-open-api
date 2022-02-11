@@ -19,7 +19,8 @@ export class Ref {
         }
         return {
             className: reference.className,
-            import: `import {${reference.className}} from '${relativePath}${reference.fileName}';`
+            import: `import {${reference.className}} from '${relativePath}${reference.fileName}';`,
+            schema: reference.schema
         }
     }
 
@@ -51,9 +52,11 @@ export interface IRef {
     fileName: string,
     className: string,
     folderPath: string
+    schema?: any;
 }
 
 export interface IRefResult {
     import: string,
     className: string
+    schema?: any;
 }
