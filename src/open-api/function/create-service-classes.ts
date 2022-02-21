@@ -30,6 +30,7 @@ const renderServiceClass = (objectProperty: ObjectProperty, subPath: 'auth' | 'n
 };
 export const createServiceClasses = (openApi: IOpenApi) => {
   const orderedPaths = orderedPath(openApi);
+  configuration.getGroupServiceFn()(openApi.paths);
 
   for (const groupName of Object.keys(orderedPaths)) {
     const className = groupName.charAt(0).toUpperCase() + groupName.slice(1);

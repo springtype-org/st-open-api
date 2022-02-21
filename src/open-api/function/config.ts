@@ -11,6 +11,7 @@ import { createInterfaceName } from '../common/function/createInterfaceName';
 import { createEnumName } from '../common/function/createEnumName';
 import { createArrayName } from '../common/function/createArrayName';
 import { mapPrimitiveValues } from '../common/function/mapPrimitiveValues';
+import { groupServices } from '../common/function/groupServices';
 
 export class Configuration {
   private config: any;
@@ -26,6 +27,8 @@ export class Configuration {
   private createInterfaceName = createInterfaceName;
 
   private createPropertyName = createPropertyName;
+
+  private groupServices = groupServices;
 
   private createEnumName = createEnumName;
 
@@ -116,6 +119,10 @@ export class Configuration {
 
   getCreateEnumNameFn() {
     return this.createEnumName;
+  }
+
+  getGroupServiceFn() {
+    return this.groupServices;
   }
 
   getCreateArrayNameFn() {
