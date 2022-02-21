@@ -46,7 +46,7 @@ export class Configuration {
     this.config = config;
     this.folder.reset(this.config.output);
     this.outputDirectory = this.folder.getOutputFolder();
-    this.logger = new ConsoleLogger(this.config?.debug ? 'DEBUG' : 'WARN');
+    this.logger = new ConsoleLogger(this.config?.debug ? 'DEBUG' : 'INFO');
   }
 
   getConfig() {

@@ -16,21 +16,34 @@ import { getPackageInfo } from './get-package-info';
 import { createComponents } from '../component/createComponents';
 import { saveApiFile } from './saveApiFile';
 
-const getSourceAsString = async (source: string): Promise<string> => {
+const getSource = async (source: string): Promise<{ contentType: string; data: string }> => {
   if (isUri(source)) {
     return download(source);
   }
-  return readFileSync(source).toString('utf-8');
+  return { contentType: source.split('.').pop(), data: readFileSync(source).toString('utf-8') };
 };
 
 export type SpecMimeType = 'yaml' | 'json';
 
-export const getSpecMimeType = (filePath: string): SpecMimeType => {
-  const lowerCasedFilePath = filePath.toLowerCase();
-  if (lowerCasedFilePath.indexOf('.yaml') > -1) {
-    return 'yaml';
+export const getSpecMimeType = (contentType: string): SpecMimeType => {
+  const lowerCaseContentType = contentType.split(';')[0].toLowerCase();
+  switch (lowerCaseContentType) {
+    case 'yaml':
+    case 'yml':
+    case 'text/x-yaml':
+    case 'text/yaml':
+    case 'text/yml':
+    case 'application/x-yaml':
+    case 'application/x-yml':
+    case 'application/yaml':
+    case 'application/yml':
+      return 'yaml';
+    case 'json':
+    case 'application/json':
+      return 'json';
+    default:
+      throw new Error('Unknown mime type');
   }
-  return 'json';
 };
 
 const JSON_SCHEMA_3_0_X = JSON.parse(
@@ -54,8 +67,8 @@ export const executeGenerationAction = async () => {
   try {
     let openApiSpec;
     const openApiFileName = configuration.getOpenApiFile();
-    const openApiRawData = await getSourceAsString(openApiFileName);
-    const isYamlFile = getSpecMimeType(openApiFileName) === 'yaml';
+    const { contentType, data: openApiRawData } = await getSource(openApiFileName);
+    const isYamlFile = getSpecMimeType(contentType) === 'yaml';
 
     if (isYamlFile) {
       openApiSpec = YAML.parse(openApiRawData);

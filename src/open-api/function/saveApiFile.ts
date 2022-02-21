@@ -3,18 +3,11 @@ import { writeFileSync } from 'fs';
 import YAML from 'yaml';
 import { Configuration, configuration } from './config';
 
-export const saveApiFile = (
-  isYamlFile: boolean,
-  openApiRawData: string,
-  config: Configuration = configuration,
-) => {
+export const saveApiFile = (isYamlFile: boolean, openApiRawData: string, config: Configuration = configuration) => {
   const folderManager = config.getFolderManager();
   const logger = config.getLogger();
 
-  const schemaFilePath = join(
-    folderManager.getOutputFolder(),
-    'open-api.' + isYamlFile ? 'yaml' : 'json',
-  );
+  const schemaFilePath = join(folderManager.getOutputFolder(), 'open-api.' + (isYamlFile ? 'yaml' : 'json'));
 
   writeFileSync(
     schemaFilePath,
