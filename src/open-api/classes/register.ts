@@ -43,6 +43,10 @@ export class Register {
   getByGroup(group: string) {
     return this.groups[group] || [];
   }
+
+  getAllGroups(): Array<string> {
+    return Object.keys(this.groups);
+  }
 }
 
 export interface IRef {

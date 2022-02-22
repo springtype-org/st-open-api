@@ -6,7 +6,6 @@ import { join } from 'path';
 import OPEN_API_SCHEMA from 'ajv/lib/refs/json-schema-draft-04.json';
 import { download } from './download';
 import { copyResources } from './copy-resources';
-import { createServiceClasses } from './create-service-classes';
 import { transpileToJs } from './transpile-to-js';
 import { createReactProvider } from './create-react-provider';
 import { createStaticServices } from './create-static-services';
@@ -15,6 +14,7 @@ import { initServiceReference } from './init-references';
 import { getPackageInfo } from './get-package-info';
 import { createComponents } from '../component/createComponents';
 import { saveApiFile } from './saveApiFile';
+import { createServiceClasses } from '../service/createServiceClasses';
 
 const getSource = async (source: string): Promise<{ contentType: string; data: string }> => {
   if (isUri(source)) {
@@ -108,7 +108,7 @@ export const executeGenerationAction = async () => {
           ),
         );
 
-        createServiceClasses(openApiSpec);
+        createServiceClasses(openApiSpec.paths);
 
         if (configuration.isCreateReactProvider()) {
           createReactProvider();

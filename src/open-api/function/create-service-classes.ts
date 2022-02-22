@@ -1,55 +1,60 @@
 import * as fs from 'fs';
 import * as nodePath from 'path';
-import { orderedPath } from './ordered-path';
 import { IOpenApi } from '../interface/open-api-mine/i-open-api';
 import { getServiceHttpFunction } from './get-service-http-function';
 import { ObjectProperty } from '../classes/object-property';
-import { GROUP_NO_AUTH_SERVICE, GROUP_SERVICE } from '../classes/register';
-import { configuration } from './config';
+import { Configuration, configuration } from './config';
 
-const renderServiceClass = (objectProperty: ObjectProperty, subPath: 'auth' | 'no-auth') => {
-  if (objectProperty.functions.length > 0) {
-    const folder = configuration.getFolderManager();
-    const reference = configuration.getReference();
+const renderServiceClass = (objectProperty: ObjectProperty, config: Configuration = configuration) => {
+  if (objectProperty.functions.length >= 0) {
+    const reference = config.getReference();
 
-    const hasSecurity = subPath === 'auth';
-    const serviceFolder = hasSecurity ? folder.getAuthServiceFolder() : folder.getNoAuthServiceFolder();
     const rendered = objectProperty.render();
+    const serviceFolder = objectProperty.getFolderPath();
+
+    const registerReferenceParts: Array<string> = [serviceFolder, objectProperty.className];
+
     reference.addReference(
-      `service/${subPath}/${objectProperty.className}`,
+      nodePath.join(...registerReferenceParts),
       {
         className: rendered.classEnumName,
         fileName: rendered.fileName,
         folderPath: serviceFolder,
       },
-      hasSecurity ? GROUP_SERVICE : GROUP_NO_AUTH_SERVICE,
+      objectProperty.getFolderPath(),
     );
-
-    fs.appendFileSync(nodePath.join(serviceFolder, `${rendered.fileName}.ts`), rendered.render);
+    const serviceFolderPath: string = objectProperty.getFolderPath();
+    fs.mkdirSync(serviceFolderPath, { recursive: true });
+    fs.appendFileSync(nodePath.join(serviceFolderPath, `${rendered.fileName}.ts`), rendered.render);
   }
 };
-export const createServiceClasses = (openApi: IOpenApi) => {
-  const orderedPaths = orderedPath(openApi);
-  configuration.getGroupServiceFn()(openApi.paths);
+export const createServiceClasses = (openApi: IOpenApi, config: Configuration = configuration) => {
+  const groupedServices = config.getGroupServiceFn()(openApi.paths);
+  const serviceFolder = config.getFolderManager().getServiceFolder();
+  for (const folderPath of Object.keys(groupedServices)) {
+    for (const groupName of Object.keys(groupedServices[folderPath])) {
+      const className = config.getCreateServiceNameFn()(groupName);
 
-  for (const groupName of Object.keys(orderedPaths)) {
-    const className = groupName.charAt(0).toUpperCase() + groupName.slice(1);
-    const group = orderedPaths[groupName];
-    const objectPropertyAuth = new ObjectProperty(className, 'service/auth/', 'service/auth/', group);
-    const objectPropertyNoAuth = new ObjectProperty(className, 'service/no-auth/', 'service/no-auth/', group);
+      const objectProperty = new ObjectProperty(
+        className,
+        nodePath.join(serviceFolder, folderPath),
+        'service',
+        groupName,
+      );
+      const group = groupedServices[folderPath][groupName];
+      for (const subPath of Object.keys(group)) {
+        const item = group[subPath];
+        getServiceHttpFunction(objectProperty, 'GET', subPath, item.get);
+        getServiceHttpFunction(objectProperty, 'DELETE', subPath, item.delete);
+        getServiceHttpFunction(objectProperty, 'HEAD', subPath, item.head);
+        getServiceHttpFunction(objectProperty, 'OPTIONS', subPath, item.options);
+        getServiceHttpFunction(objectProperty, 'PATCH', subPath, item.patch);
+        getServiceHttpFunction(objectProperty, 'TRACE', subPath, item.trace);
+        getServiceHttpFunction(objectProperty, 'PUT', subPath, item.put);
+        getServiceHttpFunction(objectProperty, 'POST', subPath, item.post);
+      }
 
-    for (const subPath of Object.keys(group)) {
-      const item = group[subPath];
-      getServiceHttpFunction(objectPropertyAuth, objectPropertyNoAuth, 'GET', subPath, item.get);
-      getServiceHttpFunction(objectPropertyAuth, objectPropertyNoAuth, 'DELETE', subPath, item.delete);
-      getServiceHttpFunction(objectPropertyAuth, objectPropertyNoAuth, 'HEAD', subPath, item.head);
-      getServiceHttpFunction(objectPropertyAuth, objectPropertyNoAuth, 'OPTIONS', subPath, item.options);
-      getServiceHttpFunction(objectPropertyAuth, objectPropertyNoAuth, 'PATCH', subPath, item.patch);
-      getServiceHttpFunction(objectPropertyAuth, objectPropertyNoAuth, 'TRACE', subPath, item.trace);
-      getServiceHttpFunction(objectPropertyAuth, objectPropertyNoAuth, 'PUT', subPath, item.put);
-      getServiceHttpFunction(objectPropertyAuth, objectPropertyNoAuth, 'POST', subPath, item.post);
+      renderServiceClass(objectProperty);
     }
-    renderServiceClass(objectPropertyAuth, 'auth');
-    renderServiceClass(objectPropertyNoAuth, 'no-auth');
   }
 };

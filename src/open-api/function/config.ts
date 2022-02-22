@@ -12,6 +12,8 @@ import { createEnumName } from '../common/function/createEnumName';
 import { createArrayName } from '../common/function/createArrayName';
 import { mapPrimitiveValues } from '../common/function/mapPrimitiveValues';
 import { groupServices } from '../common/function/groupServices';
+import { createServiceName } from '../common/function/createServiceName';
+import { createServiceFunctionName } from '../common/function/createServiceFunctionName';
 
 export class Configuration {
   private config: any;
@@ -37,6 +39,10 @@ export class Configuration {
   private createClassName = createClassName;
 
   private createFileName = createFileName;
+
+  private createServiceName = createServiceName;
+
+  private createServiceFunctionName = createServiceFunctionName;
 
   private createRefKey = createRefKey;
 
@@ -135,6 +141,14 @@ export class Configuration {
 
   getCreateFileNameFn() {
     return this.createFileName;
+  }
+
+  getCreateServiceNameFn() {
+    return this.createServiceName;
+  }
+
+  getCreateServiceFunctionName() {
+    return this.createServiceFunctionName;
   }
 
   getCreateRefKeyFn() {

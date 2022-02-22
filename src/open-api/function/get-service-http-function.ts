@@ -19,7 +19,7 @@ import {
   OPEN_API_INTERFACE_REF,
 } from '../classes/object-property';
 import { kebabCaseToCamel } from './kebab-case-to-camel';
-import { configuration } from './config';
+import { Configuration, configuration } from './config';
 import { IParameter } from '../interface/open-api-mine/i-parameter';
 import { IRefResult } from '../classes/register';
 import { firstCharacterLower, formatText } from '../common/function/text/formatText';
@@ -98,21 +98,18 @@ const getOperationId = (httpMethod: string, path: string, operationId: string | 
 };
 
 export const getServiceHttpFunction = (
-  objPropertyAuth: ObjectProperty,
-  objPropertyNoAuth: ObjectProperty,
+  objProperty: ObjectProperty,
   httpMethod: string,
   path: string,
   operation: IOperation,
+  config: Configuration = configuration,
 ) => {
   if (operation) {
-    const reference = configuration.getReference();
-    const folder = configuration.getFolderManager();
+    const reference = config.getReference();
+    const folder = config.getFolderManager();
 
-    const hasSecurity = operation.security;
-    const objProperty = hasSecurity ? objPropertyAuth : objPropertyNoAuth;
-    const serviceFolder = hasSecurity ? folder.getAuthServiceFolder() : folder.getNoAuthServiceFolder();
-
-    const functionName = getOperationId(httpMethod, path, operation.operationId);
+    const serviceFolder = objProperty.getFolderPath();
+    const functionName = config.getCreateServiceFunctionName()(httpMethod, path, operation.operationId);
     const requestBody = createRequestBodyInterfaces(functionName, operation.requestBody, serviceFolder);
     const response = createResponseInterfaces(functionName, operation.responses, serviceFolder);
 
@@ -120,7 +117,7 @@ export const getServiceHttpFunction = (
 
     const operationFunction: IFunction = {
       functionName,
-      forceInterceptor: configuration.forceInterceptor(),
+      forceInterceptor: config.forceInterceptor(),
       imports: [],
 
       httpMethod,

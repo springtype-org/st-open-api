@@ -25,7 +25,7 @@ const renderStaticServices = (
   const viewData: IReactProviderMustache = {
     ServiceConstantName: variableName,
     services: services.map((v) => ({
-      propertyName: formatText([v.fileName], 'KebabCase', 'CamelCase'),
+      propertyName: formatText([v.fileName], 'Any', 'CamelCase'),
       serviceClassName: v.className,
     })),
     isImport: services.length > 0,
@@ -37,13 +37,17 @@ const renderStaticServices = (
 
   // TODO: do this language specific
   appendFileSync(
-    join(folder.getConstantServicesFolder(), `${folderSuffix}-services.ts`),
+    join(folder.getConstantServicesFolder(), formatText([folderSuffix, 'services'], 'Any', 'PascalCase') + '.ts'),
     renderMustache('service-constants.mustache', viewData),
   );
 };
 export const createStaticServices = () => {
   const reference = configuration.getReference();
-
-  renderStaticServices(reference.getByGroup(GROUP_SERVICE), 'getAuthServices', 'auth');
-  renderStaticServices(reference.getByGroup(GROUP_NO_AUTH_SERVICE), 'getNoAuthServices', 'no-auth');
+  for (const groupName of reference.getAllGroups()) {
+    renderStaticServices(
+      reference.getByGroup(groupName),
+      formatText(['get', groupName, 'Services'], 'Any', 'CamelCase'),
+      groupName,
+    );
+  }
 };

@@ -32,12 +32,8 @@ export class FolderManager {
     return this.outputFolder;
   }
 
-  getAuthServiceFolder() {
-    return mkdir(join(this.outputFolder, 'service', 'auth'));
-  }
-
-  getNoAuthServiceFolder() {
-    return mkdir(join(this.outputFolder, 'service', 'no-auth'));
+  getServiceFolder() {
+    return mkdir(join(this.outputFolder, 'service'));
   }
 
   getFunctionFolder() {
