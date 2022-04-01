@@ -16,6 +16,8 @@ import { buildUrl, HTTP_METHOD, IRequest } from "./open-api";
 export const http = async (
     request: IRequest,
     requestInterceptor: RequestInterceptor,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    errorHandler: ErrorHandler,
     responseInterceptor: ResponseInterceptor<Response>
 ): Promise<string> => {
     const context = {};
@@ -43,7 +45,7 @@ export const http = async (
                 return response.text();
             }
         } catch (e) {
-            return responseInterceptor(request, null, run, context, e);
+            return responseInterceptor(request, undefined, run, context, e);
         }
     };
 
@@ -120,12 +122,12 @@ export class Response {
     public body: Promise<Buffer>;
 
     constructor(public incomingMessage: IncomingMessage) {
-        this.status = incomingMessage.statusCode;
-        this.statusText = incomingMessage.statusMessage;
+        this.status = incomingMessage.statusCode || 0;
+        this.statusText = incomingMessage.statusMessage || "";
         this.headers = new Headers(incomingMessage.headers);
 
         this.body = new Promise((resolve, reject) => {
-            const chunks = [];
+            const chunks: Array<Buffer> = [];
             incomingMessage.on("data", (chunk) => chunks.push(chunk));
             incomingMessage.on("aborted", () => reject(new Error("aborted")));
             incomingMessage.on("end", () => resolve(Buffer.concat(chunks)));
@@ -155,7 +157,7 @@ const fetch = async (
     }
 
     return new Promise((resolve, reject) => {
-        const request: any =
+        const request =
             _request.url.protocol === "https:" ? httpsRequest : httpRequest;
 
         const req = request(
