@@ -1,0 +1,858 @@
+"components":
+  "schemas":
+    "OrderInfoRequestHeader":
+      "properties":
+        "description1":
+          "description": "Will be shown in the ID tracking page (e.g. customer name)"
+          "maxLength": 255
+          "type": "string"
+        "description2":
+          "description": "Will be shown in the ID tracking page (e.g. order description)"
+          "maxLength": 255
+          "type": "string"
+        "externalReference":
+          "description": "Will not be shown on ID tracking; usually used for the accounting reference"
+          "maxLength": 128
+          "type": "string"
+      "title": "OrderInfoRequestHeader"
+      "type": "object"
+    "OrderCollectiveOrderId":
+      "properties":
+        "collectiveOrderId":
+          "description": "Internal orderId of collectiveOrder; used for later reference by subOrders"
+          "type": "string"
+        "fpmCollectiveOrderId":
+          "description": "ID used by ClimatePartner Footprint Manager"
+          "type": "string"
+      "title": "OrderCollectiveOrderId"
+      "type": "object"
+    "OrderInfoRequestFields":
+      "properties":
+        "emissionsInKg":
+          "description": "Non-fractional kg quantity of emissions; e.g. 45677"
+          "type": "integer"
+        "externalReference":
+          "description": "Used for the accounting reference"
+          "maxLength": 128
+          "type": "string"
+        "projectId":
+          "description": "Carbon offset project ID, e.g. 1345"
+          "minLength": 4
+          "type": "integer"
+        "commitment":
+          "description": "Status of order to be placed. draft: order is stored in system, cpId is issued but no CO2-certificates are reserved, all values (e. g. emissionsInKg) can be changed. fixed: order is stored in system, cpId is issued and CO2-certificates are reserved, certain values (e. g. emissionsInKg) can no longer be changed."
+          "enum":
+          - "draft"
+          - "fixed"
+          "maxLength": 6
+          "type": "string"
+        "language":
+          "description": "Desired language of response"
+          "type": "string"
+          "enum":
+          - "de"
+          - "en"
+          - "fr"
+          - "it"
+          - "nl"
+          - "se"
+          - "es"
+          "maxLength": 2
+      "type": "object"
+      "title": "OrderInfoRequestFields"
+    "OrderCheckRequest":
+      "properties":
+        "emissionsInKg":
+          "description": "Non-fractional kg quantity of emissions; e.g. 45677"
+          "type": "integer"
+        "projectId":
+          "description": "Carbon offset project ID, e.g. 1345"
+          "minLength": 4
+          "type": "string"
+      "type": "object"
+      "required":
+      - "emissionsInKg"
+      - "projectId"
+    "OrderInfoRequest":
+      "allOf":
+      - "$ref": "#/components/schemas/OrderInfoRequestHeader"
+      - "$ref": "#/components/schemas/OrderInfoRequestFields"
+      - "type": "object"
+        "required":
+        - "projectId"
+        - "description1"
+        - "description2"
+        - "commitment"
+        - "emissionsInKg"
+      "title": "OrderInfoRequest"
+    "OrderRequest":
+      "properties":
+        "orderInfo":
+          "$ref": "#/components/schemas/OrderInfoRequest"
+      "title": "OrderRequest"
+      "type": "object"
+    "OrderInfoResponse":
+      "allOf":
+      - "$ref": "#/components/schemas/OrderInfoRequestHeader"
+      - "$ref": "#/components/schemas/OrderInfoRequestFields"
+      - "$ref": "#/components/schemas/Price"
+      - "properties":
+          "cpId":
+            "description": "Current order cpId (raw 3-part identifier to be used
+              for the tracking; see trackingUrl for the hashed/anonymous URL)"
+            "type": "string"
+          "orderId":
+            "description": "Primary identifier (unique id) to reference the order
+              on CP side (UUIDv4); this one is to be used for cancellation too"
+            "type": "string"
+          "fpmId":
+            "description": "Internal order ID used by the ClimatePartner Footprint Manager"
+            "type": "string"
+          "status":
+            "description": "Latest status of the order in journal (e.g. ORDER_PENDING)"
+            "type": "string"
+          "trackingUrl":
+            "description": "e.g. https://fpm.climatepartner.com/tracking/f232761827cd7dbb1d4bf4e5f0cdca4c"
+            "type": "string"
+        "type": "object"
+      "title": "OrderInfoResponse"
+    "OrderResponse":
+      "properties":
+        "result":
+          "$ref": "#/components/schemas/OrderInfoResponse"
+        "status":
+          "$ref": "#/components/schemas/StatusResponse"
+      "title": "OrderResponse"
+      "type": "object"
+    "OrderCollectiveOrderResponse":
+      "allOf":
+      - "$ref": "#/components/schemas/OrderCollectiveOrderId"
+      - "$ref": "#/components/schemas/OrderInfoRequestHeader"
+      - "$ref": "#/components/schemas/Price"
+      - "$ref": "#/components/schemas/StatusResponse"
+      - "properties":
+          "emissionsInKg":
+            "description": "Cumulative emissions of all subOrders in collectiveOrder"
+            "type": "integer"
+        "type": "object"
+      "title": "OrderCollectiveOrderResponse"
+    "OrderSubOrderResponse":
+      "allOf":
+      - "$ref": "#/components/schemas/OrderCollectiveOrderId"
+      - "$ref": "#/components/schemas/OrderInfoResponse"
+      - "$ref": "#/components/schemas/StatusResponse"
+      "title": "OrderSubOrderResponse"
+      "type": "object"
+    "OrderCheckResponse":
+      "allOf":
+      - "$ref": "#/components/schemas/Price"
+      - "$ref": "#/components/schemas/OrderCheckRequest"
+      - "properties":
+          "available":
+            "enum":
+            - "yes"
+            - "no"
+            "description": "Flag for indicating whether the requested quantity is available for booking."
+      - "$ref": "#/components/schemas/StatusResponse"
+      "title": "OrderCheckResponse"
+      "type": "object"
+    "Price":
+      "properties":
+        "price":
+          "description": "Price for offsetting the emissions in emissionsInKg with 2 decimals"
+          "type": "number"
+        "handlingFee":
+          "description": "Handling fee for offset order if configured in the account settings"
+          "type": "number"
+        "currency":
+          "description": "3-digit ISO code for currency of price"
+          "enum":
+          - "EUR"
+          - "GBP"
+          - "CHF"
+          "type": "string"
+          "maxLength": 3
+      "title": "Price"
+      "type": "object"
+    "ProjectInfoResponse":
+      "properties":
+        "projectId":
+            "description": "ID of carbon offset project"
+            "type": "string"
+            "minLength": 4
+        "name":
+            "description": "Name of the project"
+            "maxLength": 55
+            "type": "string"
+        "technology":
+            "description": "Technology of the project"
+            "maxLength": 55
+            "type": "string"
+        "region":
+            "description": "Region of the project"
+            "maxLength": 55
+            "type": "string"
+        "country":
+            "description": "Country of the project"
+            "maxLength": 55
+            "type": "string"
+        "verificationType":
+            "description": "Type of verification of the project; e. g. VCS"
+            "maxLength": 55
+            "type": "string"
+        "website":
+            "description": "URL of project website on climatepartner.com"
+            "maxLength": 255
+            "type": "string"
+        "availableQuantity":
+            "description": "Remaining offset capacity of the project in kg"
+            "type": "integer"
+        "price":
+            "description": "Net (no VAT) price per kg in this project"
+            "type": "number"
+        "currency":
+            "description": "3-digit ISO currency of project price"
+            "maxLength": 3
+            "enum":
+            - "EUR"
+            - "CHF"
+            - "GBP"
+        "unit":
+            "description": "Unit of CO2e in this project; e. g. kg CO2"
+            "maxLength": 10
+            "type": "string"
+      "title": "ProjectInfoResponse"
+      "type": "object"
+    "ProjectInfoResponseList":
+      "type": "array"
+      "items":
+        "$ref": "#/components/schemas/ProjectInfoResponse"
+    "StatusResponse":
+      "properties":
+        "message":
+          "description": "Status message explaining the error"
+          "type": "string"
+        "type":
+          "description": "Can be \"SUCCESS\" or \"ERROR\""
+          "enum":
+          - "SUCCESS"
+          - "ERROR"
+          "type": "string"
+      "title": "StatusResponse"
+      "type": "object"
+"info":
+  "contact": {}
+  "description": "ClimatePartner Unified Integration Solutions API."
+  "termsOfService": "https://ftp.climatepartner.com/download/GTC/GTC_CP-DE_English.pdf"
+  "title": "Unified API"
+  "version": "1.0.1"
+"openapi": "3.0.1"
+"paths":
+  "/offset/v2/projects":
+    "get":
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/ProjectInfoResponseList"
+          "description": "OK"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed / wrong parameter format"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden"
+        "404":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Not Found; No projects assigned to this account"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error"
+      "summary": "Returns a list of carbon offset projects assigned to the account of the requesting credentials"
+      "tags":
+      - "Carbon offset projects"
+  "/healthcheck/v1/healthcheck":
+    "get":
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "OK; Unified API available and functional"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error; Unexpected internal error"
+      "summary": "Healthcheck!"
+      "tags":
+      - "Healthcheck Service"
+  "/order/v2/individualOrder":
+    "post":
+      "requestBody":
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/OrderRequest"
+        "required": true
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderResponse"
+          "description": "OK; Order has been booked / scheduled correctly"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed; missing parameters, wrong
+            format, price mismatch, wrong project id, non-supported currency"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized; Authentication failed"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden; Authentication correct but permissions missing"
+        "422":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unprocessable Entity; this offset has been scheduled already"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error; Unexpected internal error"
+      "summary": "Creates one or many individual orders"
+      "tags":
+      - "Individual order (emissions)"
+  "/order/v2/individualOrder/{orderId}":
+    "delete":
+      "parameters":
+      - "in": "path"
+        "name": "orderId"
+        "required": true
+        "schema":
+          "type": "string"
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderResponse"
+          "description": "OK"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed / wrong parameter format"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden"
+        "404":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Not Found; Offset with this id has not been scheduled before"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error"
+      "summary": "Cancels (and refunds; depending on payment) the existing order {orderId}"
+      "tags":
+      - "Individual order (emissions)"
+    "get":
+      "parameters":
+      - "in": "path"
+        "name": "orderId"
+        "required": true
+        "schema":
+          "type": "string"
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderResponse"
+          "description": "OK"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed / wrong parameter format"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden"
+        "404":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Not Found; Order with this id has not been booked / scheduled before"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error"
+      "summary": "Returns the existing order {orderId}"
+      "tags":
+      - "Individual order (emissions)"
+    "patch":
+      "parameters":
+      - "in": "path"
+        "name": "orderId"
+        "required": true
+        "schema":
+          "$ref": "#/components/schemas/OrderRequest"
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderResponse"
+          "description": "OK"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed / wrong parameter format"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden. Change is not possible."
+        "404":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Not Found; Order with this id has not been booked / scheduled before"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error"
+      "summary": "Updates an existing order {orderId}"
+      "tags":
+      - "Individual order (emissions)"
+  "/order/v2/collectiveOrder":
+    "post":
+      "requestBody":
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/OrderInfoRequestHeader"
+        "required": true
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderCollectiveOrderResponse"
+          "description": "OK; Collective order has been booked / scheduled correctly"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed; missing parameters, wrong
+            format, price mismatch, wrong project id, non-supported currency"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized; Authentication failed"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden; Authentication correct but permissions missing"
+        "422":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unprocessable Entity; this order has been booked / scheduled already"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error; Unexpected internal error"
+      "summary": "Creates a collective order"
+      "tags":
+      - "Collective and suborders (emissions)" 
+  "/order/v2/collectiveOrder/{collectiveOrderId}":
+    "get":
+      "parameters":
+      - "in": "path"
+        "name": "collectiveOrderId"
+        "required": true
+        "schema":
+          "type": "string"
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderCollectiveOrderResponse"
+          "description": "OK"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed / wrong parameter format"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden"
+        "404":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Not Found; Order with this id has not been booked / scheduled before"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error"
+      "summary": "Returns the existing collective offset order {orderId}"
+      "tags":
+      - "Collective and suborders (emissions)"
+  "/order/v2/checkOrder":
+    "post":
+      "requestBody":
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/OrderCheckRequest"
+        "required": true
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderCheckResponse"
+          "description": "OK; requested quantity is available in carbon offset project"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed; missing parameters, wrong
+            format, price mismatch, wrong project id, non-supported currency"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized; Authentication failed"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden; Authentication correct but permissions missing"
+        "422":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unprocessable Entity"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error; Unexpected internal error"
+      "summary": "Checks availability and pricing of a requested quantity of emissions (in kg) in the given carbon offset project. Returns respective price if successful. Only valid for alimited period of time (minutes)."
+      "tags":
+      - "Availability & price check (emissions)"
+  "/order/v2/subOrder/{collectiveOrderId}":
+    "post":
+      "parameters":
+      - "in": "path"
+        "name": "collectiveOrderId"
+        "required": true
+        "schema":
+          "type": "string"       
+      "requestBody":
+        "content":
+          "application/json":
+            "schema":
+              "$ref": "#/components/schemas/OrderRequest"
+        "required": true
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderSubOrderResponse"
+          "description": "OK; suborder has been booked / scheduled correctly"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed; missing parameters, wrong
+            format, price mismatch, wrong project id, non-supported currency"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized; Authentication failed"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden; Authentication correct but permissions missing"
+        "422":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unprocessable Entity; this order has been booked or scheduled already or orderId does not reference a collective order"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error; Unexpected internal error"
+      "summary": "Creates a suborder order within the collective order {orderId}"
+      "tags":
+      - "Collective and suborders (emissions)"
+  "/order/v2/subOrder/{orderId}":
+    "delete":
+      "parameters":
+      - "in": "path"
+        "name": "orderId"
+        "required": true
+        "schema":
+          "type": "string"
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderSubOrderResponse"
+          "description": "OK. Suborder has been successfully cancelled."
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed / wrong parameter format"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden"
+        "404":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Not Found; Order with this id has not been booked / scheduled before"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error"
+      "summary": "Cancels (and refunds; depending on payment) the existing suborder {orderId}"
+      "tags":
+      - "Collective and suborders (emissions)"
+    "get":
+      "parameters":
+      - "in": "path"
+        "name": "orderId"
+        "required": true
+        "schema":
+          "type": "string"
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderSubOrderResponse"
+          "description": "OK"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed / wrong parameter format"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden"
+        "404":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Not Found; Order with this id has not been booked / scheduled before"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error"
+      "summary": "Returns the existing suborder {orderId}"
+      "tags":
+      - "Collective and suborders (emissions)"   
+    "patch":
+      "parameters":
+      - "in": "path"
+        "name": "orderId"
+        "required": true
+        "schema":
+          "$ref": "#/components/schemas/OrderInfoRequest"
+      "responses":
+        "200":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/OrderSubOrderResponse"
+          "description": "OK"
+        "400":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Bad Request; Validation failed / wrong parameter format"
+        "401":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Unauthorized"
+        "403":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Forbidden. Change is not possible."
+        "404":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Not Found; Order with this id has not been booked / scheduled before"
+        "500":
+          "content":
+            "application/json":
+              "schema":
+                "$ref": "#/components/schemas/StatusResponse"
+          "description": "Internal Server Error"
+      "summary": "Updates an existing order {orderId}"
+      "tags":
+      - "Collective and suborders (emissions)"
+"servers":
+- "description": ""
+  "url": "https://unified-api.ins-dev.c12r.io"
+"tags":
+- "description": "Offset management service"
+  "name": "Individual order (emissions)"
+- "description": "Offset management service"
+  "name": "Collective and suborders (emissions)"
+- "description": "Offset management service"
+  "name": "Availability & price check (emissions)"
+- "description": "Offset management service"
+  "name": "Carbon offset projects"
+- "description": "Check for the availability of the API and its functionality"
+  "name": "Healthcheck Service"

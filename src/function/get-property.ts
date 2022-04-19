@@ -20,9 +20,9 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
     let isArray = false;
     if (schema.type === 'array') {
         isArray = true;
-        if(!!schema.items && schema.items["$ref"]){
-           const ref = configuration.getReference().getImportAndTypeByRef( schema.items["$ref"], path);
-            return new InterfaceArrayProperty(className, ref.import,ref.className)
+        if (!!schema.items && schema.items["$ref"]) {
+            const ref = configuration.getReference().getImportAndTypeByRef(schema.items["$ref"], path);
+            return new InterfaceArrayProperty(className, ref.import, ref.className)
         }
         schema = schema.items;
         schema.type = 'object';
@@ -42,9 +42,10 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
                 (prev, curr) => ({
                     ...prev,
                     required: [...(prev?.required || []), ...(curr?.required || [])],
-                    properties: { ...(prev?.properties || {}), ...(curr?.properties || {}) },
-                }),
-                { type: 'object' },
+                    properties: {...(prev?.properties || {}), ...(curr?.properties || {})},
+                })
+                ,
+                {type: 'object'},
             );
     }
 
@@ -60,11 +61,11 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
                 const isRequired = (schema.required || []).indexOf(propertyName) > -1;
                 interfaceProperty.addProperty(getProperty(className, originalName, propertyName, isRequired, property, path))
             }
-            if(typeof schema.additionalProperties === 'object' && !!schema.additionalProperties.type){
-               const isArray = schema.additionalProperties.type === 'array'
-                if(isArray) {
+            if (typeof schema.additionalProperties === 'object' && !!schema.additionalProperties.type) {
+                const isArray = schema.additionalProperties.type === 'array'
+                if (isArray) {
                     interfaceProperty.addAdditionalProperties(mapType(schema.additionalProperties.items.type), true);
-                }else {
+                } else {
                     interfaceProperty.addAdditionalProperties(mapType(schema.additionalProperties.type));
                 }
             }
