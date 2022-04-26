@@ -1,19 +1,26 @@
 import { IPaths } from '../../interface/open-api-mine/i-paths';
 import { IPathItem } from '../../interface/open-api-mine/i-path-item';
+import * as nodePath from 'path';
 
 export const groupServices = (paths: IPaths): { [folderPath: string]: { [serviceName: string]: IPaths } } => {
   const result: { [folderPath: string]: { [serviceName: string]: IPaths } } = {};
   const pathsEntries = Object.entries(paths);
-  const hasAnySecurity = hasSecurity(pathsEntries);
+  const isAnySecurity = hasAnySecurity(pathsEntries);
+  const isAnyPathVersion = hasAnyPathsVersion(pathsEntries);
 
   for (const [path, methods] of pathsEntries) {
-    const buildServiceName = path.split('/').filter((v) => !!v)[0];
+    const isPathVersion = hasPathVersion(path);
+    const pathParts = path.split('/').filter((v) => !!v);
+    const buildServiceName = pathParts[isPathVersion ? 1 : 0];
     for (const [method, methodDefinition] of Object.entries(methods)) {
-      const hasSecurity = !!methodDefinition.security;
+      const isSecurity = hasSecurity(methodDefinition);
 
       let folderPath = '';
-      if (hasAnySecurity) {
-        folderPath = hasSecurity ? 'auth' : 'no-auth';
+      if (isAnySecurity) {
+        folderPath = isSecurity ? 'auth' : 'no-auth';
+      }
+      if (isAnyPathVersion && isPathVersion) {
+        folderPath = nodePath.join(folderPath, pathParts[0]);
       }
 
       const serviceFolderPath = result[folderPath] || {};
@@ -28,6 +35,23 @@ export const groupServices = (paths: IPaths): { [folderPath: string]: { [service
   return result;
 };
 
-const hasSecurity = (pathEntries: Array<[string, IPathItem]>): boolean => {
-  return pathEntries.some(([, item]) => Object.entries(item).some(([, definition]) => !!definition.security));
+const hasAnySecurity = (pathEntries: Array<[string, IPathItem]>): boolean => {
+  return pathEntries.some(([, item]) => Object.entries(item).some(([, definition]) => hasSecurity(definition)));
+};
+
+const hasSecurity = (methodDefinition: any): boolean => {
+  return !!methodDefinition.security;
+};
+
+const hasAnyPathsVersion = (pathEntries: Array<[string, IPathItem]>): boolean => {
+  return pathEntries.some(([path]) => hasPathVersion(path));
+};
+
+const hasPathVersion = (path: string): boolean => {
+  const firstPartOfPath =
+    path
+      .toLowerCase()
+      .split('/')
+      .filter((p) => !!p)[0] || '';
+  return /v[0-9]{1,2}/g.test(firstPartOfPath);
 };

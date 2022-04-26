@@ -1,4 +1,4 @@
-import { ComponentType } from '../component/ComponentType';
+import { ComponentType } from '../component/schemas/ComponentType';
 
 export interface IPropertyClass {
   render(): IRenderResult;

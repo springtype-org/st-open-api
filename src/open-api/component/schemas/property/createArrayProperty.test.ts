@@ -1,6 +1,6 @@
 import { createArrayProperty } from './createArrayProperty';
-import { InterfaceProperty } from '../../classes/interface-property';
-import { InterfaceArrayProperty } from '../../classes/interface-array-property';
+import { InterfaceProperty } from '../../../classes/interface-property';
+import { InterfaceArrayProperty } from '../../../classes/interface-array-property';
 
 describe('creat array property', () => {
   it('test with nested object', () => {
@@ -88,7 +88,7 @@ describe('creat array property', () => {
       prefixRefKey: '#/components/schema',
       round: 0,
     });
-    expect(response.length).toBe(1);
+    expect(response.length).toBe(2);
   });
 
   it('test with $ref', () => {

@@ -1,6 +1,6 @@
 import { appendFileSync } from 'fs';
 import { join } from 'path';
-import { GROUP_NO_AUTH_SERVICE, GROUP_SERVICE, IRef } from '../classes/register';
+import { IRef } from '../classes/register';
 import { renderMustache } from './render-mustache';
 import { configuration } from './config';
 import { formatText } from '../common/function/text/formatText';

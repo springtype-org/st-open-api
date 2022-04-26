@@ -1,7 +1,13 @@
 import { IParameter } from '../interface/open-api-mine/i-parameter';
 import { ISortedParameter } from '../interface/i-sorted-parameter';
+import { configuration, Configuration } from './config';
 
-export const getSortedParameter = (path: string, parameters: Array<IParameter> = []): ISortedParameter => {
+export const getSortedParameter = (
+  path: string,
+  parameters: Array<IParameter | { $ref: string }> = [],
+  config: Configuration = configuration,
+): ISortedParameter => {
+  const logger = config.getLogger();
   const result: ISortedParameter = {
     cookie: {},
     header: {},
@@ -9,7 +15,18 @@ export const getSortedParameter = (path: string, parameters: Array<IParameter> =
     path: {},
   };
 
-  for (const parameter of parameters) {
+  const parameterRegistry = config.getParameterRegister();
+  for (let parameter of parameters) {
+    const ref = parameter['$ref'];
+    //override if its an ref
+    if (typeof ref !== 'undefined') {
+      const paramSchema = parameterRegistry.get(ref);
+      if (!paramSchema) {
+        logger.warn('Missing parameter schema ' + ref);
+        continue;
+      }
+      parameter = paramSchema;
+    }
     const typedParam = parameter as IParameter;
     const type = typedParam.in;
 

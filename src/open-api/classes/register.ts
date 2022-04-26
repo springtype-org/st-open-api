@@ -1,31 +1,32 @@
 import { relative, sep } from 'path';
 
 export const GROUP_SERVICE = 'SERVICE';
-export const GROUP_NO_AUTH_SERVICE = 'SERVICE_NO_AUTH';
 
 export class Register {
   refs: { [ref: string]: IRef } = {};
 
   groups: { [group: string]: Array<IRef & { refKey: string }> } = {};
 
-  getImportAndTypeByRef = (ref: string, path: string): IRefResult => {
+  getImportAndTypeByRef = (ref: string, path: string): IRefResult | undefined => {
     const reference = this.refs[ref];
-    let relativePath = relative(path, reference.folderPath).split(sep).join('/');
-    if (!relativePath) {
-      relativePath = './';
-    } else {
-      if (!relativePath.startsWith('../')) {
-        relativePath = `./${relativePath}`;
+    if (reference) {
+      let relativePath = relative(path, reference.folderPath).split(sep).join('/');
+      if (!relativePath) {
+        relativePath = './';
+      } else {
+        if (!relativePath.startsWith('../')) {
+          relativePath = `./${relativePath}`;
+        }
+        relativePath += '/';
       }
-      relativePath += '/';
+      return {
+        className: reference.className,
+        import: `import {${reference.className}} from '${relativePath}${reference.fileName}';`,
+        importPath: relativePath + reference.fileName,
+        fileName: reference.fileName,
+        schema: reference.schema,
+      };
     }
-    return {
-      className: reference.className,
-      import: `import {${reference.className}} from '${relativePath}${reference.fileName}';`,
-      importPath: relativePath + reference.fileName,
-      fileName: reference.fileName,
-      schema: reference.schema,
-    };
   };
 
   addReference = (refKey: string, refData: IRef, group: string | undefined = undefined) => {

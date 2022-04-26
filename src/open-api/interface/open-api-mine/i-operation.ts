@@ -44,7 +44,7 @@ export interface IOperation {
    * by a combination of a name and location. The list can use the Reference Object to link
    * to parameters that are defined at the OpenAPI Object's components/parameters.
    */
-  parameters?: Array<IParameter>;
+  parameters?: Array<IParameter | { $ref: string }>;
 
   /**
    * The request body applicable for this operation. The requestBody is only supported in HTTP methods

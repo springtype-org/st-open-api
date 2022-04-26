@@ -14,6 +14,7 @@ import { mapPrimitiveValues } from '../common/function/mapPrimitiveValues';
 import { groupServices } from '../common/function/groupServices';
 import { createServiceName } from '../common/function/createServiceName';
 import { createServiceFunctionName } from '../common/function/createServiceFunctionName';
+import { ParameterRegister } from '../classes/ParameterRegister';
 
 export class Configuration {
   private config: any;
@@ -21,6 +22,8 @@ export class Configuration {
   private folder: FolderManager = new FolderManager();
 
   private reference: Register = new Register();
+
+  private parameterRegister: ParameterRegister = new ParameterRegister();
 
   private outputDirectory = this.folder.getOutputFolder();
 
@@ -109,6 +112,10 @@ export class Configuration {
 
   getReference(): Register {
     return this.reference;
+  }
+
+  getParameterRegister(): ParameterRegister {
+    return this.parameterRegister;
   }
 
   getLogger(): Logger {

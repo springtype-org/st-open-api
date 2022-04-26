@@ -1,4 +1,4 @@
-import { Configuration } from '../../function/config';
+import { Configuration } from '../../../function/config';
 import { ComponentType } from '../ComponentType';
 
 export const getNormalizedName = (schemaName: string, type: ComponentType, config: Configuration): string => {
@@ -7,6 +7,7 @@ export const getNormalizedName = (schemaName: string, type: ComponentType, confi
     CLASS: config.getCreateClassNameFn(),
     ENUM: config.getCreateEnumNameFn(),
     INTERFACE: config.getCreateInterfaceNameFn(),
+    PRIMITIVE: config.getCreateClassNameFn(),
   };
   return typeMap[type](schemaName);
 };

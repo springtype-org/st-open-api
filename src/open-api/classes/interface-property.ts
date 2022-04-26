@@ -5,7 +5,7 @@ import { IRefResult } from './register';
 import { convertRefsToImports } from '../function/convertRefsToImports';
 import { Configuration, configuration } from '../function/config';
 import { createComponentReference } from '../common/function/createComponentReference';
-import { ComponentType } from '../component/ComponentType';
+import { ComponentType } from '../component/schemas/ComponentType';
 
 export class InterfaceProperty implements IPropertyClass {
   interfaceName: string;
@@ -47,14 +47,13 @@ export class InterfaceProperty implements IPropertyClass {
     this.imports.push(newImport);
   }
 
-  addAdditionalProperties(type: string, isArray: boolean = false) {
+  addAdditionalProperties(type: string, isArray = false) {
     this.additionalProperties.push({ type, isArray });
   }
-
   addProperty(prop: IProperty) {
     const data: IMustacheProperty = {
       isDescription: !!prop.description,
-      description: splitByLineBreak(prop.description),
+      description: splitByLineBreak((prop.description || '').trim()),
       required: prop.required,
       value: prop.value,
       propertyName: prop.propertyName,
@@ -79,7 +78,7 @@ export class InterfaceProperty implements IPropertyClass {
       isImport: this.imports.length > 0,
       imports: convertRefsToImports(this.imports),
 
-      isDescription: (this.description || '').length > 0,
+      isDescription: this.description.length > 0,
       description: this.description,
 
       isProperties: renderProperties.length > 0,

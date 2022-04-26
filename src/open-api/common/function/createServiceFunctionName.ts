@@ -8,5 +8,11 @@ export const createServiceFunctionName = (
   if (operationId) {
     return formatText([operationId], 'Any', 'CamelCase');
   }
-  return formatText([httpMethod, ...path.split('/').filter((v) => !!v)], 'Any', 'CamelCase');
+  const parts = path
+    .replace(/[{]/g, '/By/')
+    .replace(/(}\/)/g, '/And/')
+    .split(/[/}]/g)
+    .filter((v) => !!v);
+
+  return formatText([httpMethod, ...parts], 'Any', 'CamelCase');
 };

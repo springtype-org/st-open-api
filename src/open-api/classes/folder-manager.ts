@@ -45,7 +45,7 @@ export class FolderManager {
   }
 
   getEnumerationFolder() {
-    return mkdir(join(this.outputFolder, 'enumeration'));
+    return mkdir(join(this.getInterfaceFolder(), 'enumeration'));
   }
 
   getReactProviderFolder() {

@@ -12,9 +12,10 @@ import { createStaticServices } from './create-static-services';
 import { configuration } from './config';
 import { initServiceReference } from './init-references';
 import { getPackageInfo } from './get-package-info';
-import { createComponents } from '../component/createComponents';
+import { createComponents } from '../component/schemas/createComponents';
 import { saveApiFile } from './saveApiFile';
 import { createServiceClasses } from '../service/createServiceClasses';
+import { addParameterReference } from '../component/parameters/addParameterReference';
 
 const getSource = async (source: string): Promise<{ contentType: string; data: string }> => {
   if (isUri(source)) {
@@ -42,7 +43,8 @@ export const getSpecMimeType = (contentType: string): SpecMimeType => {
     case 'application/json':
       return 'json';
     default:
-      throw new Error('Unknown mime type');
+      console.log('Unknown mime type "' + lowerCaseContentType + '"');
+      return 'yaml';
   }
 };
 
@@ -68,7 +70,8 @@ export const executeGenerationAction = async () => {
     let openApiSpec;
     const openApiFileName = configuration.getOpenApiFile();
     const { contentType, data: openApiRawData } = await getSource(openApiFileName);
-    const isYamlFile = getSpecMimeType(contentType) === 'yaml';
+    const isYamlFile =
+      openApiFileName.endsWith('.yaml') || openApiFileName.endsWith('.yml') || getSpecMimeType(contentType) === 'yaml';
 
     if (isYamlFile) {
       openApiSpec = YAML.parse(openApiRawData);
@@ -82,19 +85,22 @@ export const executeGenerationAction = async () => {
 
     if (valid || configuration.ignoreValidation()) {
       logger.debug('Initialize references');
+      const folderManager = configuration.getFolderManager();
 
       createComponents(openApiSpec.components);
+      // save open api.json
+      saveApiFile(isYamlFile, openApiRawData);
+      // save creation info
+      const packageInfo = getPackageInfo();
+      const versionInfo = join(folderManager.getOutputFolder(), 'version.json');
 
       if (!configuration.isComponentOnly()) {
-        const folderManager = configuration.getFolderManager();
         initServiceReference(folderManager);
+        // add parameter references
+        addParameterReference(openApiSpec.components);
 
-        // save open api.json
-        saveApiFile(isYamlFile, openApiRawData);
-        // save creation info
-        const packageInfo = getPackageInfo();
-        const versionInfo = join(folderManager.getOutputFolder(), 'version.json');
         const date = new Date();
+
         writeFileSync(
           versionInfo,
           JSON.stringify(

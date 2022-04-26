@@ -23,7 +23,7 @@
     };
 {{/isPathParameters}}
 
-    {{#isResponse}}return {{/isResponse}}await http{{#isResponse}}<{{{responseClass}}}>{{/isResponse}}({
+    {{#isResponse}}return {{/isResponse}}await this.config.http{{#isResponse}}<{{{responseClass}}}>{{/isResponse}}({
             method: '{{httpMethod}}',
             url: `${this.config.endpointUrl}{{{originalPath}}}`,
 {{#isQueryParameters}}

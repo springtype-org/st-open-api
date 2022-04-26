@@ -1,6 +1,6 @@
-import { IComponents } from '../interface/open-api-mine/i-components';
-import { ISchema } from '../interface/open-api-mine/i-schema';
-import { configuration, Configuration } from '../function/config';
+import { IComponents } from '../../interface/open-api-mine/i-components';
+import { ISchema } from '../../interface/open-api-mine/i-schema';
+import { configuration, Configuration } from '../../function/config';
 import { getComponentType } from './property/getComponentType';
 import { registerComponent } from './registerComponent';
 import { createComponent } from './createComponent';
@@ -37,6 +37,6 @@ export const createComponents = (components: IComponents, config: Configuration 
         logger.warn('- error', e);
       }
     }
-    logger.info('Component creation done');
+    logger.debug('Component creation done');
   }
 };

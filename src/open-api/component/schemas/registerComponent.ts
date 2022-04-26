@@ -1,5 +1,5 @@
-import { createComponentReference } from '../common/function/createComponentReference';
-import { Configuration, configuration } from '../function/config';
+import { createComponentReference } from '../../common/function/createComponentReference';
+import { Configuration, configuration } from '../../function/config';
 import { ComponentType } from './ComponentType';
 
 export type RegisterComponentOptions = {

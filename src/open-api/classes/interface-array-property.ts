@@ -4,7 +4,7 @@ import { IRefResult } from './register';
 import { convertRefsToImports } from '../function/convertRefsToImports';
 import { Configuration, configuration } from '../function/config';
 import { createComponentReference } from '../common/function/createComponentReference';
-import { ComponentType } from '../component/ComponentType';
+import { ComponentType } from '../component/schemas/ComponentType';
 
 export class InterfaceArrayProperty implements IPropertyClass {
   interfaceName: string;

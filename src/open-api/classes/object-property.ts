@@ -6,7 +6,7 @@ import { IRefResult } from './register';
 import { convertRefsToImports } from '../function/convertRefsToImports';
 import { createComponentReference } from '../common/function/createComponentReference';
 import { Configuration, configuration } from '../function/config';
-import { ComponentType } from '../component/ComponentType';
+import { ComponentType } from '../component/schemas/ComponentType';
 
 export const HTTP_FUNCTION_REF = (folder: FolderManager) => ({
   fileName: 'http',

@@ -1,6 +1,6 @@
 import { Configuration, configuration } from '../../function/config';
-import { getNormalizedName } from '../../component/property/getNoramlizedName';
-import { ComponentType } from '../../component/ComponentType';
+import { getNormalizedName } from '../../component/schemas/property/getNoramlizedName';
+import { ComponentType } from '../../component/schemas/ComponentType';
 
 export type ComponentRef = {
   className: string;

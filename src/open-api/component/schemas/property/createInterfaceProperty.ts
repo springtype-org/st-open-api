@@ -1,10 +1,15 @@
 import { getPropertyFactory, PropertyFactoryOptions } from './getPropertyFactory';
-import { InterfaceProperty } from '../../classes/interface-property';
-import { IPropertyClass } from '../../interface/i-property-class';
+import { InterfaceProperty } from '../../../classes/interface-property';
+import { IPropertyClass } from '../../../interface/i-property-class';
 import { registerComponent } from '../registerComponent';
-import { Configuration, configuration } from '../../function/config';
+import { Configuration, configuration } from '../../../function/config';
 import { isPropertyPrimitive, Primitive } from './isPropertyPrimitive';
-import { formatText } from '../../common/function/text/formatText';
+import { formatText } from '../../../common/function/text/formatText';
+import { getDescriptionJoin } from './getDescriptionJoin';
+import { getFormatPrefix } from './getFormatPrefix';
+import { getPatternPrefix } from './getPatternPrefix';
+import { getValidationDescription } from './getValidationDescription';
+import { getPropertyDescription } from './getPropertyDescription';
 
 export const createInterfaceProperty = (
   options: PropertyFactoryOptions,
@@ -16,6 +21,7 @@ export const createInterfaceProperty = (
 
   const schemasAllOf = rawSchema.allOf;
   let schema = rawSchema;
+
   if (schemasAllOf) {
     schema = schemasAllOf
       .map((allOfSchema) => {
@@ -55,12 +61,14 @@ export const createInterfaceProperty = (
 
       let propertyValue: string;
 
-      const isPrimitive = isPropertyPrimitive(property.type);
+      const isPrimitive = !property.enum && isPropertyPrimitive(property);
 
       const isArray = propertyType === 'array';
       const nestedSchema = isArray ? property.items : property;
-      const isNestedPrimitive = isArray && isPropertyPrimitive(nestedSchema.type);
-
+      const isNestedPrimitive = isArray && isPropertyPrimitive(nestedSchema);
+      if (nestedSchema.allOf && nestedSchema.allOf.length === 1) {
+        nestedSchema.$ref = nestedSchema.allOf[0].$ref;
+      }
       if (isPrimitive) {
         propertyValue = config.getMapPrimitiveValuesFn()(propertyType as Primitive, propertyFormat);
       } else if (isNestedPrimitive) {
@@ -70,27 +78,31 @@ export const createInterfaceProperty = (
         propertyValue = reference.className;
         interfaceProperty.addImports(reference);
       } else {
-        const nestedSchemaName = config.getCreatePropertyNameFn()(schemaName, propertyName);
-        const propertyObjects = getPropertyFactory(
-          {
-            schema: nestedSchema,
-            schemaName: nestedSchemaName,
-            folderPath,
-            round: round + 1,
-            prefixRefKey,
-          },
-          config,
-        );
-        result.push(...propertyObjects);
-        if (propertyObjects.length >= 1) {
-          const propertyObject = propertyObjects[0];
-          propertyValue = propertyObject.getName();
-          interfaceProperty.addImports(
-            config.getReference().getImportAndTypeByRef(propertyObject.getReferenceKey(), folderPath),
+        try {
+          const nestedSchemaName = config.getCreatePropertyNameFn()(schemaName, propertyName);
+          const propertyObjects = getPropertyFactory(
+            {
+              schema: nestedSchema,
+              schemaName: nestedSchemaName,
+              folderPath,
+              round: round + 1,
+              prefixRefKey,
+            },
+            config,
           );
-        } else {
-          logger.warn(`No nested element found ${nestedSchemaName}`);
-          logger.warn(`-property ${JSON.stringify(nestedSchema, null, 2)}`);
+          result.push(...propertyObjects);
+          if (propertyObjects.length >= 1) {
+            const propertyObject = propertyObjects[0];
+            propertyValue = propertyObject.getName();
+            interfaceProperty.addImports(
+              config.getReference().getImportAndTypeByRef(propertyObject.getReferenceKey(), folderPath),
+            );
+          } else {
+            logger.warn(`No nested element found ${nestedSchemaName}`);
+            logger.warn(`-property ${JSON.stringify(nestedSchema, null, 2)}`);
+          }
+        } catch (e) {
+          logger.warn('- error in nested schema ', schemaName, propertyName);
         }
       }
 
@@ -99,8 +111,7 @@ export const createInterfaceProperty = (
           isArray,
           value: propertyValue,
           required,
-          // TODO: check this
-          description: '',
+          description: getPropertyDescription(property),
           propertyName,
         });
       }
@@ -115,7 +126,7 @@ export const createInterfaceProperty = (
     const isArray = additionalPropType === 'array';
 
     const nestedSchema = isArray ? additionalProperties.items : additionalProperties;
-    const isNestedPrimitive = isArray && isPropertyPrimitive(nestedSchema.type);
+    const isNestedPrimitive = isArray && isPropertyPrimitive(nestedSchema);
 
     let additionalPropValue: string;
 

@@ -1,4 +1,4 @@
-import { Primitive } from '../../component/property/isPropertyPrimitive';
+import { Primitive } from '../../component/schemas/property/isPropertyPrimitive';
 
 export const mapPrimitiveValues = (primitive: Primitive, format: string | undefined) => {
   const primitiveMap: Record<Primitive, () => string> = {
@@ -10,6 +10,9 @@ export const mapPrimitiveValues = (primitive: Primitive, format: string | undefi
       if (format === 'date') {
         // TODO: mapping ecmascript setter and getter
         // return 'Date';
+      }
+      if (format === 'binary') {
+        return 'File';
       }
       return 'string';
     },

@@ -1,4 +1,5 @@
 import { IOperation } from './i-operation';
+import { IParameter } from './i-parameter';
 
 export interface IPathItem {
   /**
@@ -72,5 +73,5 @@ export interface IPathItem {
    * a name and location. The list can use the Reference Object to link to parameters that are defined
    * at the OpenAPI Object's components/parameters.
    */
-  parameters?: [];
+  parameters?: Array<IParameter>;
 }

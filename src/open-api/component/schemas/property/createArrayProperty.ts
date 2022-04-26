@@ -1,8 +1,7 @@
-/* eslint-disable import/no-cycle */
 import { getPropertyFactory, PropertyFactoryOptions } from './getPropertyFactory';
-import { IPropertyClass } from '../../interface/i-property-class';
-import { Configuration, configuration } from '../../function/config';
-import { InterfaceArrayProperty } from '../../classes/interface-array-property';
+import { IPropertyClass } from '../../../interface/i-property-class';
+import { Configuration, configuration } from '../../../function/config';
+import { InterfaceArrayProperty } from '../../../classes/interface-array-property';
 
 export const createArrayProperty = (
   options: PropertyFactoryOptions,
@@ -21,7 +20,8 @@ export const createArrayProperty = (
       const nestedResults = getPropertyFactory(
         {
           schema: schema.items,
-          schemaName,
+          // TODO: fix me in future
+          schemaName: schemaName + '_item',
           folderPath,
           round: round + 1,
           prefixRefKey,
@@ -29,10 +29,10 @@ export const createArrayProperty = (
         config,
       );
       if (nestedResults.length >= 1) {
+        console.log(nestedResults.length, nestedResults);
         const firstResult = nestedResults[0];
         const ref = configuration.getReference().getImportAndTypeByRef(firstResult.getReferenceKey(), folderPath);
-        // TODO: fix me in future
-        result.push(new InterfaceArrayProperty(`${schemaName}_item`, ref, folderPath, prefixRefKey, config));
+        result.push(new InterfaceArrayProperty(schemaName, ref, folderPath, prefixRefKey, config));
       } else {
         logger.warn(`Missing child element on array ${schemaName}`);
         logger.warn('- schema', schema);

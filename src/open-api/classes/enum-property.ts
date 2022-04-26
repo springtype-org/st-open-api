@@ -2,7 +2,7 @@ import { IPropertyClass, IRenderResult } from '../interface/i-property-class';
 import { renderMustache } from '../function/render-mustache';
 import { Configuration, configuration } from '../function/config';
 import { createComponentReference } from '../common/function/createComponentReference';
-import { ComponentType } from '../component/ComponentType';
+import { ComponentType } from '../component/schemas/ComponentType';
 
 export class EnumProperty implements IPropertyClass {
   enumName: string;

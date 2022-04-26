@@ -9,6 +9,7 @@ describe('format text', () => {
       { input: 'CREATE_REACT_APP', result: ['CREATE_REACT_APP'] },
       { input: 'create-react-app', result: ['create-react-app'] },
       { input: 'create_react_app', result: ['create_react_app'] },
+      { input: 'CbScope1And2Coverage', result: ['Cb', 'Scope1', 'And2', 'Coverage'] },
     ],
     PascalCase: [{ input: 'CreateReactApp', result: ['Create', 'React', 'App'] }],
     KebabCase: [
@@ -19,7 +20,13 @@ describe('format text', () => {
       { input: 'create_react_app', result: ['create', 'react', 'app'] },
       { input: 'CREATE_REACT_APP', result: ['CREATE', 'REACT', 'APP'] },
     ],
-    Any: [{ input: 'create_REACT-App', result: ['create', 'REACT', 'App'] }],
+    Any: [
+      { input: 'create_REACT-App', result: ['create', 'REACT', 'App'] },
+      {
+        input: 'ISetByStorageByKeyQueryParameter',
+        result: ['ISet', 'By', 'Storage', 'By', 'Key', 'Query', 'Parameter'],
+      },
+    ],
   };
   for (const testCaseName of Object.keys(FROM_CASE_MAP)) {
     for (const textCase of TEST_FROM_MAP[testCaseName]) {

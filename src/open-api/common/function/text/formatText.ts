@@ -1,5 +1,6 @@
 import { isAlphaCase } from './IsAlphaCase';
 import { isLowerCase } from './isLowerCase';
+import { isNumeric } from './isNumeric';
 
 export const firstCharacterUpper = (str: string) => !!str && str[0].toUpperCase() + str.slice(1);
 export const firstCharacterLower = (str: string) => !!str && str[0].toLowerCase() + str.slice(1);
@@ -16,12 +17,13 @@ export const fromCamelCase = (str: string): Array<string> => {
 
   for (let i = 1; i < intermediateResult.length; i++) {
     const currentElement = intermediateResult[i];
-    const lastCharacter = lastElement.substring(currentElement.length - 2, 1);
+    const lastCharacter = lastElement.substring(lastElement.length - 1, lastElement.length);
     const currentCharacter = currentElement.substring(0, 1);
 
     const lastIsLowerCase = isAlphaCase(lastCharacter) && isLowerCase(lastCharacter);
     const currentIsLowerCase = isAlphaCase(currentCharacter) && isLowerCase(currentCharacter);
-    const isChange = lastIsLowerCase !== currentIsLowerCase;
+
+    const isChange = lastIsLowerCase !== currentIsLowerCase || isNumeric(lastCharacter);
     if (isChange) {
       result.push(lastElement);
       lastElement = currentElement;
@@ -37,9 +39,9 @@ export const fromPascalCase = fromCamelCase;
 export const fromSnakeCase = (str: string): Array<string> => str.split('_').filter((v) => !!v);
 export const fromKebabCase = (str: string): Array<string> => str.split('-').filter((v) => !!v);
 export const fromAny = (str: string): Array<string> =>
-  fromCamelCase(str)
-    .flatMap((v) => fromSnakeCase(v))
+  fromSnakeCase(str)
     .flatMap((v) => fromKebabCase(v))
+    .flatMap((v) => fromCamelCase(v))
     .filter((v) => !!v);
 
 export const FROM_CASE_MAP: Record<TextCase | 'Any', (str: string) => Array<string>> = {

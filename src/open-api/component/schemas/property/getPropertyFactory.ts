@@ -1,11 +1,12 @@
-import { ISchema } from '../../interface/open-api-mine/i-schema';
-import { IPropertyClass } from '../../interface/i-property-class';
+import { ISchema } from '../../../interface/open-api-mine/i-schema';
+import { IPropertyClass } from '../../../interface/i-property-class';
 import { createInterfaceProperty } from './createInterfaceProperty';
 import { createEnumProperty } from './createEnumProperty';
 import { createArrayProperty } from './createArrayProperty';
-import { Configuration, configuration } from '../../function/config';
+import { Configuration, configuration } from '../../../function/config';
 import { getComponentType } from './getComponentType';
 import { ComponentType } from '../ComponentType';
+import { createPrimitiveProperty } from './createPrimitiveProperty';
 
 export type PropertyFactoryOptions = {
   schemaName: string;
@@ -33,6 +34,7 @@ export const getPropertyFactory = (
       INTERFACE: () => createInterfaceProperty(options, config),
       ENUM: () => createEnumProperty(options, config),
       ARRAY: () => createArrayProperty(options, config),
+      PRIMITIVE: () => createPrimitiveProperty(options, config),
     };
     result.push(...componentMap[type]());
   }

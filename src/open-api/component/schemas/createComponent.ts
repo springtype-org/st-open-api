@@ -1,5 +1,5 @@
-import { Configuration, configuration } from '../function/config';
-import { ISchema } from '../interface/open-api-mine/i-schema';
+import { Configuration, configuration } from '../../function/config';
+import { ISchema } from '../../interface/open-api-mine/i-schema';
 import { getPropertyFactory } from './property/getPropertyFactory';
 import { getNormalizedName } from './property/getNoramlizedName';
 import { ComponentType } from './ComponentType';

@@ -23,6 +23,8 @@ import { Configuration, configuration } from './config';
 import { IParameter } from '../interface/open-api-mine/i-parameter';
 import { IRefResult } from '../classes/register';
 import { firstCharacterLower, formatText } from '../common/function/text/formatText';
+import { createRequestBody } from '../service/function/createRequestBody';
+import { createResponse } from '../service/function/createResponse';
 
 const createParameter = (
   type: 'query' | 'header' | 'path' | 'cookie',
@@ -30,9 +32,9 @@ const createParameter = (
   parameters: { [parameterName: string]: IParameter },
   serviceFolder: string,
 ): IRefResult => {
-  const parameterClassName = `I${functionName.substring(0, 1).toUpperCase()}${functionName.substring(
-    1,
-  )}${type.substring(0, 1).toUpperCase()}${type.substring(1)}Parameter`;
+  const parameterClassName = `I${functionName.substring(0, 1).toUpperCase()}${functionName.substring(1)}${type
+    .substring(0, 1)
+    .toUpperCase()}${type.substring(1)}Parameter`;
 
   const reference = configuration.getReference();
   const folder = configuration.getFolderManager();
@@ -111,9 +113,18 @@ export const getServiceHttpFunction = (
     const serviceFolder = objProperty.getFolderPath();
     const functionName = config.getCreateServiceFunctionName()(httpMethod, path, operation.operationId);
     const requestBody = createRequestBodyInterfaces(functionName, operation.requestBody, serviceFolder);
+    const requestBody1 = createRequestBody(functionName, operation.requestBody, serviceFolder);
+    const requestBodyKeys = Object.keys(requestBody1);
+    if (requestBodyKeys.length > 0) {
+      console.log('requestBodies', requestBodyKeys);
+    }
     const response = createResponseInterfaces(functionName, operation.responses, serviceFolder);
-
-    const sortedParameter = getSortedParameter(path, operation.parameters);
+    const response1 = createResponse(functionName, operation.responses, serviceFolder);
+    const responseKeys = Object.keys(response1);
+    if (responseKeys.length > 0) {
+      console.log('responses', responseKeys);
+    }
+    const sortedParameter = getSortedParameter(path, operation.parameters, config);
 
     const operationFunction: IFunction = {
       functionName,
@@ -123,7 +134,7 @@ export const getServiceHttpFunction = (
       httpMethod,
       originalPath: path,
 
-      description: operation.description,
+      description: operation.description || operation.summary,
 
       ...requestBody,
       ...response,

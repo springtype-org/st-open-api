@@ -1,6 +1,6 @@
 import { join } from 'path';
-import { IPropertyClass } from '../interface/i-property-class';
-import { configuration, Configuration } from '../function/config';
+import { IPropertyClass } from '../../interface/i-property-class';
+import { configuration, Configuration } from '../../function/config';
 
 export const renderPropertyClass = (propertyClass: IPropertyClass, config: Configuration = configuration) => {
   const logger = config.getLogger();
@@ -19,10 +19,11 @@ export const renderPropertyClass = (propertyClass: IPropertyClass, config: Confi
 
   // TODO: check if already exists
   writeFileSync(filePath, rendered.render);
-  logger.info(`- create component ${originalName}`);
+  logger.debug(`- create component ${name}`);
   logger.debug('-- schema', JSON.stringify(schema, null, 2));
   logger.debug(`-- file name: ${fileName}`);
   logger.debug(`-- type: ${type}`);
   logger.debug(`-- class name: ${name}`);
+  logger.debug(`-- original name: ${originalName}`);
   logger.debug(`-- folder path: ${folderPath}`);
 };
