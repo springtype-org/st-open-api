@@ -1,5 +1,4 @@
-// @ts-ignore; works well once copied over to actual generated code
-import {IError, IRequest} from "../function/http";
+import {IError, IRequest} from "../function/open-api";
 export interface I$openApi {
     requestInterceptor: RequestInterceptor;
     responseInterceptor: ResponseInterceptor<any>;

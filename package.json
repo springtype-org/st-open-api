@@ -1,6 +1,6 @@
 {
-  "name": "@igkokici/st-open-api",
-  "version": "1.4.9",
+  "name": "@igli.kokici/st-open-api",
+  "version": "1.4.15",
   "publishConfig": {
     "access": "public"
   },
