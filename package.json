@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "publishConfig": {
     "access": "public"
   },
