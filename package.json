@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "publishConfig": {
     "access": "public"
   },
@@ -23,9 +23,6 @@
     "build": "tsc",
     "postbuild": "npx st-cp package.json README.md static schema template banner.txt dist"
   },
-  "engines": {
-    "node": ">=10"
-  },
   "bundledDependencies": [
     "ajv",
     "commander",
@@ -45,7 +42,6 @@
   },
   "dependencies": {
     "ajv": "^6.12.2",
-    "chalk": "^5.0.1",
     "commander": "^5.1.0",
     "mustache": "^4.0.1",
     "node-fetch": "^2.6.0",
