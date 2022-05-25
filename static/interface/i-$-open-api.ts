@@ -1,5 +1,4 @@
-// @ts-ignore; works well once copied over to actual generated code
-import {IError, IRequest} from "../function/http";
+import {IError, IRequest} from "../function/open-api";
 export interface I$openApi {
     requestInterceptor: RequestInterceptor;
     responseInterceptor: ResponseInterceptor<any>;
@@ -11,7 +10,9 @@ export interface IParameter {
     [key: string]: string
 }
 
-export type RequestInterceptor =  (request: IRequest) => Promise<IRequest>;
-export type ResponseInterceptor<R> =  (request: IRequest, response: R, retry: HttpRequestFn, error?: IError) => Promise<R>;
-export type HttpRequestFn = (request: IRequest) => Promise<void>;
+export type InterceptorContext = {}
+
+export type RequestInterceptor =  (request: IRequest, context: InterceptorContext) => Promise<IRequest>;
+export type ResponseInterceptor<R> =  (request: IRequest, response: R | undefined, retry: HttpRequestFn, context: InterceptorContext, error?: unknown) => Promise<string>;
+export type HttpRequestFn = (request: IRequest) => Promise<string>;
 export type ErrorHandler =  (request: IError) => IError | false;

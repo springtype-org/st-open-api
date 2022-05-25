@@ -28,7 +28,8 @@ export class Ref {
         const ref = {
             fileName: data.fileName,
             className: data.className,
-            folderPath: data.folderPath
+            folderPath: data.folderPath,
+            schema: data?.schema
         };
 
         this.refs[refKey] = ref;
