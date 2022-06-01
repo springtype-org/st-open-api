@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "publishConfig": {
     "access": "public"
   },
@@ -13,7 +13,7 @@
   "description": "Generates API client SDKs from an OpenAPI specification written in OpenAPI version 3.x.x",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/igkokici/st-open-api.git"
+    "url": "git+https://github.com/springtype-org/st-open-api.git"
   },
   "scripts": {
     "audit-fix": "npm_config_yes=true npx yarn-audit-fix",
