@@ -1,9 +1,7 @@
 import {
     IncomingHttpHeaders,
     IncomingMessage,
-    request as httpRequest,
 } from "http";
-import { request as httpsRequest } from "https";
 import {
     RequestInterceptor,
     ErrorHandler,
@@ -12,14 +10,16 @@ import {
 } from "../interface/i-$-open-api";
 import { getQueryParameters } from "./get-query-params";
 import { buildUrl, HTTP_METHOD, IRequest } from "./open-api";
+import type { fetch as nodeFetch } from './fetch-node'
 
 export const http = async (
     request: IRequest,
     requestInterceptor: RequestInterceptor,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     errorHandler: ErrorHandler,
-    responseInterceptor: ResponseInterceptor<Response>
+    responseInterceptor: ResponseInterceptor<Response | globalThis.Response>
 ): Promise<string> => {
+    const fetch = typeof window !== 'undefined' && window.fetch ? window.fetch : (require('./fetch-node').fetch as typeof nodeFetch) // Browser support
     const context = {};
 
     if (requestInterceptor) {
@@ -36,7 +36,7 @@ export const http = async (
         try {
             const response = await fetch(url, {
                 method: request.method,
-                headers: request.header as IncomingHttpHeaders,
+                headers: request.header as Record<string, string>,
                 body: request.body,
             });
             if (responseInterceptor) {
@@ -52,7 +52,7 @@ export const http = async (
     return run(request);
 };
 
-interface RequestOptions {
+export interface RequestOptions {
     body?: string | Buffer;
     method?: HTTP_METHOD;
     headers?: IncomingHttpHeaders;
@@ -86,7 +86,7 @@ const handler: ProxyHandler<HeadersBase> = {
     },
 };
 
-const Headers = new Proxy(HeadersBase, {
+export const Headers = new Proxy(HeadersBase, {
     construct(target, [headers = {}]: [{ [key: string]: string }]) {
         const res = new Proxy(new target(), handler);
 
@@ -98,7 +98,7 @@ const Headers = new Proxy(HeadersBase, {
     },
 });
 
-class Request {
+export class Request {
     public method: HTTP_METHOD;
     public headers: HeadersBase;
     public body: Buffer;
@@ -142,35 +142,3 @@ export class Response {
         return (await this.blob()).toString("utf8");
     }
 }
-
-const fetch = async (
-    url: string | URL | Request,
-    { method, headers, body, ...options }: RequestOptions = {}
-): Promise<Response> => {
-    const _request: Request =
-        typeof url === "string" || url instanceof URL
-            ? new Request(url, { method, headers, body })
-            : url;
-
-    if (!(_request instanceof Request)) {
-        throw new TypeError("url must be string, URL or Request");
-    }
-
-    return new Promise((resolve, reject) => {
-        const request =
-            _request.url.protocol === "https:" ? httpsRequest : httpRequest;
-
-        const req = request(
-            _request.url,
-            {
-                method: _request.method,
-                headers: _request.headers,
-                ...options,
-            },
-            (res) => resolve(new Response(res))
-        );
-
-        req.on("error", reject);
-        req.end(_request.body.length ? _request.body : undefined);
-    });
-};
