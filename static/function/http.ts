@@ -1,4 +1,4 @@
-import {
+import type {
     IncomingHttpHeaders,
     IncomingMessage,
 } from "http";
@@ -10,7 +10,7 @@ import {
 } from "../interface/i-$-open-api";
 import { getQueryParameters } from "./get-query-params";
 import { buildUrl, HTTP_METHOD, IRequest } from "./open-api";
-import type { fetch as nodeFetch } from './fetch-node'
+import type { fetch as nodeFetchType } from './fetch-node'
 
 export const http = async (
     request: IRequest,
@@ -19,7 +19,7 @@ export const http = async (
     errorHandler: ErrorHandler,
     responseInterceptor: ResponseInterceptor<Response | globalThis.Response>
 ): Promise<string> => {
-    const fetch = typeof window !== 'undefined' && window.fetch ? window.fetch : (require('./fetch-node').fetch as typeof nodeFetch) // Browser support
+    const fetch = typeof window !== 'undefined' && window.fetch ? window.fetch : (require('./fetch-node').fetch as typeof nodeFetchType) // Dynamic browser support
     const context = {};
 
     if (requestInterceptor) {

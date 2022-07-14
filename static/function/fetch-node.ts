@@ -1,6 +1,14 @@
-import { request as httpRequest } from "http";
-import { request as httpsRequest } from "https";
+import type { request as httpRequestType } from "http";
+import type { request as httpsRequestType } from "https";
 import { RequestOptions, Request, Response } from './http'
+
+// Dynamic Browser support
+let httpRequest: typeof httpRequestType
+let httpsRequest: typeof httpsRequestType
+if (typeof window === 'undefined') {
+    httpRequest = require('http').request
+    httpsRequest = require('https').request
+}
 
 export const fetch = async (
     url: string | URL | Request,
