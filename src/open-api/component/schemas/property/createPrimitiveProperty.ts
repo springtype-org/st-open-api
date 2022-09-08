@@ -1,24 +1,20 @@
 import { PropertyFactoryOptions } from './getPropertyFactory';
 import { IPropertyClass } from '../../../interface/i-property-class';
 import { registerComponent } from '../registerComponent';
-import { configuration, Configuration } from '../../../function/config';
-import { PrimitiveProperty } from '../../../classes/primitive-property';
+import { Configuration } from '../../../classes/Configuration';
+import { PrimitiveProperty } from '../../../classes/PrimitiveProperty';
 import { Primitive } from './isPropertyPrimitive';
-import { getDescriptionJoin } from './getDescriptionJoin';
-import { getFormatPrefix } from './getFormatPrefix';
-import { getPatternPrefix } from './getPatternPrefix';
-import { getValidationDescription } from './getValidationDescription';
 import { getPropertyDescription } from './getPropertyDescription';
 
 export const createPrimitiveProperty = (
   options: PropertyFactoryOptions,
-  config: Configuration = configuration,
+  config: Configuration,
 ): Array<IPropertyClass> => {
   const { schema, schemaName, round, prefixRefKey, folderPath } = options;
 
   const result: Array<IPropertyClass> = [];
 
-  const primitiveType = new PrimitiveProperty(schemaName, folderPath, prefixRefKey, config);
+  const primitiveType = new PrimitiveProperty(schemaName, folderPath, prefixRefKey, schema, config);
   primitiveType.setValue(mapPrimitive(schema.type as Primitive));
   primitiveType.addDescription(getPropertyDescription(schema));
 

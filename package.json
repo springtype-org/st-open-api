@@ -24,7 +24,7 @@
     "test": "jest"
   },
   "engines": {
-    "node": ">=10"
+    "node": ">=16"
   },
   "bundledDependencies": [
     "ajv",
@@ -35,9 +35,7 @@
     "valid-url",
     "typescript"
   ],
-  "bin": {
-    "st-open-api": "./cli.js"
-  },
+  "bin": "./cli.js",
   "author": "Michael Mannseicher, Aron Homberg",
   "license": "MIT",
   "bugs": {
@@ -46,17 +44,19 @@
   "dependencies": {
     "ajv": "^6.12.2",
     "commander": "^5.1.0",
+    "js-yaml": "^4.1.0",
+    "json-stable-stringify": "^1.0.1",
     "mustache": "^4.2.0",
     "node-fetch": "^2.6.1",
     "st-rm-rf": "^2.0.0-beta.1",
-    "typescript": "^4.5.5",
+    "typescript": "^4.7.4",
     "valid-url": "^1.0.9",
     "yaml": "^1.10.2"
   },
   "devDependencies": {
     "@types/jest": "^27.4.0",
     "@types/mustache": "^4.0.1",
-    "@types/node": "^13.11.1",
+    "@types/node": "14.14.2",
     "@types/node-fetch": "^2.5.6",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.0.0",

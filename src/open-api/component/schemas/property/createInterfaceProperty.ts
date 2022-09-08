@@ -1,33 +1,29 @@
 import { getPropertyFactory, PropertyFactoryOptions } from './getPropertyFactory';
-import { InterfaceProperty } from '../../../classes/interface-property';
+import { InterfaceProperty } from '../../../classes/InterfaceProperty';
 import { IPropertyClass } from '../../../interface/i-property-class';
 import { registerComponent } from '../registerComponent';
-import { Configuration, configuration } from '../../../function/config';
 import { isPropertyPrimitive, Primitive } from './isPropertyPrimitive';
-import { formatText } from '../../../common/function/text/formatText';
-import { getDescriptionJoin } from './getDescriptionJoin';
-import { getFormatPrefix } from './getFormatPrefix';
-import { getPatternPrefix } from './getPatternPrefix';
-import { getValidationDescription } from './getValidationDescription';
 import { getPropertyDescription } from './getPropertyDescription';
+import { getNormalizedName } from './getNoramlizedName';
+import { Configuration } from '../../../classes/Configuration';
+import { splitByLineBreak } from '../../../function/splitByLineBreak';
+import { onDefined } from '../../../function/onDefined';
+import { ISchema } from '../../../interface/open-api-mine/i-schema';
 
-export const createInterfaceProperty = (
-  options: PropertyFactoryOptions,
-  config: Configuration = configuration,
-): Array<IPropertyClass> => {
-  const result: Array<IPropertyClass> = [];
-  const { schemaName, schema: rawSchema, round, prefixRefKey, folderPath } = options;
-  const logger = config.getLogger();
+export const resolveAllOf = (schema: ISchema, folderPath: string, config: Configuration) => {
+  let response = schema;
+  const schemaAllOfs = schema.allOf;
 
-  const schemasAllOf = rawSchema.allOf;
-  let schema = rawSchema;
-
-  if (schemasAllOf) {
-    schema = schemasAllOf
+  if (schemaAllOfs) {
+    response = schemaAllOfs
       .map((allOfSchema) => {
         const schemaRef = allOfSchema.$ref;
         if (schemaRef) {
-          return config.getReference().getImportAndTypeByRef(schemaRef, folderPath).schema;
+          return resolveAllOf(
+            config.getReference().getImportAndTypeByRef(schemaRef, folderPath).schema,
+            folderPath,
+            config,
+          );
         }
         return allOfSchema;
       })
@@ -42,8 +38,21 @@ export const createInterfaceProperty = (
       );
   }
 
-  const interfaceProperty = new InterfaceProperty(schemaName, folderPath, prefixRefKey, config);
+  return response;
+};
 
+export const createInterfaceProperty = (
+  options: PropertyFactoryOptions,
+  config: Configuration,
+): Array<IPropertyClass> => {
+  const result: Array<IPropertyClass> = [];
+  const { schemaName, schema: rawSchema, round, prefixRefKey, folderPath } = options;
+  const logger = config.getLogger();
+
+  const schema = resolveAllOf(rawSchema, folderPath, config);
+
+  const interfaceProperty = new InterfaceProperty(schemaName, folderPath, prefixRefKey, schema, config);
+  interfaceProperty.description = ['Open-api schema', ...splitByLineBreak(JSON.stringify(schema, null, 2))];
   if (round > 0) {
     registerComponent(schemaName, prefixRefKey, folderPath, 'INTERFACE', schema, config);
   }
@@ -52,7 +61,7 @@ export const createInterfaceProperty = (
   const objectProperties = schema.properties;
   if (objectProperties) {
     const requiredProperties = schema.required || [];
-    const objectPropertyNames = Object.keys(objectProperties);
+    const objectPropertyNames = Object.keys(objectProperties).sort();
     for (const propertyName of objectPropertyNames) {
       const property = objectProperties[propertyName];
       const required = requiredProperties.indexOf(propertyName) > -1;
@@ -102,7 +111,7 @@ export const createInterfaceProperty = (
             logger.warn(`-property ${JSON.stringify(nestedSchema, null, 2)}`);
           }
         } catch (e) {
-          logger.warn('- error in nested schema ', schemaName, propertyName);
+          logger.warn('- error in nested schema ', schemaName, propertyName, e);
         }
       }
 
@@ -111,7 +120,7 @@ export const createInterfaceProperty = (
           isArray,
           value: propertyValue,
           required,
-          description: getPropertyDescription(property),
+          description: onDefined(getPropertyDescription(property), ''),
           propertyName,
         });
       }
@@ -119,7 +128,11 @@ export const createInterfaceProperty = (
   }
 
   const { additionalProperties } = schema;
-  if (additionalProperties) {
+  if (additionalProperties === true || additionalProperties === false) {
+    if (additionalProperties === true) {
+      interfaceProperty.addAdditionalProperties('any', false);
+    }
+  } else if (additionalProperties) {
     const additionalPropType = additionalProperties.type;
     const additionalPropFormat = additionalProperties.format;
     const isPrimitive = isPropertyPrimitive(additionalPropType);
@@ -139,7 +152,7 @@ export const createInterfaceProperty = (
       additionalPropValue = reference.className;
       interfaceProperty.addImports(reference);
     } else {
-      const nestedSchemaName = formatText([schemaName, 'additional', 'properties'], 'Any', 'PascalCase');
+      const nestedSchemaName = getNormalizedName('INTERFACE', config, schemaName, ['additional', 'properties']);
       const propertyObjects = getPropertyFactory(
         {
           schema: nestedSchema,

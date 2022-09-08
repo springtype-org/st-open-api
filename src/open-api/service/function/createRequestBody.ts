@@ -2,20 +2,20 @@ import { IRequestBody } from '../../interface/open-api-mine/i-request-body';
 import { IReference } from '../../interface/open-api-mine/i-reference';
 import { IRefResult } from '../../classes/register';
 import { ISchema } from '../../interface/open-api-mine/i-schema';
-import { configuration } from '../../function/config';
-import { formatText } from '../../common/function/text/formatText';
+import { Configuration } from '../../classes/Configuration';
 import { getPropertyFactory } from '../../component/schemas/property/getPropertyFactory';
 import { renderPropertyClass } from '../../component/schemas/renderPropertyClass';
+import { getNormalizedName } from '../../component/schemas/property/getNoramlizedName';
 
 export const REQUEST_SCHEMA_PREFIX = '#/Request/schemas/';
 
 export type CreateRequestBody = { [contentType: string]: IRefResult };
 
 export const createRequestBody = (
-  operationId: string,
+  functionName: string,
   requestBodyOrRef: IRequestBody | IReference,
   folderPath: string,
-  config = configuration,
+  config: Configuration,
 ): CreateRequestBody => {
   const logger = config.getLogger();
   const folderManager = config.getFolderManager();
@@ -39,17 +39,21 @@ export const createRequestBody = (
               response[contentType] = importRef;
             }
           } else {
-            const schemaName = formatText([operationId, 'Request'], 'Any', 'PascalCase');
+            const schemaName = getNormalizedName('INTERFACE', config, functionName, ['Request']);
             try {
-              const classes = getPropertyFactory({
-                schemaName,
-                schema: contentSchema,
-                prefixRefKey: REQUEST_SCHEMA_PREFIX,
-                folderPath: folderManager.getInterfaceRequestFolder(),
-                round: 0,
-              });
-              classes.forEach((propertyClass) => renderPropertyClass(propertyClass, config));
+              const classes = getPropertyFactory(
+                {
+                  schemaName,
+                  schema: contentSchema,
+                  prefixRefKey: REQUEST_SCHEMA_PREFIX,
+                  folderPath: folderManager.getInterfaceRequestFolder(),
+                  round: 0,
+                },
+                config,
+              );
               const registered = classes.map((clazz) => {
+                // render class
+                renderPropertyClass(clazz, config);
                 register.addReference(clazz.getReferenceKey(), {
                   className: clazz.getName(),
                   fileName: clazz.getFileName(),

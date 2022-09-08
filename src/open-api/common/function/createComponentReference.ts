@@ -1,4 +1,4 @@
-import { Configuration, configuration } from '../../function/config';
+import { Configuration } from '../../classes/Configuration';
 import { getNormalizedName } from '../../component/schemas/property/getNoramlizedName';
 import { ComponentType } from '../../component/schemas/ComponentType';
 
@@ -12,10 +12,10 @@ export const createComponentReference = (
   schemaName: string,
   type: ComponentType,
   refkey: string,
-  config: Configuration = configuration,
+  config: Configuration,
 ) => {
   const fileName = config.getCreateFileNameFn()(type, schemaName);
-  const name = getNormalizedName(schemaName, type, config);
+  const name = getNormalizedName(type, config, schemaName);
 
   const refKey = config.getCreateRefKeyFn()(refkey, schemaName);
 

@@ -1,21 +1,18 @@
 import { getPropertyFactory, PropertyFactoryOptions } from './getPropertyFactory';
 import { IPropertyClass } from '../../../interface/i-property-class';
-import { Configuration, configuration } from '../../../function/config';
-import { InterfaceArrayProperty } from '../../../classes/interface-array-property';
+import { Configuration } from '../../../classes/Configuration';
+import { InterfaceArrayProperty } from '../../../classes/InterfaceArrayProperty';
 
-export const createArrayProperty = (
-  options: PropertyFactoryOptions,
-  config: Configuration = configuration,
-): Array<IPropertyClass> => {
+export const createArrayProperty = (options: PropertyFactoryOptions, config: Configuration): Array<IPropertyClass> => {
   const { schema, folderPath, schemaName, prefixRefKey, round } = options;
   const logger = config.getLogger();
 
   const result: Array<IPropertyClass> = [];
 
   if (schema.type === 'array') {
-    if (schema.items.$ref) {
-      const ref = configuration.getReference().getImportAndTypeByRef(schema.items.$ref, folderPath);
-      result.push(new InterfaceArrayProperty(schemaName, ref, folderPath, prefixRefKey, config));
+    if (schema.items?.$ref) {
+      const ref = config.getReference().getImportAndTypeByRef(schema.items.$ref, folderPath);
+      result.push(new InterfaceArrayProperty(schemaName, ref, folderPath, prefixRefKey, schema, config));
     } else {
       const nestedResults = getPropertyFactory(
         {
@@ -29,10 +26,9 @@ export const createArrayProperty = (
         config,
       );
       if (nestedResults.length >= 1) {
-        console.log(nestedResults.length, nestedResults);
         const firstResult = nestedResults[0];
-        const ref = configuration.getReference().getImportAndTypeByRef(firstResult.getReferenceKey(), folderPath);
-        result.push(new InterfaceArrayProperty(schemaName, ref, folderPath, prefixRefKey, config));
+        const ref = config.getReference().getImportAndTypeByRef(firstResult.getReferenceKey(), folderPath);
+        result.push(new InterfaceArrayProperty(schemaName, ref, folderPath, prefixRefKey, schema, config));
       } else {
         logger.warn(`Missing child element on array ${schemaName}`);
         logger.warn('- schema', schema);

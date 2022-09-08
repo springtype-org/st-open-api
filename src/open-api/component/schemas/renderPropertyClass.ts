@@ -1,8 +1,8 @@
 import { join } from 'path';
 import { IPropertyClass } from '../../interface/i-property-class';
-import { configuration, Configuration } from '../../function/config';
+import { Configuration } from '../../classes/Configuration';
 
-export const renderPropertyClass = (propertyClass: IPropertyClass, config: Configuration = configuration) => {
+export const renderPropertyClass = (propertyClass: IPropertyClass, config: Configuration) => {
   const logger = config.getLogger();
   const writeFileSync = config.getWriteFileSyncFn();
 
@@ -14,8 +14,7 @@ export const renderPropertyClass = (propertyClass: IPropertyClass, config: Confi
   const schema = propertyClass.getSchema();
   const fileName = propertyClass.getFileName();
 
-  // TODO: do this language specific
-  const filePath = join(folderPath, `${fileName}.ts`);
+  const filePath = join(folderPath, `${fileName}${config.getFileExtension()}`);
 
   // TODO: check if already exists
   writeFileSync(filePath, rendered.render);

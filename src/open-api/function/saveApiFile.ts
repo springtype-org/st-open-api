@@ -1,9 +1,9 @@
 import { join } from 'path';
 import { writeFileSync } from 'fs';
 import YAML from 'yaml';
-import { Configuration, configuration } from './config';
+import { Configuration } from '../classes/Configuration';
 
-export const saveApiFile = (isYamlFile: boolean, openApiRawData: string, config: Configuration = configuration) => {
+export const saveApiFile = (isYamlFile: boolean, openApiRawData: string, config: Configuration) => {
   const folderManager = config.getFolderManager();
   const logger = config.getLogger();
 

@@ -8,15 +8,26 @@
 {{/isImport}}
 
 {{#isDescription}}
- /*
+/**
 {{#description}}
-  * {{{.}}}
+ * {{{.}}}
 {{/description}}
-  */
+ */
 {{/isDescription}}
-export class {{className}} {
+export class {{className}}<HttpOption> {
 
-    constructor(private config: OpenApi) {}
+    constructor(public config: {
+        send: <T = void>(request: {
+            method: string;
+            url: string;
+            queryParameter?: any;
+            urlParameter?: any;
+            headerParameter?: any;
+            cookieParameter?: any;
+            body?: any;
+        }, options?: Partial<HttpOption>) => Promise<T>
+    }) {
+    }
 
 {{#isProperties}}
 {{#properties}}

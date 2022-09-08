@@ -7,9 +7,13 @@ export const mapPrimitiveValues = (primitive: Primitive, format: string | undefi
     boolean: () => 'boolean',
     string: () => {
       // TODO: more mappings
+      if (format === 'date-time') {
+        // TODO: mapping ecmascript setter and getter
+        return 'Date';
+      }
       if (format === 'date') {
         // TODO: mapping ecmascript setter and getter
-        // return 'Date';
+        return 'Date';
       }
       if (format === 'binary') {
         return 'File';

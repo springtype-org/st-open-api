@@ -3,7 +3,7 @@ import { IPropertyClass } from '../../../interface/i-property-class';
 import { createInterfaceProperty } from './createInterfaceProperty';
 import { createEnumProperty } from './createEnumProperty';
 import { createArrayProperty } from './createArrayProperty';
-import { Configuration, configuration } from '../../../function/config';
+import { Configuration } from '../../../classes/Configuration';
 import { getComponentType } from './getComponentType';
 import { ComponentType } from '../ComponentType';
 import { createPrimitiveProperty } from './createPrimitiveProperty';
@@ -16,10 +16,7 @@ export type PropertyFactoryOptions = {
   round: number;
 };
 
-export const getPropertyFactory = (
-  options: PropertyFactoryOptions,
-  config: Configuration = configuration,
-): Array<IPropertyClass> => {
+export const getPropertyFactory = (options: PropertyFactoryOptions, config: Configuration): Array<IPropertyClass> => {
   const result: Array<IPropertyClass> = [];
 
   const { schema, schemaName } = options;

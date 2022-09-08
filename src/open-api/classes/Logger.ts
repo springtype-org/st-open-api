@@ -1,40 +1,48 @@
-/* eslint-disable no-console,max-classes-per-file */
-export type LogLevel = 'WARN' | 'INFO' | 'DEBUG';
+export type LogLevel = 'WARN' | 'INFO' | 'DEBUG' | 'ERROR';
 
-export abstract class Logger {
-  public static wrapper(message: any, optionalParams: Array<any>, logFn: (message?: any, ...params: any[]) => void) {
-    if (optionalParams.length === 0) {
-      logFn(message);
-      return;
-    }
-    logFn(message, optionalParams);
-  }
+export const LOG_LEVEL_ORDER: Array<LogLevel> = ['DEBUG', 'INFO', 'WARN', 'ERROR'];
 
-  public debug: (message?: any, ...optionalParams: Array<any>) => void;
-
-  public info: (message?: any, ...optionalParams: Array<any>) => void;
-
-  public warn: (message?: any, ...optionalParams: Array<any>) => void;
+export interface Logger {
+  getLevel: () => LogLevel;
+  debug: (...optionalParams: Array<any>) => void;
+  info: (...optionalParams: Array<any>) => void;
+  warn: (...optionalParams: Array<any>) => void;
+  error: (...optionalParams: Array<any>) => void;
 }
+export class ConsoleLogger implements Logger {
+  constructor(private level: LogLevel) {}
 
-export class ConsoleLogger extends Logger {
-  constructor(private level: LogLevel = 'INFO') {
-    super();
+  static isLogging(currentLevel: LogLevel, level: LogLevel) {
+    const levelIndex = LOG_LEVEL_ORDER.indexOf(currentLevel);
+    const foundIndex = LOG_LEVEL_ORDER.indexOf(level);
+    return levelIndex <= foundIndex;
   }
 
-  debug = (message?: any, ...optionalParams: Array<any>): void => {
-    if (this.level === 'DEBUG') {
-      ConsoleLogger.wrapper(message, optionalParams, console.debug);
+  debug = (...messages: Array<any>): void => {
+    if (ConsoleLogger.isLogging(this.level, 'DEBUG')) {
+      console.debug(...messages);
     }
   };
 
-  info = (message?: any, ...optionalParams: Array<any>): void => {
-    if (this.level === 'DEBUG' || this.level === 'INFO') {
-      ConsoleLogger.wrapper(message, optionalParams, console.info);
+  info = (...messages: Array<any>): void => {
+    if (ConsoleLogger.isLogging(this.level, 'INFO')) {
+      console.info(...messages);
     }
   };
 
-  warn = (message?: any, ...optionalParams: Array<any>): void => {
-    ConsoleLogger.wrapper(message, optionalParams, console.warn);
+  warn = (...messages: Array<any>): void => {
+    if (ConsoleLogger.isLogging(this.level, 'WARN')) {
+      console.warn(...messages);
+    }
   };
+
+  error = (...messages: Array<any>): void => {
+    if (ConsoleLogger.isLogging(this.level, 'ERROR')) {
+      console.error(...messages);
+    }
+  };
+
+  getLevel(): LogLevel {
+    return this.level;
+  }
 }

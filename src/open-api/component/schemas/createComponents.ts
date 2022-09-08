@@ -1,13 +1,13 @@
 import { IComponents } from '../../interface/open-api-mine/i-components';
 import { ISchema } from '../../interface/open-api-mine/i-schema';
-import { configuration, Configuration } from '../../function/config';
+import { Configuration } from '../../classes/Configuration';
 import { getComponentType } from './property/getComponentType';
 import { registerComponent } from './registerComponent';
 import { createComponent } from './createComponent';
 
 export const COMPONENT_SCHEMA_KEY = '#/components/schemas/';
 
-export const createComponents = (components: IComponents, config: Configuration = configuration) => {
+export const createComponents = (components: IComponents, config: Configuration) => {
   const logger = config.getLogger();
   const folderManager = config.getFolderManager();
 

@@ -5,73 +5,24 @@
 {{/description}}
  */
 {{/isDescription}}
-{{functionName}} = async ({{#isPathParameters}}pathParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}options?: Partial<HttpOption>): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
-{{#isQueryParameters}}
-
-    const queryParam = [
-    {{#queryParameters}}
-        {name: '{{name}}', value: queryParameter.{{value}}},
-    {{/queryParameters}}
-    ];
-{{/isQueryParameters}}
-{{#isPathParameters}}
-
-    const pathParam = {
-    {{#pathParameters}}
-        '{{name}}': pathParameter.{{value}},
-    {{/pathParameters}}
-    };
-{{/isPathParameters}}
-
-    {{#isResponse}}return {{/isResponse}}await this.config.http{{#isResponse}}<{{{responseClass}}}>{{/isResponse}}({
+{{functionName}} = async ({{#isPathParameters}}urlParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}options?: Partial<HttpOption>): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
+    return this.config.send<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}>({
             method: '{{httpMethod}}',
-            url: `${this.config.endpointUrl}{{{originalPath}}}`,
-{{#isQueryParameters}}
-            queryParameter: queryParam,
-{{/isQueryParameters}}
-{{#isPathParameters}}
-            urlParameter: pathParam,
-{{/isPathParameters}}
-            header: {
-{{#isJsonResponse}}
-                Accept: 'application/json',
-{{/isJsonResponse}}
-{{#isDownloadResponse}}
-                Accept: 'application/octet-stream',
-{{/isDownloadResponse}}
-{{#isPlaintextResponse}}
-                Accept: 'text/plain',
-{{/isPlaintextResponse}}
-{{#isRequestBodyJson}}
-                'Content-Type': 'application/json',
-{{/isRequestBodyJson}}
-{{#isHeaderParameters}}
+            url: '{{{originalPath}}}',
+            urlParameter: {{#isPathParameters}}urlParameter{{/isPathParameters}}{{^isPathParameters}}{}{{/isPathParameters}},
+            queryParameter: {{#isQueryParameters}}queryParameter{{/isQueryParameters}}{{^isQueryParameters}}{}{{/isQueryParameters}},
+            headerParameter: {
 {{#headerParameters}}
-                '{{name}}': headerParameter.{{value}},
+                '{{{name}}}': '{{{value}}}',
 {{/headerParameters}}
+{{#isHeaderParameters}}
+                ...headerParameter
 {{/isHeaderParameters}}
             },
-{{#isRequestBodyJson}}
-            body: JSON.stringify(body),
-{{/isRequestBodyJson}}
-{{#isRequestBodyUpload}}
-            body: convertRequestToFormData(body),
-{{/isRequestBodyUpload}}
+{{#isRequestBody}}
+            body,
+{{/isRequestBody}}
         },
-        options?.interceptor || this.config.requestInterceptor,
-        options?.errorHandler || this.config.errorHandler,
-        {
-{{#isJsonResponse}}
-            load: onJsonLoad,
-{{/isJsonResponse}}
-{{#isPlaintextResponse}}
-            load: onPlainTextLoad,
-{{/isPlaintextResponse}}
-{{#isDownloadResponse}}
-            beforeSend: onBinaryBeforeSend,
-            load: onBinaryLoad,
-{{/isDownloadResponse}}
-            ...options?.eventListener,
-        }
+        options
     );
 };

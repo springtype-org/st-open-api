@@ -1,5 +1,5 @@
 import { createComponentReference } from '../../common/function/createComponentReference';
-import { Configuration, configuration } from '../../function/config';
+import { Configuration } from '../../classes/Configuration';
 import { ComponentType } from './ComponentType';
 
 export type RegisterComponentOptions = {
@@ -12,12 +12,12 @@ export const registerComponent = (
   folderPath: string,
   type: ComponentType,
   schema: any,
-  config: Configuration = configuration,
+  config: Configuration,
 ) => {
   const logger = config.getLogger();
   const register = config.getReference();
 
-  const { fileName, name, refKey } = createComponentReference(schemaName, type, prefixRefKey);
+  const { fileName, name, refKey } = createComponentReference(schemaName, type, prefixRefKey, config);
 
   register.addReference(refKey, {
     fileName,
