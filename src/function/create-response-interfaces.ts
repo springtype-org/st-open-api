@@ -10,7 +10,7 @@ export const createResponseInterfaces = (operationId: string, responses: any): I
     const reference = configuration.getReference();
     const folder = configuration.getFolderManager();
 
-    const success = responses['200'] || responses['201'];
+    const success = responses['200'] || responses['201'] || responses['207'];
 
     // TODO: Refactor me !!!
     if (!!success && !!success.content) {
