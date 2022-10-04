@@ -42,11 +42,11 @@
     "url": "https://github.com/springtype-org/st-open-api/issues"
   },
   "dependencies": {
-    "ajv": "^6.12.2",
-    "commander": "^5.1.0",
-    "js-yaml": "^4.1.0",
-    "json-stable-stringify": "^1.0.1",
-    "mustache": "^4.2.0",
+    "ajv": "6.12.6",
+    "commander": "5.1.0",
+    "js-yaml": "4.1.0",
+    "json-stable-stringify": "1.0.1",
+    "mustache": "4.2.0",
     "node-fetch": "^2.6.1",
     "st-rm-rf": "^2.0.0-beta.1",
     "typescript": "^4.7.4",
