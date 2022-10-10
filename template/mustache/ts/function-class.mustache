@@ -5,7 +5,7 @@
 {{/description}}
  */
 {{/isDescription}}
-{{functionName}} = async ({{#isPathParameters}}urlParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}options?: Partial<HttpOption>): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
+{{functionName}} = async ({{#isPathParameters}}urlParameter: {{pathParameterClassName}}, {{/isPathParameters}}{{#isQueryParameters}}queryParameter: {{queryParameterClassName}}, {{/isQueryParameters}}{{#isHeaderParameters}}headerParameter: {{headerParameterClassName}}, {{/isHeaderParameters}}{{#isRequestBody}}body: {{{requestBodyClass}}}, {{/isRequestBody}}): Promise<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}> => {
     return this.config.send<{{#isResponse}}{{{responseClass}}}{{/isResponse}}{{^isResponse}}void{{/isResponse}}>({
             method: '{{httpMethod}}',
             url: '{{{originalPath}}}',
@@ -22,7 +22,6 @@
 {{#isRequestBody}}
             body,
 {{/isRequestBody}}
-        },
-        options
+        }
     );
 };

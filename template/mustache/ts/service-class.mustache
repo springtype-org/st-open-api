@@ -14,7 +14,7 @@
 {{/description}}
  */
 {{/isDescription}}
-export class {{className}}<HttpOption> {
+export class {{className}} {
 
     constructor(public config: {
         send: <T = void>(request: {
@@ -25,7 +25,7 @@ export class {{className}}<HttpOption> {
             headerParameter?: any;
             cookieParameter?: any;
             body?: any;
-        }, options?: Partial<HttpOption>) => Promise<T>
+        }) => Promise<T>
     }) {
     }
 
