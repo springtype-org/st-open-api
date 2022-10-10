@@ -10,16 +10,20 @@ import { splitByLineBreak } from '../../../function/splitByLineBreak';
 import { onDefined } from '../../../function/onDefined';
 import { ISchema } from '../../../interface/open-api-mine/i-schema';
 
-export const resolveAllOf = (schema: ISchema, folderPath: string, config: Configuration) => {
+export const resolveAllOfOrRef = (schema: ISchema, folderPath: string, config: Configuration) => {
   let response = schema;
-  const schemaAllOfs = schema.allOf;
+  let schemaAllOfOrRef = schema.allOf;
 
-  if (schemaAllOfs) {
-    response = schemaAllOfs
+  if (typeof schema.$ref !== 'undefined') {
+    schemaAllOfOrRef = [{ $ref: schema.$ref }];
+  }
+
+  if (schemaAllOfOrRef) {
+    response = schemaAllOfOrRef
       .map((allOfSchema) => {
         const schemaRef = allOfSchema.$ref;
         if (schemaRef) {
-          return resolveAllOf(
+          return resolveAllOfOrRef(
             config.getReference().getImportAndTypeByRef(schemaRef, folderPath).schema,
             folderPath,
             config,
@@ -49,7 +53,7 @@ export const createInterfaceProperty = (
   const { schemaName, schema: rawSchema, round, prefixRefKey, folderPath } = options;
   const logger = config.getLogger();
 
-  const schema = resolveAllOf(rawSchema, folderPath, config);
+  const schema = resolveAllOfOrRef(rawSchema, folderPath, config);
 
   const interfaceProperty = new InterfaceProperty(schemaName, folderPath, prefixRefKey, schema, config);
   interfaceProperty.description = ['Open-api schema', ...splitByLineBreak(JSON.stringify(schema, null, 2))];

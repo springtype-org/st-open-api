@@ -1,6 +1,5 @@
 import { getDescriptionJoin } from './getDescriptionJoin';
 import { getFormatPrefix } from './getFormatPrefix';
-import { getPatternPrefix } from './getPatternPrefix';
 import { getValidationDescription } from './getValidationDescription';
 import { ISchema } from '../../../interface/open-api-mine/i-schema';
 
