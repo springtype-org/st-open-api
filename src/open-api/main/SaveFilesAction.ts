@@ -34,9 +34,13 @@ export class SaveFilesAction extends AbstractAction<MainContext> {
     const openApiFilePathWithoutExtension = join(folderManager.getOutputFolder(), 'open-api');
     const fileRegistryFilePathWithoutExtension = join(folderManager.getOutputFolder(), 'references');
     const versionInfoPath = join(folderManager.getOutputFolder(), 'version.json');
+    
+    const apiAsJsonString =  JSON.stringify(parsed, null, 2);
+    //prevent strange references
+    const apiAsYamlString = YAML.stringify(JSON.parse(apiAsJsonString), { indent: 2 });  
 
-    writeFileSync(openApiFilePathWithoutExtension + '.json', JSON.stringify(parsed, null, 2));
-    writeFileSync(openApiFilePathWithoutExtension + '.yaml', YAML.stringify(parsed, { indent: 2 }));
+    writeFileSync(openApiFilePathWithoutExtension + '.json', apiAsJsonString);
+    writeFileSync(openApiFilePathWithoutExtension + '.yaml', apiAsYamlString);
 
     // writeFileSync(fileRegistryFilePathWithoutExtension + '.json', jsonStringify(references, { space: 2 }));
     // writeFileSync(fileRegistryFilePathWithoutExtension + '.yaml', yaml.dump(references, { indent: 2, sortKeys: true }));
