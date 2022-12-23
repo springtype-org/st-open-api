@@ -12,12 +12,12 @@ import { ISchema } from '../../../interface/open-api-mine/i-schema';
 
 export const resolveAllOfOrRef = (schema: ISchema, folderPath: string, config: Configuration) => {
   let response = schema;
+  const isAllOf = !!schema.allOf;
   let schemaAllOfOrRef = schema.allOf;
 
   if (typeof schema.$ref !== 'undefined') {
     schemaAllOfOrRef = [{ $ref: schema.$ref }];
   }
-
   if (schemaAllOfOrRef) {
     response = schemaAllOfOrRef
       .map((allOfSchema) => {
@@ -41,7 +41,37 @@ export const resolveAllOfOrRef = (schema: ISchema, folderPath: string, config: C
         { type: 'object' },
       );
   }
+  //have to merge properties
+  if (isAllOf) {
+    if (schema.properties) {
+      const entries = Object.entries(schema.properties);
+      if (!response.properties) {
+        response.properties = {};
+      }
+      for (const entry of entries) {
+        const propertyName = entry[0];
+        const propertyValue = entry[1];
 
+        if (response.properties[propertyName]) {
+          config.getLogger().warn(`Overriding property ${propertyName}`);
+        }
+        response.properties[propertyName] = propertyValue;
+      }
+    }
+    if (schema.required) {
+      const values = Object.values(schema.required);
+      if (!response.required) {
+        response.required = [];
+      }
+      for (const value of values) {
+        if (response.required.indexOf(value) !== -1) {
+          config.getLogger().warn(`Property is already required ${value}`);
+        } else {
+          response.required.push(value);
+        }
+      }
+    }
+  }
   return response;
 };
 
