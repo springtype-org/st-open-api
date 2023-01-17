@@ -10,7 +10,7 @@ export const getComponentType = (
   if (schema.enum) {
     return 'ENUM';
   }
-  if (schema.type === 'object' || schema.allOf || schema.$ref) {
+  if (schema.type === 'object' || schema.allOf || schema.oneOf || schema.$ref) {
     return 'INTERFACE';
   }
   if (schema.type === 'array') {

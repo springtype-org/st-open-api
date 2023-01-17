@@ -9,6 +9,7 @@ import { Configuration } from '../../../classes/Configuration';
 import { splitByLineBreak } from '../../../function/splitByLineBreak';
 import { onDefined } from '../../../function/onDefined';
 import { ISchema } from '../../../interface/open-api-mine/i-schema';
+import { InterfaceOneOfProperty } from '../../../classes/InterfaceOneOfProperty';
 
 export const resolveAllOfOrRef = (schema: ISchema, folderPath: string, config: Configuration) => {
   let response = schema;
@@ -81,6 +82,23 @@ export const createInterfaceProperty = (
 ): Array<IPropertyClass> => {
   const result: Array<IPropertyClass> = [];
   const { schemaName, schema: rawSchema, round, prefixRefKey, folderPath } = options;
+
+  if (rawSchema.oneOf) {
+    const oneOfElement = new InterfaceOneOfProperty(schemaName, folderPath, prefixRefKey, rawSchema, config);
+    for (const one of rawSchema.oneOf) {
+      if (one.$ref) {
+        const refSchema = one.$ref;
+        const schemaResult = config.getReference().getImportAndTypeByRef(refSchema, folderPath);
+        oneOfElement.addImports(schemaResult);
+        oneOfElement.addOneOf(schemaResult.className);
+      } else {
+        config.getLogger().warn('Unknown oneOf', schemaName, rawSchema);
+      }
+    }
+    result.push(oneOfElement);
+    return result;
+  }
+
   const logger = config.getLogger();
 
   const schema = resolveAllOfOrRef(rawSchema, folderPath, config);
@@ -133,6 +151,17 @@ export const createInterfaceProperty = (
             },
             config,
           );
+          propertyObjects.forEach((propertyObject) => {
+            //create component if not exist!
+            if (!config.getReference().getImportAndTypeByRef(propertyObject.getReferenceKey(), folderPath)) {
+              config.getReference().addReference(propertyObject.getReferenceKey(), {
+                className: propertyObject.getName(),
+                fileName: propertyObject.getFileName(),
+                folderPath: propertyObject.getFolderPath(),
+                schema: propertyObject.getSchema(),
+              });
+            }
+          });
           result.push(...propertyObjects);
           if (propertyObjects.length >= 1) {
             const propertyObject = propertyObjects[0];
