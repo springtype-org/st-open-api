@@ -166,6 +166,20 @@ paths:
             application/json:
               schema: {$ref: '#/components/schemas/StatusResponse'}
 
+  /v1/playground:
+    get:
+      tags:
+        - Playground Service
+      summary: Used to test st-open-api
+      operationId: playAround
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PlaygroundResponse'}
+
+
 components:
   schemas:
     
@@ -307,6 +321,30 @@ components:
           $ref: '#/components/schemas/StatusResponse'
         result:
           $ref: '#/components/schemas/OffsetInfoResponse'
+
+    PlaygroundResponse:
+      title: PlaygroundResponse
+      type: object
+      properties:
+        anyType:
+          $ref: '#/components/schemas/AnyType'
+        numberType:
+          $ref: '#/components/schemas/NumberType'
+        integerType:
+          $ref: '#/components/schemas/IntegerType'
+        booleanType:
+          $ref: '#/components/schemas/BooleanType'
+        primitiveAnyType: {}
+
+    AnyType: {}
+    StringType:
+      type: string
+    NumberType:
+      type: number
+    IntegerType:
+      type: integer
+    BooleanType:
+      type: boolean
 
   securitySchemes:
     bearerAuth:

@@ -1,7 +1,7 @@
 import {IType} from "./i-type";
 
 export interface ISchema {
-    type: IType | 'object' | 'array';
+    type?: IType | 'object' | 'array';
     items?: ISchemaItem;
     required?: Array<string>;
     properties?: { [name: string]: ISchema };
