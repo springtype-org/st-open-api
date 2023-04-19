@@ -10,8 +10,9 @@ import {mkdir} from "../classes/folder-manager";
 import {configuration} from "./config";
 import {InterfaceArrayProperty} from "../classes/interface-array-property";
 import {formatText} from "./formatText";
+import { PrimitiveTypeProperty } from "../classes/primitive-type-property";
 
-export const getInterfaceOrEnumFromSchema = (className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | InterfaceArrayProperty => {
+export const getInterfaceOrEnumFromSchema = (className: string, originalName: string, schema: ISchema, path: string): InterfaceProperty | EnumProperty | InterfaceArrayProperty | PrimitiveTypeProperty => {
     const isDebug = configuration.isDebug();
     if (isDebug) {
         console.log(`Get enum or interface ${className}`)
@@ -77,6 +78,10 @@ export const getInterfaceOrEnumFromSchema = (className: string, originalName: st
         const enumClass = new EnumProperty(className);
         enumClass.setValues(schema.enum);
         return enumClass;
+    } else if (isPrimitive(schema.type)) {
+        const primitiveTypeClass = new PrimitiveTypeProperty(className);
+        primitiveTypeClass.setPrimitiveType(mapType(schema.type))
+        return primitiveTypeClass;
     } else {
         console.log(className, originalName, 'no mapping for schema found')
     }
@@ -193,20 +198,28 @@ const getReference = (schema: ISchema) => {
     }
 }
 
-const mapType = (type: string) => {
-    return type === 'integer' ? 'number' : type;
+const mapType = (type: string | undefined) => {
+    switch (type) {
+        case "integer":
+          return "number";
+        case undefined:
+          return "any";
+        default:
+          return type;
+      };
 }
 
 const getNestedPath = (path: string, type: string) => {
     return mkdir(join(path, type));
 }
 
-const isPrimitive = (type: string) => {
+const isPrimitive = (type: string | undefined) => {
     switch (type) {
         case "boolean":
         case "integer":
         case "number":
-        case  "string":
+        case "string":
+        case undefined:
             return true;
     }
     return false
