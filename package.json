@@ -48,7 +48,7 @@
     "st-rm-rf": "^2.0.0-beta.1",
     "typescript": "^3.8.3",
     "valid-url": "^1.0.9",
-    "yaml": "^1.10.2"
+    "yaml": "^2.2.2"
   },
   "devDependencies": {
     "@types/mustache": "^4.0.1",
