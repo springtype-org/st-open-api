@@ -51,7 +51,7 @@
                 '{{nameOriginal}}': headerParameter.{{name}},
     {{/required}}
     {{^required}}
-                ...(headerParameter.{{name}} && {['{{nameOriginal}}']: headerParameter.{{name}}}),
+                ...(headerParameter.{{name}} && {'{{nameOriginal}}': headerParameter.{{name}}}),
     {{/required}}
 {{/headerParameters}}
 {{/isHeaderParameters}}
