@@ -21,12 +21,20 @@ import {configuration} from "./config";
 import {formatText} from "./formatText";
 import {IParameter} from "../interface/open-api-mine/i-parameter";
 import {IRefResult} from "../classes/ref";
+import { IHeaderParameter } from "../interface/i-header-parameter";
 
-const createParameter = (
-    type: 'query' | 'header' | 'path' | 'cookie',
-    functionName: string,
-    parameters: { [parameterName: string]: IParameter }
-): IRefResult => {
+type CreateParameterArguments = 
+    {
+        type: 'query' | 'path' | 'cookie',
+        functionName: string,
+        parameters: { [parameterName: string]: IParameter }
+    } | {
+        type: 'header',
+        functionName: string,
+        parameters: { [parameterName: string]: IHeaderParameter }
+    }
+
+const createParameter = ({type, functionName, parameters}: CreateParameterArguments): IRefResult => {
     const parameterClassName = `I${functionName.substring(0, 1).toUpperCase()}${functionName.substring(1)}${type.substring(0, 1).toUpperCase()}${type.substring(1)}Parameter`;
 
     const reference = configuration.getReference();
@@ -93,19 +101,19 @@ export const getServiceHttpFunction = (objProperty: ObjectProperty, httpMethod: 
         operationFunction.imports.push(response.import);
 
         if (Object.keys(sortedParameter.query).length > 0) {
-            const {className, import: importString} = createParameter('query', functionName, sortedParameter.query)
+            const {className, import: importString} = createParameter({type: 'query', functionName, parameters: sortedParameter.query})
             operationFunction.queryParameters = {className, params: Object.keys(sortedParameter.query)};
             operationFunction.imports.push(importString);
         }
 
         if (Object.keys(sortedParameter.header).length > 0) {
-            const {className, import: importString} = createParameter('header', functionName, sortedParameter.header)
-            operationFunction.headerParameters = {className, params: Object.keys(sortedParameter.header)};
+            const {className, import: importString} = createParameter({type: 'header', functionName, parameters: sortedParameter.header})
+            operationFunction.headerParameters = {className, params: sortedParameter.header};
             operationFunction.imports.push(importString);
         }
 
         if (Object.keys(sortedParameter.path).length > 0) {
-            const {className, import: importString} = createParameter('path', functionName, sortedParameter.path)
+            const {className, import: importString} = createParameter({type: 'path', functionName, parameters: sortedParameter.path})
             operationFunction.pathParameters = {className, params: Object.keys(sortedParameter.path)};
             operationFunction.imports.push(importString);
         }

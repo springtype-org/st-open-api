@@ -4,6 +4,7 @@ import {UniqueArray} from "./unique-array";
 import {splitByLineBreak} from "../function/split-by-line-break";
 import {FolderManager} from "./folder-manager";
 import {formatText} from "../function/formatText";
+import { IHeaderParameter } from "../interface/i-header-parameter";
 
 export const HTTP_FUNCTION_REF = (folder: FolderManager) => {
     return {
@@ -109,7 +110,13 @@ export class ObjectProperty implements IPropertyClass {
             queryParameterClassName: fun.queryParameters?.className,
 
             isHeaderParameters: !!fun.headerParameters,
-            headerParameters: fun.headerParameters?.params,
+            headerParameters: fun.headerParameters && Object.values(fun.headerParameters.params).map(param => {
+                return {
+                    name: param.name,
+                    nameOriginal: param.nameOriginal,
+                    required: param.required,
+                }
+            }),
             headerParameterClassName: fun.headerParameters?.className,
 
             isRequestBody: !!fun.requestBodyClass,
@@ -220,7 +227,7 @@ interface IMustacheFunction {
 
     isHeaderParameters: boolean;
     headerParameterClassName?: string;
-    headerParameters?: Array<string>;
+    headerParameters?: Array<{ name: string, nameOriginal: string, required: boolean }>;
 
     isRequestBody: boolean;
     requestBodyClass?: string;
@@ -243,7 +250,7 @@ export interface IFunction extends IFunctionResponse, IFunctionRequestBody {
     };
     headerParameters?: {
         className: string;
-        params: Array<string>
+        params: { [parameterName: string]: IHeaderParameter }
     };
     queryParameters?: {
         className: string;

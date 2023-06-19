@@ -47,7 +47,12 @@
 {{/isRequestBodyJson}}
 {{#isHeaderParameters}}
 {{#headerParameters}}
-                '{{.}}': headerParameter.{{.}},
+    {{#required}}
+                '{{nameOriginal}}': headerParameter.{{name}},
+    {{/required}}
+    {{^required}}
+                ...(headerParameter.{{name}} && {['{{nameOriginal}}']: headerParameter.{{name}}}),
+    {{/required}}
 {{/headerParameters}}
 {{/isHeaderParameters}}
             },

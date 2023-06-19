@@ -43,6 +43,13 @@ paths:
             schema:
               $ref: '#/components/schemas/OffsetRequest'
         required: true
+      parameters:
+        - name: X-Sdk-Version
+          in: header
+          description: SDK version header
+          schema:
+            type: string
+          required: false
       responses:
         200:
           description: OK; Offset has been scheduled correctly
@@ -172,6 +179,48 @@ paths:
         - Playground Service
       summary: Used to test st-open-api
       operationId: playAround
+      parameters:
+        - name: X-Sdk-Version
+          in: header
+          description: SDK version header
+          schema:
+            type: string
+          required: true
+        - name: my-optional-header
+          in: header
+          description: test
+          schema:
+            type: string
+          required: false
+        - name: headerInCamelCase
+          in: header
+          description: test
+          schema:
+            type: string
+          required: false
+        - name: header_in_snake_case
+          in: header
+          description: test
+          schema:
+            type: string
+          required: true
+        - name: queryParameter
+          in: query
+          description: test
+          schema:
+            type: string
+        - name: pathParameter
+          in: path
+          description: test
+          schema:
+            type: string
+          required: true
+        - name: cookieParameter
+          in: cookie
+          description: test
+          schema:
+            type: string
+          required: true
       responses:
         200:
           description: OK
