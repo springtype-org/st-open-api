@@ -7,13 +7,13 @@ import {ISchema} from "../interface/open-api-mine/i-schema";
 import * as fs from "fs";
 import * as nodePath from "path";
 import {
-    HTTP_ERROR_HANDLER_INTERFACE_REF,
-    HTTP_FUNCTION_REF,
-    HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF,
-    HTTP_RESPONSE_INTERCEPTOR_INTERFACE_REF,
-    IFunction,
-    ObjectProperty,
-    OPEN_API_FUNCTION_REF,
+  HTTP_ERROR_HANDLER_INTERFACE_REF,
+  HTTP_FUNCTION_REF,
+  HTTP_REQUEST_INTERCEPTOR_INTERFACE_REF,
+  HTTP_RESPONSE_INTERCEPTOR_INTERFACE_REF,
+  IFunction,
+  ObjectProperty,
+  OPEN_API_FUNCTION_REF,
 } from "../classes/object-property";
 import {kebabCaseToCamel} from "./kebab-case-to-camel";
 import {firstCharacterLower} from "./first-character-lower";
@@ -34,42 +34,42 @@ type CreateParameterArguments =
         parameters: { [parameterName: string]: IHeaderParameter }
     }
 
-const createParameter = ({type, functionName, parameters}: CreateParameterArguments): IRefResult => {
-    const parameterClassName = `I${functionName.substring(0, 1).toUpperCase()}${functionName.substring(1)}${type.substring(0, 1).toUpperCase()}${type.substring(1)}Parameter`;
-
-    const reference = configuration.getReference();
-    const folder = configuration.getFolderManager();
-
-    const parameterObject: ISchema = {
-        type: 'object',
-        required: [],
-        properties: {}
-    }
-    Object.values(parameters).forEach(p => {
+    const createParameter = ({type, functionName, parameters}: CreateParameterArguments): IRefResult => {
+        const parameterClassName = `I${functionName.substring(0, 1).toUpperCase()}${functionName.substring(1)}${type.substring(0, 1).toUpperCase()}${type.substring(1)}Parameter`;
+    
+        const reference = configuration.getReference();
+        const folder = configuration.getFolderManager();
+    
+        const parameterObject: ISchema = {
+            type: 'object',
+            required: [],
+            properties: {}
+        }
+        Object.values(parameters).forEach(p => {
 
         // HTTP authorization header shall be added via interceptor,
         // not be necessary to be provided for every single request
         if (p.name === 'authorization' && type === 'header') return;
 
-        if (p.required) {
-            parameterObject.required.push(p.name);
-        }
-        parameterObject.properties[p.name] = p.schema;
-    });
+    if (p.required) {
+      parameterObject.required.push(p.name);
+    }
+    parameterObject.properties[p.name] = p.schema;
+  });
 
-    const classToRender = getInterfaceOrEnumFromSchema(parameterClassName, functionName, parameterObject, folder.getInterfaceParameterFolder());
+  const classToRender = getInterfaceOrEnumFromSchema(parameterClassName, functionName, parameterObject, folder.getInterfaceParameterFolder());
 
-    const rendered = classToRender.render();
-    fs.appendFileSync(nodePath.join(folder.getInterfaceParameterFolder(), `${rendered.fileName}.ts`), rendered.render)
-    const schemaName = `#/schema/parameter/${parameterClassName}`;
+  const rendered = classToRender.render();
+  fs.appendFileSync(nodePath.join(folder.getInterfaceParameterFolder(), `${rendered.fileName}.ts`), rendered.render)
+  const schemaName = `#/schema/parameter/${parameterClassName}`;
 
-    reference.addReference(schemaName, {
-        fileName: rendered.fileName,
-        className: rendered.classEnumName,
-        folderPath: folder.getInterfaceParameterFolder(),
-    });
+  reference.addReference(schemaName, {
+      fileName: rendered.fileName,
+      className: rendered.classEnumName,
+      folderPath: folder.getInterfaceParameterFolder(),
+  });
 
-    return reference.getImportAndTypeByRef(schemaName, folder.getServiceFolder());
+  return reference.getImportAndTypeByRef(schemaName, folder.getServiceFolder());
 }
 
 export const getServiceHttpFunction = (objProperty: ObjectProperty, httpMethod: string, path: string, operation: IOperation) => {
@@ -86,19 +86,24 @@ export const getServiceHttpFunction = (objProperty: ObjectProperty, httpMethod: 
         const operationFunction: IFunction = {
 
             functionName: functionName,
-            forceInterceptor: configuration.forceInterceptor(),
-            imports: [],
+      forceInterceptor: configuration.forceInterceptor(),
+      imports: [],
 
-            httpMethod: httpMethod,
-            originalPath: path,
+      httpMethod: httpMethod,
+      originalPath: path,
 
-            description: operation.description,
+      description: operation.description,
 
-            ...requestBody,
-            ...response
-        }
-        operationFunction.imports.push(requestBody.import);
-        operationFunction.imports.push(response.import);
+      requestBody: requestBody,
+      response: response,
+    }
+
+    if (Array.isArray(requestBody.import)) {
+      operationFunction.imports.push(...requestBody.import);
+    } else {
+      operationFunction.imports.push(requestBody.import);
+    }
+    operationFunction.imports.push(response.import);
 
         if (Object.keys(sortedParameter.query).length > 0) {
             const {className, import: importString} = createParameter({type: 'query', functionName, parameters: sortedParameter.query})

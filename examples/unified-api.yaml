@@ -228,6 +228,22 @@ paths:
             application/json:
               schema: {$ref: '#/components/schemas/PlaygroundResponse'}
 
+    post:
+      operationId: postPlayground
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/ContactInfoRequest'
+                - $ref: '#/components/schemas/OffsetInfoRequest'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema: {$ref: '#/components/schemas/PlaygroundResponse'}
 
 components:
   schemas:

@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.6.3",
+  "version": "1.6.4",
   "publishConfig": {
     "access": "public"
   },
@@ -45,6 +45,7 @@
     "commander": "^5.1.0",
     "mustache": "^4.0.1",
     "node-fetch": "^2.6.0",
+    "st-cp": "^2.0.0-beta.2",
     "st-rm-rf": "^2.0.0-beta.1",
     "typescript": "^3.8.3",
     "valid-url": "^1.0.9",

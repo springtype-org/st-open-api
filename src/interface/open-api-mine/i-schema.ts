@@ -9,6 +9,7 @@ export interface ISchema {
     '$ref'?: string;
     enum?: Array<string | number>;
     allOf?: Array<{ '$ref': string } | any>
+    oneOf?: Array<{ '$ref': string } | any>
 }
 
 export interface ISchemaItem {

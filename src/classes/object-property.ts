@@ -119,176 +119,206 @@ export class ObjectProperty implements IPropertyClass {
             }),
             headerParameterClassName: fun.headerParameters?.className,
 
-            isRequestBody: !!fun.requestBodyClass,
-            isRequestBodyJson: !!fun.requestBodyClass && fun.isRequestBodyJson,
-            requestBodyClass: fun.requestBodyClass,
+            isRequestBody: !!fun.requestBody.requestBodyClass,
+            isRequestBodyJson: !!fun.requestBody.requestBodyClass && fun.requestBody.isRequestBodyJson,
+            requestBodyClass:
+              fun.requestBody.requestBodyCardinality === "oneOf"
+                ? fun.requestBody.requestBodyClass.join(" | ")
+                : fun.requestBody.requestBodyClass,
 
-            forceInterceptor: fun.forceInterceptor,
-            isResponse: !!fun.responseClass,
-            isJsonResponse: !!fun.responseClass && fun.isJsonResponse,
-            isPlaintextResponse: fun.isPlaintextResponse,
-            isDownloadResponse: fun.isDownloadResponse,
-            responseClass: fun.responseClass
-        }
-        this.functions.push({data: data, imports: fun.imports, name: fun.functionName});
-    }
 
-    addProperty(prop: IProperty) {
-        const data: IMustacheProperty = {
-            isDescription: !!prop.description,
-            description: splitByLineBreak(prop.description),
-            required: prop.required,
-            value: prop.value,
-            propertyName: prop.propertyName,
-            isArray: prop.isArray,
-        }
-        this.properties.push({data: data, import: prop.import, name: data.propertyName});
-    }
-
-    render(): IRenderResult {
-        const renderedFunctions = this.functions.map(fun => {
-            return {
-                imports: fun.imports || [],
-                name: fun.name,
-                render: renderMustache('function-class.mustache', fun.data)
+                forceInterceptor: fun.forceInterceptor,
+                isResponse: !!fun.response.responseClass,
+                isJsonResponse: !!fun.response.responseClass && fun.response.isJsonResponse,
+                isPlaintextResponse: fun.response.isPlaintextResponse,
+                isDownloadResponse: fun.response.isDownloadResponse,
+                responseClass: fun.response.responseClass
             }
-        }).sort((a, b) => a.name.localeCompare(b.name));
-        const renderProperties = this.properties.map((prop) => {
-            return {import: prop.import, name: prop.name, render: renderMustache('property-class.mustache', prop.data)}
-        }).sort((a, b) => a.name.localeCompare(b.name));
-
-        const isFunction = renderedFunctions.length > 0;
-
-        renderedFunctions.forEach(fun => this.imports.push(...fun.imports));
-        renderProperties.forEach(property => this.imports.push(property.import));
-
-        const viewData: IMustacheClass = {
-            className: this.className,
-            isInterface: Object.values(this.functions).length == 0,
-            isImport: this.imports.get().length > 0,
-            imports: this.imports.get().sort(),
-
-            isDescription: (this.description || '').length > 0,
-            description: this.description,
-
-            isFunction: isFunction,
-            function: renderedFunctions.map(rf => splitByLineBreak(rf.render)),
-
-            isProperties: renderProperties.length > 0,
-            properties: renderProperties.map(rf => splitByLineBreak(rf.render))
+            this.functions.push({data: data, imports: fun.imports, name: fun.functionName});
         }
-        return {
-            classEnumName: this.className,
-            fileName: this.fileName,
-            render: renderMustache('service-class.mustache', viewData)
+    
+        addProperty(prop: IProperty) {
+            const data: IMustacheProperty = {
+                isDescription: !!prop.description,
+                description: splitByLineBreak(prop.description),
+                required: prop.required,
+                value: prop.value,
+                propertyName: prop.propertyName,
+                isArray: prop.isArray,
+            }
+            this.properties.push({data: data, import: prop.import, name: data.propertyName});
+        }
+    
+        render(): IRenderResult {
+            const renderedFunctions = this.functions.map(fun => {
+                return {
+                    imports: fun.imports || [],
+                    name: fun.name,
+                    render: renderMustache('function-class.mustache', fun.data)
+                }
+            }).sort((a, b) => a.name.localeCompare(b.name));
+            const renderProperties = this.properties.map((prop) => {
+                return {import: prop.import, name: prop.name, render: renderMustache('property-class.mustache', prop.data)}
+            }).sort((a, b) => a.name.localeCompare(b.name));
+    
+            const isFunction = renderedFunctions.length > 0;
+    
+            renderedFunctions.forEach(fun => this.imports.push(...fun.imports));
+            renderProperties.forEach(property => this.imports.push(property.import));
+    
+            const viewData: IMustacheClass = {
+                className: this.className,
+                isInterface: Object.values(this.functions).length == 0,
+                isImport: this.imports.get().length > 0,
+                imports: this.imports.get().sort(),
+    
+                isDescription: (this.description || '').length > 0,
+                description: this.description,
+    
+                isFunction: isFunction,
+                function: renderedFunctions.map(rf => splitByLineBreak(rf.render)),
+    
+                isProperties: renderProperties.length > 0,
+                properties: renderProperties.map(rf => splitByLineBreak(rf.render))
+            }
+            return {
+                classEnumName: this.className,
+                fileName: this.fileName,
+                render: renderMustache('service-class.mustache', viewData)
+            }
         }
     }
-}
-
+    
 interface IMustacheClass {
-    className: string;
+  className: string;
 
-    isInterface: boolean;
+  isInterface: boolean;
 
-    isImport: boolean;
-    imports?: Array<string>;
+  isImport: boolean;
+  imports?: Array<string>;
 
-    isDescription: boolean;
-    description?: Array<string>;
+  isDescription: boolean;
+  description?: Array<string>;
 
-    isFunction: boolean;
-    function?: Array<Array<string>>;
+  isFunction: boolean;
+  function?: Array<Array<string>>;
 
-    isProperties: boolean;
-    properties: Array<Array<string>>;
+  isProperties: boolean;
+  properties: Array<Array<string>>;
 
 }
 
 interface IMustacheFunction {
-    functionName: string;
-    httpMethod: string;
-    originalPath: string;
+  functionName: string;
+  httpMethod: string;
+  originalPath: string;
 
-    isPathParameters: boolean;
-    pathParameterClassName?: string;
-    pathParameters?: Array<string>;
+  isPathParameters: boolean;
+  pathParameterClassName?: string;
+  pathParameters?: Array<string>;
 
-    isJsonResponse: boolean;
-    isPlaintextResponse: boolean;
-    isDownloadResponse: boolean;
-    isRequestBodyJson: boolean;
+  isJsonResponse: boolean;
+  isPlaintextResponse: boolean;
+  isDownloadResponse: boolean;
+  isRequestBodyJson: boolean;
 
-    isDescription: boolean;
-    description?: Array<string>;
+  isDescription: boolean;
+  description?: Array<string>;
 
-    isQueryParameters: boolean;
-    queryParameterClassName?: string;
-    queryParameters?: Array<string>;
+  isQueryParameters: boolean;
+  queryParameterClassName?: string;
+  queryParameters?: Array<string>;
 
-    isHeaderParameters: boolean;
-    headerParameterClassName?: string;
-    headerParameters?: Array<{ name: string, nameOriginal: string, required: boolean }>;
+  isHeaderParameters: boolean;
+  headerParameterClassName?: string;
+  headerParameters?: Array<{ name: string, nameOriginal: string, required: boolean }>;
 
-    isRequestBody: boolean;
-    requestBodyClass?: string;
+  isRequestBody: boolean;
+  requestBodyClass?: string;
 
-    forceInterceptor: boolean;
-    isResponse: boolean;
-    responseClass?: string;
+  forceInterceptor: boolean;
+  isResponse: boolean;
+  responseClass?: string;
 }
 
-export interface IFunction extends IFunctionResponse, IFunctionRequestBody {
-    functionName: string;
-    imports: Array<string>;
+export interface IFunction {
+  functionName: string;
+  imports: Array<string>;
 
-    httpMethod: string;
-    originalPath: string;
+  httpMethod: string;
+  originalPath: string;
 
-    pathParameters?: {
-        className: string;
-        params: Array<string>
-    };
-    headerParameters?: {
-        className: string;
-        params: { [parameterName: string]: IHeaderParameter }
-    };
-    queryParameters?: {
-        className: string;
-        params: Array<string>
-    };
+  pathParameters?: {
+    className: string;
+    params: Array<string>
+  };
+  headerParameters?: {
+    className: string;
+    params: { [parameterName: string]: IHeaderParameter }
+  };
+  queryParameters?: {
+    className: string;
+    params: Array<string>
+  };
 
-    description: string;
-    forceInterceptor: boolean;
+  requestBody: IFunctionRequestBody;
+  response: IFunctionResponse;
+
+  description: string;
+  forceInterceptor: boolean;
 }
 
 export interface IFunctionResponse {
-    isJsonResponse: boolean;
-    isPlaintextResponse: boolean;
-    isDownloadResponse: boolean;
-    responseClass?: string;
+  isJsonResponse: boolean;
+  isPlaintextResponse: boolean;
+  isDownloadResponse: boolean;
+  responseClass?: string;
 }
 
-export interface IFunctionRequestBody {
-    isRequestBodyJson: boolean;
-    requestBodyClass?: string;
+export type RequestBodyCardinality = "oneOf" | "single";
+
+interface IFunctionRequestBodyBase {
+  isRequestBodyJson: boolean;
+  requestBodyCardinality?: RequestBodyCardinality;
+  requestBodyClass?: string | string[];
 }
+
+export interface IFunctionRequestBodySingle extends IFunctionRequestBodyBase {
+  requestBodyCardinality: "single";
+  requestBodyClass?: string;
+}
+
+export interface IFunctionRequestBodyOneOf extends IFunctionRequestBodyBase {
+  requestBodyCardinality: "oneOf";
+  requestBodyClass?: string[];
+}
+
+export interface IFunctionRequestBodyNonJSON extends IFunctionRequestBodyBase {
+  isRequestBodyJson: false;
+  requestBodyCardinality: undefined;
+  requestBodyClass: undefined;
+}
+
+export type IFunctionRequestBody =
+  | IFunctionRequestBodySingle
+  | IFunctionRequestBodyOneOf;
 
 interface IMustacheProperty {
-    propertyName: string;
+  propertyName: string;
 
-    isDescription: boolean;
-    description?: Array<string>;
+  isDescription: boolean;
+  description?: Array<string>;
 
-    required: boolean;
-    isArray: boolean;
-    value: string;
+  required: boolean;
+  isArray: boolean;
+  value: string;
 }
 
 export interface IProperty {
-    propertyName: string;
-    import: string;
-    description?: string;
-    required: boolean;
-    isArray: boolean;
-    value: string;
+  propertyName: string;
+  import: string;
+  description?: string;
+  required: boolean;
+  isArray: boolean;
+  value: string;
 }
