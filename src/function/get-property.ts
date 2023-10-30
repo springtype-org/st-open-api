@@ -94,9 +94,6 @@ const getProperty = (className: string, originalName: string, propertyName: stri
     if (isDebug) {
         console.log(`Enter get property ${originalName}`, JSON.stringify(schema, null, 2))
     }
-    if (schema.allOf) {
-        schema = schema.allOf.find(v => !!v['$ref']) as any
-    }
     let isArray = false;
 
 
@@ -129,6 +126,10 @@ const getProperty = (className: string, originalName: string, propertyName: stri
 
     if (isDebug && !!reference) {
         console.log('Reference found ', JSON.stringify(schema, null, 2))
+    }
+
+    if (schema.allOf) {
+        reference = handleAllOfProperty(propertyName, originalName, path, schema)
     }
 
     if (!!enumeration) {
@@ -224,4 +225,23 @@ const isPrimitive = (type: string | undefined) => {
     }
     return false
 
+}
+
+
+const handleAllOfProperty = (propertyName: string, originalName: string, path: string, schema: ISchema) => {
+    const ref = configuration.getReference();
+
+    let referenceName = `${propertyName}${originalName.substring(0, 1).toUpperCase()}${originalName.substring(1)}`;
+
+    const allOfCombination = getInterfaceOrEnumFromSchema(`I${formatText(referenceName, 'ANY', 'PascalCase')}`, referenceName, schema, path) as EnumProperty;
+    const rendered = allOfCombination.render();
+    fs.appendFileSync(nodePath.join(path, `${rendered.fileName}.ts`), rendered.render)
+
+    const refKey = `#/nested/${referenceName}`
+    ref.addReference(refKey, {
+        fileName: rendered.fileName,
+        className: rendered.classEnumName,
+        folderPath: path
+    })
+    return refKey;
 }

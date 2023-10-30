@@ -8,6 +8,9 @@ export class Ref {
 
     getImportAndTypeByRef = (ref: string, path: string): IRefResult => {
         const reference = this.refs[ref];
+        if(!reference) {
+            throw new Error(`Reference ${ref} not found.`);
+        }
         let relativePath = relative(path, reference.folderPath).split(sep).join('/');
         if (!relativePath) {
             relativePath = './';
