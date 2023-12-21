@@ -2,11 +2,10 @@ import {download} from "../function/download";
 import {isUri} from "valid-url";
 import {readFileSync} from "fs";
 import * as YAML from "yaml";
-import * as Ajv from 'ajv';
+import * as SwaggerParser from '@apidevtools/swagger-parser'
 import {createComponentInterfaces} from "../function/create-component-interfaces";
 import {copyResources} from "../function/copy-resources";
 import {createServiceClasses} from "../function/create-service-classes";
-import {join} from "path";
 import {transpileToJs} from "../function/transpile-to-js";
 import {createReactProvider} from "../function/create-react-provider";
 import {createStaticServices} from "../function/create-static-services";
@@ -21,14 +20,19 @@ const getSourceAsString = async (source: string): Promise<string> => {
     }
 }
 
-const validate = async (openApiSchema: object): Promise<boolean> => {
-    const JSON_SCHEMA_3_0_x = JSON.parse(readFileSync(join(__dirname, '..', 'schema/open-api-3-0-x.json')).toString('utf-8'));
-    const ajv = Ajv({schemaId: 'auto', allErrors: true});
-    ajv.addMetaSchema(require('ajv/lib/refs/json-schema-draft-04.json'));
-    const valid = ajv.validate(JSON_SCHEMA_3_0_x, openApiSchema);
-    if (!valid && configuration.isDebug()) console.log(ajv.errors);
-    return valid
-}
+const validate = async (openApiSchema: any): Promise<boolean> => {
+    try {
+      await SwaggerParser.validate(openApiSchema, {
+        validate: {
+          spec: false, // Don't validate against Swagger 2.0, only OpenAPI 3.0
+        },
+      })
+      return true
+    } catch (err) {
+      console.error(err)
+      return false
+    }
+  }
 
 export type SpecMimeType = 'yaml' | 'json'
 

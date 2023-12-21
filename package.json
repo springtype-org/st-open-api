@@ -1,6 +1,6 @@
 {
   "name": "st-open-api",
-  "version": "1.6.5",
+  "version": "1.6.6",
   "publishConfig": {
     "access": "public"
   },
@@ -21,17 +21,8 @@
     "start": "node ./dist/cli.js",
     "watch": "tsc --watch",
     "build": "tsc",
-    "postbuild": "npx st-cp package.json README.md static schema template banner.txt dist"
+    "postbuild": "npx st-cp package.json README.md static template banner.txt dist"
   },
-  "bundledDependencies": [
-    "ajv",
-    "commander",
-    "mustache",
-    "node-fetch",
-    "st-rm-rf",
-    "valid-url",
-    "typescript"
-  ],
   "bin": {
     "st-open-api": "./cli.js"
   },
@@ -41,10 +32,11 @@
     "url": "https://github.com/springtype-org/st-open-api/issues"
   },
   "dependencies": {
-    "ajv": "^6.12.2",
+    "@apidevtools/swagger-parser": "^10.1.0",
     "commander": "^5.1.0",
     "mustache": "^4.0.1",
     "node-fetch": "^2.6.0",
+    "openapi-types": "^12.1.3",
     "st-cp": "^2.0.0-beta.2",
     "st-rm-rf": "^2.0.0-beta.1",
     "typescript": "^3.8.3",
@@ -55,5 +47,13 @@
     "@types/mustache": "^4.0.1",
     "@types/node": "^13.11.1",
     "@types/node-fetch": "^2.5.6"
-  }
+  },
+  "bundledDependencies": [
+    "commander",
+    "mustache",
+    "node-fetch",
+    "st-rm-rf",
+    "valid-url",
+    "typescript"
+  ]
 }
