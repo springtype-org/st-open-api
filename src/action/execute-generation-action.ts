@@ -62,7 +62,7 @@ export const executeGenerationAction = async () => {
     }
 
     try {
-        const valid = await validate(openApiSpec);
+        const valid = await validate(structuredClone(openApiSpec));
 
         if (isDebug) {
             console.log('OpenApi JSON is valid :', valid);

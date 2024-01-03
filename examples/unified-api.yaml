@@ -247,7 +247,6 @@ paths:
 
 components:
   schemas:
-    
     StatusResponse:
       title: StatusResponse
       required:
@@ -309,10 +308,7 @@ components:
           pattern: ^[A-Z]{2}$
           description: ISO 3166-1 alpha-2, e.g. DE, EN
         language:
-          type: string
-          maxLength: 2
-          description: Language of the tracking
-          enum: [DE, EN]
+          $ref: '#/components/schemas/Language'
 
     OffsetInfoRequest:
       title: OffsetInfoRequest
@@ -400,6 +396,8 @@ components:
         booleanType:
           $ref: '#/components/schemas/BooleanType'
         primitiveAnyType: {}
+        language:
+          $ref: '#/components/schemas/Language'
 
     AnyType: {}
     StringType:
@@ -410,6 +408,13 @@ components:
       type: integer
     BooleanType:
       type: boolean
+
+    Language:
+      type: string
+      maxLength: 2
+      description: Language of the tracking
+      enum: [DE, EN]
+
 
   securitySchemes:
     bearerAuth:
